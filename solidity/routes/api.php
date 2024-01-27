@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AuthController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 
 // API rute za korisnike
-Route::post('/register', 'AuthController@register');
+Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', 'AuthController@login');
 Route::post('/logout', 'AuthController@logout');
 
