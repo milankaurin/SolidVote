@@ -2,63 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contract;
 use Illuminate\Http\Request;
 
 class ContractController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return Contract::all();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        // Validacija i kreiranje novog ugovora
+        // Validacija i kreiranje novog ugovora
+        $validated = $request->validate([
+            'name' => 'required|max:255',
+            'address' => 'required|unique:contracts',
+            // Ostale validacije
+        ]);
+        $contract = Contract::create($validated);
+        return response()->json($contract, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        return Contract::findOrFail($id);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, $id)
     {
-        //
+         // Ažuriranje ugovora
+         $contract = Contract::findOrFail($id);
+         $contract->update($request->all());
+         return response()->json($contract, 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy($id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        // Brisanje ugovora
+        $contract = Contract::findOrFail($id);
+        $contract->delete();
+        return response()->json(null, 204);
     }
 }
+
