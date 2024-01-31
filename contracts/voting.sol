@@ -13,6 +13,8 @@ contract Voting {
 
     uint256 public votingStart;
     uint256 public votingEnd;
+    event CandidateAdded(string name);
+    event Voted(address voter, uint256 candidateIndex);
 
 constructor(string[] memory _candidateNames, uint256 _durationInMinutes) {
     for (uint256 i = 0; i < _candidateNames.length; i++) {
@@ -36,6 +38,7 @@ constructor(string[] memory _candidateNames, uint256 _durationInMinutes) {
                 name: _name,
                 voteCount: 0
         }));
+         emit CandidateAdded(_name); // Emituje event
     }
 
     function vote(uint256 _candidateIndex) public {
@@ -44,6 +47,7 @@ constructor(string[] memory _candidateNames, uint256 _durationInMinutes) {
 
         candidates[_candidateIndex].voteCount++;
         voters[msg.sender] = true;
+        emit Voted(msg.sender, _candidateIndex); // Emituje event
     }
 
     function getAllVotesOfCandiates() public view returns (Candidate[] memory){
