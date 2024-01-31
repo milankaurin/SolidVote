@@ -6,7 +6,8 @@ import Finished from './Components/Finished';
 import Connected from './Components/Connected';
 import './App.css';
 
-function App() {
+function App() { 
+  const adresaAdmina ="0xeb697566C0249E6c6D185731a5ACe3390c413818";
   const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
