@@ -4,10 +4,10 @@ import {contractAbi, contractAddress} from './Constant/constant';
 import Login from './Components/Login';
 import Finished from './Components/Finished';
 import Connected from './Components/Connected';
+import AdminPanel from './Components/AdminPanel';
 import './App.css';
 
 function App() { 
-  const adresaAdmina ="0xeb697566C0249E6c6D185731a5ACe3390c413818";
   const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -122,6 +122,8 @@ function App() {
         const address = await signer.getAddress();
         setAccount(address);
         console.log("Metamask Connected : " + address);
+        const adresaAdmina ="0xeb697566C0249E6c6D185731a5ACe3390c413818";
+        setIsAdmin(address.toLowerCase() === adminAddress.toLowerCase());
         setIsConnected(true);
         canVote();
       } catch (err) {
@@ -145,7 +147,8 @@ function App() {
                       number= {number}
                       handleNumberChange = {handleNumberChange}
                       voteFunction = {vote}
-                      showButton = {CanVote}/>) 
+                      showButton = {CanVote}
+                      isAdmin={isAdmin}/>) 
                       
                       : 
                       
