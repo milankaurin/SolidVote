@@ -16,17 +16,20 @@ contract Voting {
     event CandidateAdded(string name);
     event Voted(address voter, uint256 candidateIndex);
 
-constructor(string[] memory _candidateNames, uint256 _durationInMinutes) {
-    for (uint256 i = 0; i < _candidateNames.length; i++) {
-        candidates.push(Candidate({
-            name: _candidateNames[i],
-            voteCount: 0
-        }));
+  function isOwner() public view returns (bool) {
+        return msg.sender == owner;
     }
+
+constructor() {
     owner = msg.sender;
+}
+
+function startVoting(uint256 _durationInMinutes) public onlyOwner {
+    require(votingStart == 0, "Voting has already been started");
     votingStart = block.timestamp;
     votingEnd = block.timestamp + (_durationInMinutes * 1 minutes);
 }
+
 
     modifier onlyOwner {
         require(msg.sender == owner);
