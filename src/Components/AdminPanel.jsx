@@ -56,6 +56,22 @@ const AdminPanel = ({ signer }) => {
         }
     };
 
+
+    const stopVoting = async () => {
+        setLoading(true);
+        try {
+            const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+            const transaction = await contract.stopVoting();
+            await transaction.wait();
+            alert("Voting has been stopped.");
+        } catch (error) {
+            console.error("Error stopping the voting:", error);
+            alert("Failed to stop voting.");
+        }
+        setLoading(false);
+    };
+
+
     return (
         <div className="admin-panel">
             <h2>Admin Panel</h2>
@@ -79,8 +95,15 @@ const AdminPanel = ({ signer }) => {
             <button onClick={startVoting} disabled={loading}>
                 Start Voting
             </button>
+            <button onClick={stopVoting} disabled={loading}>
+            Stop Voting
+        </button>
         </div>
     );
 };
 
 export default AdminPanel;
+
+
+
+

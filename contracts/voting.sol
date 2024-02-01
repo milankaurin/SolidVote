@@ -25,11 +25,15 @@ constructor() {
 }
 
 function startVoting(uint256 _durationInMinutes) public onlyOwner {
-    require(votingStart == 0, "Voting has already been started");
+    require(votingEnd <= block.timestamp, "Voting has already been started");
     votingStart = block.timestamp;
     votingEnd = block.timestamp + (_durationInMinutes * 1 minutes);
 }
 
+function stopVoting() public onlyOwner {
+    require(block.timestamp < votingEnd, "Voting has not ended yet or has been already stopped.");
+    votingEnd = block.timestamp; // Postavlja kraj glasanja na trenutni timestamp, efektivno zaustavljajući glasanje
+}
 
     modifier onlyOwner {
         require(msg.sender == owner);

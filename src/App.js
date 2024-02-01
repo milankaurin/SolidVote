@@ -161,24 +161,26 @@ function App() {
 
     return (
         <div className="App">
-            { isConnected ? (
-                isOwner ? (
-                    <AdminPanel signer={signer} />
-                ) : (
-                    <Connected 
-                        account={account}
-                        candidates={candidates}
-                        remainingTime={remainingTime}
-                        number={number}
-                        handleNumberChange={handleNumberChange}
-                        voteFunction={vote}
-                        showButton={canVote}
-                    />
-                )
+            {isConnected ? (
+                <>
+                    {isOwner ? (
+                        <AdminPanel signer={signer} />
+                    ) : (
+                        <Connected 
+                            account={account}
+                            candidates={candidates}
+                            remainingTime={remainingTime}
+                            number={number}
+                            handleNumberChange={handleNumberChange}
+                            voteFunction={vote}
+                            showButton={canVote}
+                        />
+                    )}
+                </>
             ) : (
                 <Login connectWallet={connectToMetamask} />
             )}
-            {!votingStatus && <Finished />}
+            {!votingStatus && !isOwner && <Finished />}
         </div>
     );
 }

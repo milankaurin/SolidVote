@@ -1,18 +1,21 @@
-require("@nomiclabs/hardhat-waffle");
+/**
+* @type import('hardhat/config').HardhatUserConfig
+*/
 
-// Učitajte .env biblioteku na početku fajla
 require('dotenv').config();
+require("@nomiclabs/hardhat-ethers");
 
-// Pretpostavimo da imate definisane ove varijable u .env fajlu
-const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL;
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const { API_URL, PRIVATE_KEY } = process.env;
 
 module.exports = {
-  solidity: "0.8.9",
-  networks: {
-    sepolia: {
-      url: SEPOLIA_RPC_URL, // Ovo treba da bude URL vašeg Sepolia node-a ili Infura/Alchemy endpoint-a
-      accounts: [`0x${PRIVATE_KEY}`] // Ovo treba da bude vaš privatni ključ
-    }
-  }
-};
+   solidity: "0.8.11",
+   defaultNetwork: "sepolia",
+   networks: {
+      hardhat: {},
+      sepolia: {
+         url: API_URL,
+         accounts: [`0x${PRIVATE_KEY}`],
+         
+      }
+   },
+}
