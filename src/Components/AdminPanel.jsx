@@ -13,6 +13,7 @@ const AdminPanel = ({ signer }) => {
         height: '100vh', // Visina pozadine
         width: '100vw' // Širina pozadine
     };
+    const [action, setAction] = useState("");
     const handleInputCandidatesChange = (e) => {
         setInputCandidates(e.target.value);
     };
@@ -22,6 +23,7 @@ const AdminPanel = ({ signer }) => {
     };
 
     const addCandidates = async () => {
+        setAction("adding");
         if (!inputCandidates.trim()) {
             alert("Please enter candidate names.");
             return;
@@ -46,6 +48,7 @@ const AdminPanel = ({ signer }) => {
     };
 
     const startVoting = async () => {
+        setAction("starting");
         try {
             const durationInMinutes = parseInt(votingDuration); // Pretvorite unos u broj
             if (isNaN(durationInMinutes) || durationInMinutes <= 0) {
@@ -64,6 +67,7 @@ const AdminPanel = ({ signer }) => {
 
 
     const stopVoting = async () => {
+        setAction("stoping");
         setLoading(true);
         try {
             const contract = new ethers.Contract(contractAddress, contractAbi, signer);
@@ -77,6 +81,7 @@ const AdminPanel = ({ signer }) => {
         setLoading(false);
     };
     const clearCandidates = async () => {
+        setAction("clearing");
         setLoading(true);
         try {
             const contract = new ethers.Contract(contractAddress, contractAbi, signer);

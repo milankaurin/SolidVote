@@ -20,6 +20,7 @@ function App() {
     const [number, setNumber] = useState('');
     const [canVote, setCanVote] = useState(true);
     const [isOwner, setIsOwner] = useState(false);
+    
 
     useEffect(() => {
         if (window.ethereum) {
