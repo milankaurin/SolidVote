@@ -7,11 +7,19 @@ const AdminPanel = (props) => {
         setCandidateName(e.target.value);
     };
 
-    const addCandidate = () => {
-        // Logika za dodavanje kandidata putem smart contracta
-        // Ovo zavisi od specifičnosti vašeg Ethereum smart contracta
+    const addCandidate = async () => {
         console.log("Dodajem kandidata: ", candidateName);
-        // Ovde dodajte poziv smart contracta
+    
+        try {
+            const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+            const transaction = await contract.addCandidate(candidateName);
+            await transaction.wait();
+    
+            // Nakon dodavanja kandidata, možda ćete želeti da osvežite listu kandidata
+            props.refreshCandidates(); // Ovo je funkcija koju morate implementirati
+        } catch (error) {
+            console.error("Greška pri dodavanju kandidata: ", error);
+        }
     };
 
     return (

@@ -6,7 +6,7 @@ import Finished from './Components/Finished';
 import Connected from './Components/Connected';
 import AdminPanel from './Components/AdminPanel';
 import './App.css';
-
+// 0x7dA505f9f3B4763AD2acf415bb97a5ea965413cf  ---UGOVOR DEPLOYOVAN!!
 function App() { 
   const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState(null);
@@ -16,6 +16,10 @@ function App() {
   const [candidates, setCandidates] = useState([]);
   const [number, setNumber] = useState('');
   const [CanVote, setCanVote] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const adminAddress = "0xeb697566C0249E6c6D185731a5ACe3390c413818";
+  
+
 
 
   useEffect( () => {

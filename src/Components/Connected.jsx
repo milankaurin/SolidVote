@@ -1,5 +1,5 @@
 import React from "react";
-
+import AdminPanel from './AdminPanel';
 const Connected = (props) => {
     return (
         <div className="connected-container">
