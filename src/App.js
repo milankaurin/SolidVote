@@ -114,8 +114,21 @@ function App() {
       console.log(status);
       setVotingStatus(status);
   }
-
   async function getRemainingTime() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
+    const timeInSeconds = await contractInstance.getRemainingTime();
+    const time = parseInt(timeInSeconds); // Pretpostavimo da je vreme već u pravom formatu
+    const hours = Math.floor(time / 3600);
+    const minutes = Math.floor((time % 3600) / 60);
+    const seconds = time % 60;
+
+    setRemainingTime(`${hours}h ${minutes}m ${seconds}s`);
+}
+
+/*   async function getRemainingTime() {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
@@ -124,7 +137,7 @@ function App() {
       );
       const time = await contractInstance.getRemainingTime();
       setRemainingTime(parseInt(time, 16));
-  }
+  } */
 
     const connectToMetamask = async () => {
         if (window.ethereum) {
