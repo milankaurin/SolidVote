@@ -6,7 +6,13 @@ const AdminPanel = ({ signer }) => {
     const [inputCandidates, setInputCandidates] = useState("");
     const [loading, setLoading] = useState(false);
     const [votingDuration, setVotingDuration] = useState(""); // Dodato stanje za unos trajanja glasanja
-
+    const backgroundStyle = {
+        backgroundImage: `url('/images/adminBackground.jpg')`,
+        backgroundSize: 'cover', // Pokriva celu pozadinu
+        backgroundPosition: 'center', // Centrira sliku
+        height: '100vh', // Visina pozadine
+        width: '100vw' // Širina pozadine
+    };
     const handleInputCandidatesChange = (e) => {
         setInputCandidates(e.target.value);
     };
@@ -70,11 +76,24 @@ const AdminPanel = ({ signer }) => {
         }
         setLoading(false);
     };
-
+    const clearCandidates = async () => {
+        setLoading(true);
+        try {
+            const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+            const transaction = await contract.clearCandidates();
+            await transaction.wait();
+            alert("Candidates cleared successfully.");
+        } catch (error) {
+            console.error("Error clearing candidates:", error);
+            alert("Failed to clear candidates.");
+        }
+        setLoading(false);
+    };
+    
 
     return (
-        <div className="admin-panel">
-            <h2>Admin Panel</h2>
+        <div style={backgroundStyle} className="admin-panel">
+           <h2 style={{ color: 'white' }}>Administrator Panel</h2>
             <input
                 type="text"
                 value={inputCandidates}
@@ -97,6 +116,9 @@ const AdminPanel = ({ signer }) => {
             </button>
             <button onClick={stopVoting} disabled={loading}>
             Stop Voting
+        </button>
+        <button onClick={clearCandidates} disabled={loading}>
+            Clear Candidates
         </button>
         </div>
     );

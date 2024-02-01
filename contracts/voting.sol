@@ -48,6 +48,13 @@ function stopVoting() public onlyOwner {
          emit CandidateAdded(_name); // Emituje event
     }
 
+    function clearCandidates() public onlyOwner {
+    require(block.timestamp < votingStart || block.timestamp > votingEnd, "Cannot clear candidates during voting period.");
+    delete candidates; // Ovo briše ceo niz kandidata
+}
+
+
+
     function addCandidates(string[] memory _names) public onlyOwner {
     for (uint256 i = 0; i < _names.length; i++) {
         candidates.push(Candidate({
