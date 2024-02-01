@@ -6,6 +6,47 @@
   height: 100vh;
   background-color: #f1f1f1;
 }
+.admin-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.admin-panel h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.admin-panel input[type="text"] {
+  width: 250px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+}
+
+.admin-panel button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+  margin-bottom: 20px; /* Dodajte marginu između dugmadi */
+}
+
+.admin-panel button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.admin-panel button:hover {
+  background-color: #0056b3;
+}
 
 .welcome-message {
   font-size: 2rem;

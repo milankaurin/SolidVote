@@ -7,6 +7,9 @@ import Connected from './Components/Connected';
 import AdminPanel from './Components/AdminPanel';
 import './App.css';
 
+const provider = new ethers.providers.Web3Provider(window.ethereum);
+const signer = provider.getSigner();
+
 function App() {
     const [provider, setProvider] = useState(null);
     const [account, setAccount] = useState(null);
@@ -160,7 +163,7 @@ function App() {
         <div className="App">
             { isConnected ? (
                 isOwner ? (
-                    <AdminPanel />
+                    <AdminPanel signer={signer} />
                 ) : (
                     <Connected 
                         account={account}
