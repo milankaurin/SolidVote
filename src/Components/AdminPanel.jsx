@@ -3,16 +3,40 @@ import { ethers } from 'ethers';
 import { contractAbi, contractAddress } from '../Constant/constant';
 
 const AdminPanel = ({ signer }) => {
-    const [candidateName, setCandidateName] = useState("");
+    const [inputCandidates, setInputCandidates] = useState("");
     const [loading, setLoading] = useState(false);
     const [votingDuration, setVotingDuration] = useState(""); // Dodato stanje za unos trajanja glasanja
 
-    const handleCandidateNameChange = (e) => {
-        setCandidateName(e.target.value);
+    const handleInputCandidatesChange = (e) => {
+        setInputCandidates(e.target.value);
     };
 
     const handleVotingDurationChange = (e) => {
         setVotingDuration(e.target.value);
+    };
+
+    const addCandidates = async () => {
+        if (!inputCandidates.trim()) {
+            alert("Please enter candidate names.");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const candidatesArray = inputCandidates.split(",");
+            const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+
+            // Pozovite funkciju addCandidates iz pametnog ugovora i prosledite niz kandidata
+            const transaction = await contract.addCandidates(candidatesArray);
+            await transaction.wait();
+
+            alert(`Candidates added successfully.`);
+            setInputCandidates(""); // Resetovanje polja nakon dodavanja
+        } catch (error) {
+            console.error("Error adding candidates:", error);
+            alert("Failed to add candidates.");
+        }
+        setLoading(false);
     };
 
     const startVoting = async () => {
@@ -32,35 +56,14 @@ const AdminPanel = ({ signer }) => {
         }
     };
 
-    const addCandidate = async () => {
-        if (!candidateName.trim()) {
-            alert("Please enter a candidate name.");
-            return;
-        }
-
-        setLoading(true);
-        try {
-            const contract = new ethers.Contract(contractAddress, contractAbi, signer);
-            const transaction = await contract.addCandidate(candidateName);
-            await transaction.wait();
-
-            alert(`Candidate "${candidateName}" added successfully.`);
-            setCandidateName(""); // Resetovanje polja nakon dodavanja
-        } catch (error) {
-            console.error("Error adding candidate:", error);
-            alert("Failed to add candidate.");
-        }
-        setLoading(false);
-    };
-
     return (
         <div className="admin-panel">
             <h2>Admin Panel</h2>
             <input
                 type="text"
-                value={candidateName}
-                onChange={handleCandidateNameChange}
-                placeholder="Candidate Name"
+                value={inputCandidates}
+                onChange={handleInputCandidatesChange}
+                placeholder="Candidate Names (comma separated)"
                 disabled={loading}
             />
             <input
@@ -70,8 +73,8 @@ const AdminPanel = ({ signer }) => {
                 placeholder="Voting Duration (minutes)" // Dodato polje za unos trajanja glasanja
                 disabled={loading}
             />
-            <button onClick={addCandidate} disabled={loading}>
-                {loading ? "Adding..." : "Add Candidate"}
+            <button onClick={addCandidates} disabled={loading}>
+                {loading ? "Adding..." : "Add Candidates"}
             </button>
             <button onClick={startVoting} disabled={loading}>
                 Start Voting

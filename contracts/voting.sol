@@ -44,6 +44,17 @@ function startVoting(uint256 _durationInMinutes) public onlyOwner {
          emit CandidateAdded(_name); // Emituje event
     }
 
+    function addCandidates(string[] memory _names) public onlyOwner {
+    for (uint256 i = 0; i < _names.length; i++) {
+        candidates.push(Candidate({
+            name: _names[i],
+            voteCount: 0
+        }));
+        emit CandidateAdded(_names[i]); // Emituje event za svaki dodatog kandidata
+    }
+}
+
+
     function vote(uint256 _candidateIndex) public {
         require(!voters[msg.sender], "You have already voted.");
         require(_candidateIndex < candidates.length, "Invalid candidate index.");
