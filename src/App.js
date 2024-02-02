@@ -188,13 +188,14 @@ function App() {
                             handleNumberChange={handleNumberChange}
                             voteFunction={vote}
                             showButton={canVote}
+                            votingStatus={votingStatus}
                         />
                     )}
                 </>
             ) : (
                 <Login connectWallet={connectToMetamask} />
             )}
-            {!votingStatus && !isOwner && <Finished />}
+           
         </div>
     );
 }

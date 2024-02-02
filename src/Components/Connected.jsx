@@ -3,8 +3,8 @@ import AdminPanel from './AdminPanel';
 
 const Connected = ({ account, candidates, remainingTime, number, handleNumberChange, voteFunction, showButton, votingStatus, isAdmin }) => {
     // Provera da li je glasanje završeno
-    const isVotingFinished = true;
-
+    const isVotingFinished = !votingStatus;
+    console.log("Voting Status:", votingStatus);
     return (
         <div className="connected-container">
             <h1 className="connected-header">You are Connected to Metamask</h1>
