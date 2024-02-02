@@ -13,7 +13,8 @@ const Connected = ({ account, candidates, remainingTime, number, handleNumberCha
             {isAdmin ? (
                 <AdminPanel />
             ) : isVotingFinished ? (
-                <p className="connected-account">Voting is Finished</p>
+                <h1 className="connected-account">Voting is Finished</h1>
+
             ) : (
                 <>
                     <p className="connected-account">Remaining Time: {remainingTime}</p>

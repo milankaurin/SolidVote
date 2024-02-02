@@ -6,7 +6,7 @@ import Finished from './Components/Finished';
 import Connected from './Components/Connected';
 import AdminPanel from './Components/AdminPanel';
 import './App.css';
-
+import logo from './logo.png'; // Ako je direktno unutar src/, ili putanju prilagodite gde se tačno nalazi slika
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
 
@@ -175,6 +175,9 @@ function App() {
 
     return (
         <div className="App">
+            <header className="App-header">
+            <img src={logo} alt="Logo" className="App-logo" />
+        </header>
             {isConnected ? (
                 <>
                     {isOwner ? (
