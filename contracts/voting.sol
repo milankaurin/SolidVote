@@ -9,12 +9,15 @@ contract Voting {
 
     Candidate[] public candidates;
     address owner;
-    mapping(address => bool) public voters;
+   
+    uint256 public votingSessionId;
 
     uint256 public votingStart;
     uint256 public votingEnd;
     event CandidateAdded(string name);
     event Voted(address voter, uint256 candidateIndex);
+
+    mapping(address => uint256) public voters;
 
   function isOwner() public view returns (bool) {
         return msg.sender == owner;
@@ -25,10 +28,12 @@ constructor() {
 }
 
 function startVoting(uint256 _durationInMinutes) public onlyOwner {
-    require(votingEnd <= block.timestamp, "Voting has already been started");
+    require(votingEnd <= block.timestamp, "Voting has already been started.");
     votingStart = block.timestamp;
     votingEnd = block.timestamp + (_durationInMinutes * 1 minutes);
+    votingSessionId++; // Inkrementira ID sesije, omogućavajući svima da glasaju ponovo
 }
+
 
 function stopVoting() public onlyOwner {
     require(block.timestamp < votingEnd, "Voting has not ended yet or has been already stopped.");
@@ -66,14 +71,15 @@ function stopVoting() public onlyOwner {
 }
 
 
-    function vote(uint256 _candidateIndex) public {
-        require(!voters[msg.sender], "You have already voted.");
-        require(_candidateIndex < candidates.length, "Invalid candidate index.");
+   function vote(uint256 _candidateIndex) public {
+    require(voters[msg.sender] < votingSessionId, "You have already voted in this session.");
+    require(_candidateIndex < candidates.length, "Invalid candidate index.");
 
-        candidates[_candidateIndex].voteCount++;
-        voters[msg.sender] = true;
-        emit Voted(msg.sender, _candidateIndex); // Emituje event
-    }
+    candidates[_candidateIndex].voteCount++;
+    voters[msg.sender] = votingSessionId; // Postavlja sesiju glasanja za ovog glasača na trenutnu sesiju
+    emit Voted(msg.sender, _candidateIndex);
+}
+
 
     function getAllVotesOfCandiates() public view returns (Candidate[] memory){
         return candidates;
