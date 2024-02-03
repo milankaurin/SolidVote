@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { ethers } from 'ethers';
 import { contractAbi, contractAddress } from '../Constant/constant';
 
@@ -6,6 +6,7 @@ const AdminPanel = ({ signer }) => {
     const [inputCandidates, setInputCandidates] = useState("");
     const [loading, setLoading] = useState(false);
     const [votingDuration, setVotingDuration] = useState(""); // Dodato stanje za unos trajanja glasanja
+    const [candidates, setCandidates] = useState([]); // Dodajemo state za kandidate
     const backgroundStyle = {
         backgroundImage: `url('/images/adminBackground.jpg')`,
         backgroundSize: 'cover', // Pokriva celu pozadinu
@@ -21,6 +22,26 @@ const AdminPanel = ({ signer }) => {
     const handleVotingDurationChange = (e) => {
         setVotingDuration(e.target.value);
     };
+
+    const fetchCandidates = async () => {
+        setLoading(true);
+        try {
+            const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+            const candidatesArray = await contract.getAllVotesOfCandiates();
+            setCandidates(candidatesArray.map((candidate, index) => ({
+                index,
+                name: candidate.name,
+                voteCount: candidate.voteCount.toNumber(), // Pretpostavlja se da je voteCount BigNumber
+            })));
+        } catch (error) {
+            console.error("Error fetching candidates:", error);
+        }
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        fetchCandidates();
+    }, []);
 
     const addCandidates = async () => {
         setAction("adding");
@@ -125,6 +146,27 @@ const AdminPanel = ({ signer }) => {
         <button onClick={clearCandidates} disabled={loading}>
             Clear Candidates
         </button>
+
+ {/* Dodajemo tabelu ispod postojećih elemenata */}
+ <table>
+                <thead>
+                    <tr>
+                        <th>Index</th>
+                        <th>Candidate Name</th>
+                        <th>Vote Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {candidates.map((candidate, index) => (
+                        <tr key={index}>
+                            <td>{index}</td>
+                            <td>{candidate.name}</td>
+                            <td>{candidate.voteCount}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
         </div>
     );
 };
