@@ -74,16 +74,31 @@ function App() {
 
 
   async function checkcanVote() {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      const signer = provider.getSigner();
-      const contractInstance = new ethers.Contract (
-        contractAddress, contractAbi, signer
-      );
-      const voteStatus = await contractInstance.voters(await signer.getAddress());
-      setCanVote(voteStatus);
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const contractInstance = new ethers.Contract(
+        contractAddress, 
+        contractAbi, 
+        signer
+    );
 
-  }
+    // Dohvata adresu trenutnog korisnika
+    const userAddress = await signer.getAddress();
+
+    // Dohvata ID sesije u kojoj je korisnik poslednji put glasao
+    const sessionVoted = await contractInstance.lastVotedSession(userAddress);
+
+    // Dohvata trenutni ID sesije glasanja
+    const currentSession = await contractInstance.votingSessionId();
+
+    // Proverava da li je korisnik već glasao u trenutnoj sesiji
+    const hasVoted = sessionVoted.toString() >= currentSession.toString();
+
+    // Postavlja stanje u React komponenti na osnovu toga da li korisnik može da glasa
+    setCanVote(hasVoted);
+}
+
 
   async function getCandidates() {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
