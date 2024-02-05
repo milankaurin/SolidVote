@@ -41,7 +41,7 @@ contract Voting {
 
     function stopVoting() public onlyOwner {
         require(block.timestamp <= votingEnd, "Voting has not been started or already stopped.");
-        votingEnd = block.timestamp; // Opciono, ovo može da se ukloni ako želite da votingEnd ostane kao planirano vreme završetka
+        votingEnd = block.timestamp; 
     }
 
     function addCandidate(string memory _name) public onlyOwner {

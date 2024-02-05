@@ -2,12 +2,12 @@ import React from "react";
 
 const Login = (props) => {
 
-    const backgroundStyle = {
+    const backgroundStyle = {   //dodavanje pozadine
         backgroundImage: `url('/images/adminBackground.jpg')`,
-        backgroundSize: 'cover', // Pokriva celu pozadinu
-        backgroundPosition: 'center', // Centrira sliku
-        height: '100vh', // Visina pozadine
-        width: '100vw' // Širina pozadine
+        backgroundSize: 'cover', 
+        backgroundPosition: 'center', 
+        height: '100vh',
+        width: '100vw' 
     };
     return (
         <div style={backgroundStyle} className="login-container">
@@ -18,3 +18,6 @@ const Login = (props) => {
 }
 
 export default Login;
+
+
+

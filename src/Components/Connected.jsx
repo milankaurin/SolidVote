@@ -10,11 +10,9 @@ const Connected = ({ account, candidates, remainingTime, number, handleNumberCha
         width: '100vw' // Širina pozadine
     };
     // Provera da li je glasanje završeno
-    const isVotingFinished = !votingStatus;
+    const isVotingFinished = !votingStatus; 
     console.log("Voting Status:", votingStatus);
     return (
-        <div style={backgroundStyle} className="admin-panel">
-
         <div  style={backgroundStyle} className="connected-container">
             <h1 className="connected-header">You are Connected to Metamask</h1>
             <p className="connected-account">Metamask Account: {account}</p>
@@ -35,9 +33,9 @@ const Connected = ({ account, candidates, remainingTime, number, handleNumberCha
                             <br />
                             <button className="login-button" onClick={voteFunction}>Vote</button>
                         </div>
-                    )}
-                    <table id="myTable" className="candidates-table">
-                        <thead>
+                    )} 
+                    <table id="myTable" className="candidates-table"> 
+                        <thead> 
                             <tr>
                                 <th>Index</th>
                                 <th>Candidate name</th>
@@ -56,7 +54,6 @@ const Connected = ({ account, candidates, remainingTime, number, handleNumberCha
                     </table>
                 </>
             )}
-        </div>
         </div>
     );
 };

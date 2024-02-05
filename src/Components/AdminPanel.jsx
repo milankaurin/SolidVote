@@ -39,9 +39,7 @@ const AdminPanel = ({ signer }) => {
         setLoading(false);
     };
 
-    useEffect(() => {
-        fetchCandidates();
-    }, []);
+    
 
     const addCandidates = async () => {
         setAction("adding");
@@ -83,10 +81,7 @@ const AdminPanel = ({ signer }) => {
         } catch (error) {
             console.error("Error starting the voting:", error);
             alert("Failed to start voting.");
-        }
-    };
-
-
+        } };
     const stopVoting = async () => {
         setAction("stoping");
         setLoading(true);
@@ -113,9 +108,11 @@ const AdminPanel = ({ signer }) => {
             console.error("Error clearing candidates:", error);
             alert("Failed to clear candidates.");
         }
-        setLoading(false);
-    };
-    
+        setLoading(false);};
+
+
+    useEffect(() => {
+        fetchCandidates();  }, []);
 
     return (
         <div style={backgroundStyle} className="admin-panel">
@@ -170,7 +167,6 @@ const AdminPanel = ({ signer }) => {
         </div>
     );
 };
-
 export default AdminPanel;
 
 
