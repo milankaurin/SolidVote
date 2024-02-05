@@ -148,6 +148,7 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Dodaje blago zasenčenje oko tabele */
   border-radius: 8px; /* Zaobljene ivice */
   overflow: hidden;
+  opacity: 80%;
 }
 
 .candidates-table th, .candidates-table td {
