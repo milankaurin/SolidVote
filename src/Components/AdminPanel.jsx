@@ -148,7 +148,7 @@ const AdminPanel = ({ signer }) => {
         </button>
 
  {/* Dodajemo tabelu ispod postojećih elemenata */}
- <table>
+ <table className="candidates-table">
                 <thead>
                     <tr>
                         <th>Index</th>

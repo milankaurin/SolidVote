@@ -2,11 +2,20 @@ import React from "react";
 import AdminPanel from './AdminPanel';
 
 const Connected = ({ account, candidates, remainingTime, number, handleNumberChange, voteFunction, showButton, votingStatus, isAdmin }) => {
+    const backgroundStyle = {
+        backgroundImage: `url('/images/adminBackground.jpg')`,
+        backgroundSize: 'cover', // Pokriva celu pozadinu
+        backgroundPosition: 'center', // Centrira sliku
+        height: '100vh', // Visina pozadine
+        width: '100vw' // Širina pozadine
+    };
     // Provera da li je glasanje završeno
     const isVotingFinished = !votingStatus;
     console.log("Voting Status:", votingStatus);
     return (
-        <div className="connected-container">
+        <div style={backgroundStyle} className="admin-panel">
+
+        <div  style={backgroundStyle} className="connected-container">
             <h1 className="connected-header">You are Connected to Metamask</h1>
             <p className="connected-account">Metamask Account: {account}</p>
 
@@ -47,6 +56,7 @@ const Connected = ({ account, candidates, remainingTime, number, handleNumberCha
                     </table>
                 </>
             )}
+        </div>
         </div>
     );
 };
