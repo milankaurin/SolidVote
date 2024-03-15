@@ -3,10 +3,14 @@ import { ethers } from 'ethers';
 import { contractAbi, contractAddress } from '../Constant/constant';
 
 const AdminPanel = ({ signer }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [unosKorisnika, setUnosKorisnika] = useState('');
+    const [naslovGlasanja, setNaslovGlasanja] = useState('Početni Naslov');
     const [inputCandidates, setInputCandidates] = useState("");
     const [loading, setLoading] = useState(false);
     const [votingDuration, setVotingDuration] = useState(""); // Dodato stanje za unos trajanja glasanja
-    const [candidates, setCandidates] = useState([]); // Dodajemo state za kandidate
+    const [candidates, setCandidates] = useState([]); 
+    const [redoviOpcijaZaGlasanje, setRedoviOpcijaZaGlasanje] = useState([{ id: 0, tekst: '' }]); 
     const backgroundStyle = {
         backgroundImage: `url('/images/adminBackground.jpg')`,
         backgroundSize: 'cover', // Pokriva celu pozadinu
@@ -39,7 +43,16 @@ const AdminPanel = ({ signer }) => {
         setLoading(false);
     };
 
-    
+    const handleNaslovChange = (event) => {
+        setNaslovGlasanja(event.target.value);
+    };
+
+    const handleFinishEditing = (event) => {
+        if (event.type === 'blur' || (event.type === 'keypress' && event.key === 'Enter')) {
+            handleNaslovChange(event);
+            setIsEditing(false); // Izlaz iz režima uređivanja
+        }
+    };
 
     const addCandidates = async () => {
         setAction("adding");
@@ -111,60 +124,116 @@ const AdminPanel = ({ signer }) => {
         setLoading(false);};
 
 
+        
     useEffect(() => {
         fetchCandidates();  }, []);
 
+
+        const handleTextChange = (id, event) => {
+            const noviRedovi = [...redoviOpcijaZaGlasanje];
+            noviRedovi[id].tekst = event.target.value;
+        
+            // Proveravamo da li treba dodati novi prazan red
+            if (id === redoviOpcijaZaGlasanje.length - 1 && event.target.value) {
+                noviRedovi.push({ id: noviRedovi.length, tekst: '' });
+            } else if (redoviOpcijaZaGlasanje.length > 1 && !noviRedovi[redoviOpcijaZaGlasanje.length - 1].tekst && !noviRedovi[redoviOpcijaZaGlasanje.length - 2].tekst) {
+                // Ako su poslednji i pretposlednji red prazni, uklanjamo poslednji red
+                noviRedovi.pop();
+            }
+          
+                console.log(redoviOpcijaZaGlasanje); // Ovo će ispisati trenutno stanje redova u konzoli
+          
+            
+            setRedoviOpcijaZaGlasanje(noviRedovi);
+        };
+        
     return (
         <div style={backgroundStyle} className="admin-panel">
-           <h2 style={{ color: 'white' }}>Administrator Panel</h2>
-            <input
-                type="text"
-                value={inputCandidates}
-                onChange={handleInputCandidatesChange}
-                placeholder="Candidate Names (comma separated)"
-                disabled={loading}
-            />
-            <input
-                type="text"
-                value={votingDuration}
-                onChange={handleVotingDurationChange}
-                placeholder="Voting Duration (minutes)" // Dodato polje za unos trajanja glasanja
-                disabled={loading}
-            />
-            <button onClick={addCandidates} disabled={loading}>
-                {loading ? "Adding..." : "Add Candidates"}
-            </button>
-            <button onClick={startVoting} disabled={loading}>
-                Start Voting
-            </button>
-            <button onClick={stopVoting} disabled={loading}>
+        <h2 style={{ color: 'white' }}>Administrator Panel</h2>
+        <input
+            type="text"
+            value={inputCandidates}
+            onChange={handleInputCandidatesChange}
+            placeholder="Candidate Names (comma separated)"
+            disabled={loading}
+        />
+        <input
+            type="text"
+            value={votingDuration}
+            onChange={handleVotingDurationChange}
+            placeholder="Voting Duration (minutes)"
+            disabled={loading}
+        />
+        <button onClick={addCandidates} disabled={loading}>
+            {loading ? "Adding..." : "Add Candidates"}
+        </button>
+        <button onClick={startVoting} disabled={loading}>
+            Start Voting
+        </button>
+        <button onClick={stopVoting} disabled={loading}>
             Stop Voting
         </button>
         <button onClick={clearCandidates} disabled={loading}>
             Clear Candidates
         </button>
 
- {/* Dodajemo tabelu ispod postojećih elemenata */}
- <table className="candidates-table">
-                <thead>
-                    <tr>
-                        <th>Index</th>
-                        <th>Candidate Name</th>
-                        <th>Vote Count</th>
+        <table className="candidates-table">
+            <thead>
+                <tr>
+                    <th>Index</th>
+                    <th>Candidate Name</th>
+                    <th>Vote Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {candidates.map((candidate, index) => (
+                    <tr key={index}>
+                        <td>{index}</td>
+                        <td>{candidate.name}</td>
+                        <td>{candidate.voteCount}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    {candidates.map((candidate, index) => (
-                        <tr key={index}>
-                            <td>{index}</td>
-                            <td>{candidate.name}</td>
-                            <td>{candidate.voteCount}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                ))}
+            </tbody>
+        </table>
 
-        </div>
+        <div>
+               
+        <table>
+        <thead>
+          <tr>
+            <th>
+              <h2 onDoubleClick={() => setIsEditing(true)} style={{ cursor: 'pointer' }}>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    defaultValue={naslovGlasanja}
+                    onBlur={handleFinishEditing}
+                    onKeyPress={handleFinishEditing}
+                    autoFocus
+                  />
+                ) : (
+                  naslovGlasanja
+                )}
+              </h2>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {redoviOpcijaZaGlasanje.map((red, index) => (
+            <tr key={red.id}>
+              <td>
+                <input
+                  type="text"
+                  value={red.tekst}
+                  onChange={(event) => handleTextChange(red.id, event)}
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+            </div>
+    </div>
     );
 };
 export default AdminPanel;

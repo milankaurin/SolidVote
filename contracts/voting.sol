@@ -7,7 +7,8 @@ contract Voting {
         uint256 voteCount;
     }
     
-    Candidate[] public candidates;                         //Dinamicki niz koji sadrži sve kandidate
+    Candidate[] public candidates;
+    address[] public voters;                           //Dinamicki niz koji sadrži sve kandidate
     address public owner;                                  //Adresa vlasnika ugovora
     mapping(address => uint256) public lastVotedSession;   //Mapiranje koje prati poslednju sesiju glasanja u kojoj je korisnik glasao.
     uint256 public votingSessionId;                        //ID sesije, vreme pocetka i kraja glasanja
@@ -32,16 +33,25 @@ contract Voting {
 
 //FUNKCIJE ZA KONTROLU GLASANJA - započinjanje, prekidanje glasanja, dodavanje novog kandidata, brisanje svih kandidata, dodavanje liste kandidata
 
-    function startVoting(uint256 _durationInMinutes) public onlyOwner {
+    function addVoters(address[] memory glasaci) public onlyOwner {
+
+     voters=glasaci;
+
+    }
+
+
+    function startVoting(uint256 _durationInMinutes,address[] memory glasaci) public onlyOwner {
         require(votingEnd <= block.timestamp, "Voting has already been started or has not been stopped.");
         votingStart = block.timestamp;
         votingEnd = block.timestamp + (_durationInMinutes * 1 minutes);
+        addVoters(glasaci);
         votingSessionId++; // Povećava se za svako novo glasanje
     }
 
     function stopVoting() public onlyOwner {
         require(block.timestamp <= votingEnd, "Voting has not been started or already stopped.");
-        votingEnd = block.timestamp; 
+        votingEnd = block.timestamp;
+
     }
 
     function addCandidate(string memory _name) public onlyOwner {
@@ -60,12 +70,26 @@ contract Voting {
         }
     }
 
+    function addressInArray() public view returns (bool){
+        bool check = false;
+
+        for (uint256 index = 0; index < voters.length; index++) {
+            if(msg.sender == voters[index]){
+                check=true;
+            }
+
+        }
+        return check;
+
+    }
+
 //FUNKCIJA VOTE - omogućava korisnicima da glasaju, proverava se da li je glasanje aktivno, da li su već glasali u ovoj sesiji i da li je unos (index) validan
 
     function vote(uint256 _candidateIndex) public {
         require(block.timestamp >= votingStart && block.timestamp < votingEnd, "Voting is not active.");
         require(_candidateIndex < candidates.length, "Invalid candidate index.");
         require(lastVotedSession[msg.sender] < votingSessionId, "You have already voted in this session.");
+       require(addressInArray(),"You are not eligible to vote.");
 
         candidates[_candidateIndex].voteCount++;
         lastVotedSession[msg.sender] = votingSessionId;
