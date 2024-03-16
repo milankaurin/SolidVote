@@ -9,7 +9,7 @@ const AdminPanel = ({ signer }) => {
 
     const [unosKorisnika, setUnosKorisnika] = useState('');
     const [isEditing, setIsEditing] = useState(false);
-    const [naslovGlasanja, setNaslovGlasanja] = useState('Početni Naslov');
+    const [naslovGlasanja, setNaslovGlasanja] = useState('Your Question');
     const [redoviOpcijaZaGlasanje, setRedoviOpcijaZaGlasanje] = useState([{ tekst: '' }]);
 
     const [inputCandidates, setInputCandidates] = useState("");
@@ -250,28 +250,32 @@ const AdminPanel = ({ signer }) => {
                
         
   <div>
-    <Typography variant="h5" onDoubleClick={() => setIsEditing(true)} style={{ cursor: 'pointer', marginBottom: '20px' }}>
-      {isEditing ? (
-        <TextField
-          fullWidth
-          variant="outlined"
-          defaultValue={naslovGlasanja}
-          onBlur={handleFinishEditing}
-          onKeyPress={(event) => handleFinishEditing(event)}
-          autoFocus
-        />
-      ) : (
-        naslovGlasanja
-      )}
-    </Typography>
+    
     <TableContainer component={Paper}>
       <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Naslov</TableCell>
-            <TableCell align="right">Akcije</TableCell>
-          </TableRow>
-        </TableHead>
+      <TableHead>
+      <TableRow>
+        <TableCell>
+          <Typography variant="h6" style={{ cursor: 'pointer' }} onDoubleClick={() => setIsEditing(true)}>
+            {isEditing ? (
+              <TextField
+                fullWidth
+                variant="outlined"
+                defaultValue={naslovGlasanja}
+                onBlur={handleFinishEditing}
+                onKeyPress={(event) => event.key === 'Enter' && handleFinishEditing(event)}
+                autoFocus
+              />
+            ) : (
+              naslovGlasanja
+            )}
+          </Typography>
+        </TableCell>
+        <TableCell align="right">
+          <Typography variant="h6"></Typography>
+        </TableCell>
+      </TableRow>
+    </TableHead>
         <TableBody>
           {redoviOpcijaZaGlasanje.map((red, index) => (
             <TableRow key={index}>
