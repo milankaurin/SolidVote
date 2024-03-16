@@ -1,6 +1,8 @@
 import React, { useState,useEffect } from "react";
 import { ethers } from 'ethers';
 import { contractAbi, contractAddress } from '../Constant/constant';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Typography } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const AdminPanel = ({ signer }) => {
     const tableRef = React.useRef(null);
@@ -131,15 +133,18 @@ const AdminPanel = ({ signer }) => {
     
         const handleTextChange = (index, event) => {
             setRedoviOpcijaZaGlasanje(currentRows => {
-                const newRows = [...currentRows];
+                let newRows = [...currentRows];
                 newRows[index].tekst = event.target.value;
         
-                // Ako se unosi tekst u poslednji red, dodaj novi prazan red
+                // Ako se unosi tekst u poslednji red, i taj tekst nije prazan, dodaj novi prazan red
                 if (index === currentRows.length - 1 && event.target.value.trim()) {
                     newRows.push({ tekst: '' });
+                } else if (index === currentRows.length - 2 && !event.target.value.trim() && !newRows[currentRows.length - 1].tekst.trim()) {
+                    // Ako je prethodni red prazan, a unosi se prazan tekst u trenutni poslednji red, ukloni taj poslednji red
+                    newRows.pop();
                 }
-                
-                return newRows;
+        
+                return newRows.filter(row => row.tekst.trim() || newRows.indexOf(row) === newRows.length - 1); // Uvek zadrži barem jedan red
             });
         };
         
@@ -194,32 +199,33 @@ const AdminPanel = ({ signer }) => {
     return (
         <div style={backgroundStyle} className="admin-panel">
         <h2 style={{ color: 'white' }}>Administrator Panel</h2>
-        <input
+        <input className="admin-panel-input"
             type="text"
             value={inputCandidates}
             onChange={handleInputCandidatesChange}
             placeholder="Candidate Names (comma separated)"
             disabled={loading}
         />
-        <input
+        <input className="admin-panel-input"
             type="text"
             value={votingDuration}
             onChange={handleVotingDurationChange}
             placeholder="Voting Duration (minutes)"
             disabled={loading}
         />
-        <button onClick={addCandidates} disabled={loading}>
-            {loading ? "Adding..." : "Add Candidates"}
+       <button className="admin-panel-button" onClick={addCandidates} disabled={loading}>
+         {loading ? "Adding..." : "Add Candidates"}
         </button>
-        <button onClick={startVoting} disabled={loading}>
-            Start Voting
-        </button>
-        <button onClick={stopVoting} disabled={loading}>
-            Stop Voting
-        </button>
-        <button onClick={clearCandidates} disabled={loading}>
-            Clear Candidates
-        </button>
+        <button className="admin-panel-button" onClick={startVoting} disabled={loading}>
+         Start Voting
+    </button>
+    <button className="admin-panel-button" onClick={stopVoting} disabled={loading}>
+          Stop Voting
+    </button>
+    <button className="admin-panel-button" onClick={clearCandidates} disabled={loading}>
+          Clear Candidates
+    </button>
+
 
         <table className="candidates-table">
             <thead>
@@ -242,47 +248,55 @@ const AdminPanel = ({ signer }) => {
 
         
                
-        <div>
-            <h2 onDoubleClick={() => setIsEditing(true)} style={{ cursor: 'pointer' }}>
-                {isEditing ? (
-                    <input
-                        type="text"
-                        defaultValue={naslovGlasanja}
-                        onBlur={handleFinishEditing}
-                        onKeyPress={(event) => handleFinishEditing(event)}
-                        autoFocus
-                    />
-                ) : (
-                    naslovGlasanja
+        
+  <div>
+    <Typography variant="h5" onDoubleClick={() => setIsEditing(true)} style={{ cursor: 'pointer', marginBottom: '20px' }}>
+      {isEditing ? (
+        <TextField
+          fullWidth
+          variant="outlined"
+          defaultValue={naslovGlasanja}
+          onBlur={handleFinishEditing}
+          onKeyPress={(event) => handleFinishEditing(event)}
+          autoFocus
+        />
+      ) : (
+        naslovGlasanja
+      )}
+    </Typography>
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Naslov</TableCell>
+            <TableCell align="right">Akcije</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {redoviOpcijaZaGlasanje.map((red, index) => (
+            <TableRow key={index}>
+              <TableCell>
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  value={red.tekst}
+                  onChange={(event) => handleTextChange(index, event)}
+                />
+              </TableCell>
+              <TableCell align="right">
+                {/* Uslovno prikazivanje dugmeta za brisanje, isključujući poslednji red */}
+                {index !== redoviOpcijaZaGlasanje.length - 1 && (
+                  <IconButton onClick={() => handleRemoveRow(index)} color="error">
+                    <DeleteIcon />
+                  </IconButton>
                 )}
-            </h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Naslov</th>
-                        <th>Akcije</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {redoviOpcijaZaGlasanje.map((red, index) => (
-                        <tr key={index}>
-                            <td>
-                                <input
-                                    type="text"
-                                    value={red.tekst}
-                                    onChange={(event) => handleTextChange(index, event)}
-                                />
-                            </td>
-                            <td>
-                                <button onClick={() => handleRemoveRow(index)} style={{ cursor: 'pointer' }}>
-                                    🗑️
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </div>
     </div>
     );
 };

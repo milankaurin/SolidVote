@@ -43,7 +43,7 @@ body {
 }
 
 
-.admin-panel input[type="text"] {
+.admin-panel-input[type="text"] {
   width: 250px;
   padding: 10px;
   margin-bottom: 10px;
@@ -52,7 +52,7 @@ body {
   outline: none;
 }
 
-.admin-panel button {
+.admin-panel-button {
   padding: 10px 20px;
   background-color: #007bff;
   color: #fff;
