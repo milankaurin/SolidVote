@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from "react";
 import { ethers } from 'ethers';
 import { contractAbi, contractAddress } from '../Constant/constant';
-import { Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Typography } from '@mui/material';
+import { Container, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const AdminPanel = ({ signer }) => {
