@@ -40,11 +40,11 @@ contract Voting {
     }
 
 
-    function startVoting(uint256 _durationInMinutes,address[] memory glasaci) public onlyOwner {
+    function startVoting(uint256 _durationInMinutes) public onlyOwner {
         require(votingEnd <= block.timestamp, "Voting has already been started or has not been stopped.");
         votingStart = block.timestamp;
         votingEnd = block.timestamp + (_durationInMinutes * 1 minutes);
-        addVoters(glasaci);
+       // addVoters(glasaci);
         votingSessionId++; // Povećava se za svako novo glasanje
     }
 
