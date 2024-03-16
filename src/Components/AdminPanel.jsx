@@ -196,114 +196,95 @@ const AdminPanel = ({ signer }) => {
           
           
         
-    return (
-        <div style={backgroundStyle} className="admin-panel">
-        <h2 style={{ color: 'white' }}>Administrator Panel</h2>
-        <input className="admin-panel-input"
-            type="text"
-            value={inputCandidates}
-            onChange={handleInputCandidatesChange}
-            placeholder="Candidate Names (comma separated)"
-            disabled={loading}
-        />
-        <input className="admin-panel-input"
-            type="text"
-            value={votingDuration}
-            onChange={handleVotingDurationChange}
-            placeholder="Voting Duration (minutes)"
-            disabled={loading}
-        />
-       <button className="admin-panel-button" onClick={addCandidates} disabled={loading}>
-         {loading ? "Adding..." : "Add Candidates"}
-        </button>
-        <button className="admin-panel-button" onClick={startVoting} disabled={loading}>
-         Start Voting
-    </button>
-    <button className="admin-panel-button" onClick={stopVoting} disabled={loading}>
-          Stop Voting
-    </button>
-    <button className="admin-panel-button" onClick={clearCandidates} disabled={loading}>
-          Clear Candidates
-    </button>
-
-
-        <table className="candidates-table">
-            <thead>
-                <tr>
-                    <th>Index</th>
-                    <th>Candidate Name</th>
-                    <th>Vote Count</th>
-                </tr>
-            </thead>
-            <tbody>
-                {candidates.map((candidate, index) => (
-                    <tr key={index}>
-                        <td>{index}</td>
-                        <td>{candidate.name}</td>
-                        <td>{candidate.voteCount}</td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
-
+          return (
+            <Box sx={{
+                backgroundColor: '#E0F7FA', // Svetlo plava pozadina
+                minHeight: '100vh', // Osigurava da pozadina pokriva celu visinu viewporta
+                padding: '20px',
+                overflowY: 'auto' // Omogućava skrolanje unutar Box-a ako je sadržaj duži od visine viewporta
+            }}>
+                <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
+                    <Typography variant="h4" sx={{ color: '#333', marginBottom: '20px', textAlign: 'center' }}>
+                        Administrator Panel
+                    </Typography>
+                    <TextField
+                        label="Candidate Names (comma separated)"
+                        variant="outlined"
+                        value={inputCandidates}
+                        onChange={handleInputCandidatesChange}
+                        disabled={loading}
+                        sx={{ minWidth: '250px', marginRight: '20px' }}
+                    />
+                    <TextField
+                        label="Voting Duration (minutes)"
+                        variant="outlined"
+                        value={votingDuration}
+                        onChange={handleVotingDurationChange}
+                        disabled={loading}
+                        sx={{ minWidth: '250px' }}
+                    />
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '20px' }}>
+                        <button className="admin-panel-button" onClick={addCandidates} disabled={loading} sx={{ marginBottom: '10px' }}>
+                            {loading ? "Adding..." : "Add Candidates"}
+                        </button>
+                        <button className="admin-panel-button" onClick={startVoting} disabled={loading} sx={{ marginBottom: '10px' }}>
+                            Start Voting
+                        </button>
+                        <button className="admin-panel-button" onClick={stopVoting} disabled={loading} sx={{ marginBottom: '10px' }}>
+                            Stop Voting
+                        </button>
+                        <button className="admin-panel-button" onClick={clearCandidates} disabled={loading}>
+                            Clear Candidates
+                        </button>
+                    </Box>
+                </Container>
         
-               
-        
-  <div>
-  <Container maxWidth="lg" sx={{ margin: 'auto', width: '100%' }}>
-  <TableContainer component={Paper}>
-  <Table sx={{ minWidth: 650 }}>
-      <TableHead>
-      <TableRow>
-        <TableCell>
-          <Typography variant="h6" style={{ cursor: 'pointer' }} onDoubleClick={() => setIsEditing(true)}>
-            {isEditing ? (
-              <TextField
-                fullWidth
-                variant="outlined"
-                defaultValue={naslovGlasanja}
-                onBlur={handleFinishEditing}
-                onKeyPress={(event) => event.key === 'Enter' && handleFinishEditing(event)}
-                autoFocus
-              />
-            ) : (
-              naslovGlasanja
-            )}
-          </Typography>
-        </TableCell>
-        <TableCell align="right">
-          <Typography variant="h6"></Typography>
-        </TableCell>
-      </TableRow>
-    </TableHead>
-        <TableBody>
-          {redoviOpcijaZaGlasanje.map((red, index) => (
-            <TableRow key={index}>
-              <TableCell>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  value={red.tekst}
-                  onChange={(event) => handleTextChange(index, event)}
-                />
-              </TableCell>
-              <TableCell align="right">
-                {/* Uslovno prikazivanje dugmeta za brisanje, isključujući poslednji red */}
-                {index !== redoviOpcijaZaGlasanje.length - 1 && (
-                  <IconButton onClick={() => handleRemoveRow(index)} color="error">
-                    <DeleteIcon />
-                  </IconButton>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-    </Container>
-  </div>
-    </div>
-    );
+                <Paper elevation={3} sx={{ overflow: 'auto', padding: '20px', margin: '20px auto', maxWidth: 'lg', background: 'white', borderRadius: '8px', boxShadow: 3 }}>
+                    <Typography variant="h6" sx={{ marginBottom: '10px' }}>
+                        Candidates
+                    </Typography>
+                    <TableContainer component={Paper} sx={{ marginBottom: '20px' }}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Index</TableCell>
+                                    <TableCell>Candidate Name</TableCell>
+                                    <TableCell>Vote Count</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {candidates.map((candidate, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell>{index}</TableCell>
+                                        <TableCell>{candidate.name}</TableCell>
+                                        <TableCell>{candidate.voteCount}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <Typography variant="h6" sx={{ marginTop: '20px', marginBottom: '10px' }}>
+                        Voting Options
+                    </Typography>
+                    {/* Logika za prikaz i uređivanje opcija glasanja */}
+                    {redoviOpcijaZaGlasanje.map((opcija, index) => (
+                        <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                            <TextField
+                                fullWidth
+                                variant="outlined"
+                                label={`Option ${index + 1}`}
+                                value={opcija.tekst}
+                                onChange={(event) => handleTextChange(index, event)}
+                                sx={{ marginRight: '10px' }}
+                            />
+                            <IconButton onClick={() => handleRemoveRow(index)} color="error">
+                                <DeleteIcon />
+                            </IconButton>
+                        </Box>
+                    ))}
+                </Paper>
+            </Box>
+        );
 };
 export default AdminPanel;
 
