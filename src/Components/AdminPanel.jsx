@@ -251,7 +251,7 @@ const AdminPanel = ({ signer }) => {
         
   <div>
     
-    <TableContainer component={Paper}>
+  <TableContainer component={Paper} sx={{ maxWidth: 'false', width: '100%', margin: 'auto' }}>
       <Table>
       <TableHead>
       <TableRow>
