@@ -3,14 +3,18 @@ import { ethers } from 'ethers';
 import { contractAbi, contractAddress } from '../Constant/constant';
 
 const AdminPanel = ({ signer }) => {
-    const [isEditing, setIsEditing] = useState(false);
+    const tableRef = React.useRef(null);
+
     const [unosKorisnika, setUnosKorisnika] = useState('');
+    const [isEditing, setIsEditing] = useState(false);
     const [naslovGlasanja, setNaslovGlasanja] = useState('Početni Naslov');
+    const [redoviOpcijaZaGlasanje, setRedoviOpcijaZaGlasanje] = useState([{ tekst: '' }]);
+
     const [inputCandidates, setInputCandidates] = useState("");
     const [loading, setLoading] = useState(false);
     const [votingDuration, setVotingDuration] = useState(""); // Dodato stanje za unos trajanja glasanja
     const [candidates, setCandidates] = useState([]); 
-    const [redoviOpcijaZaGlasanje, setRedoviOpcijaZaGlasanje] = useState([{ id: 0, tekst: '' }]); 
+   
     const backgroundStyle = {
         backgroundImage: `url('/images/adminBackground.jpg')`,
         backgroundSize: 'cover', // Pokriva celu pozadinu
@@ -26,7 +30,7 @@ const AdminPanel = ({ signer }) => {
     const handleVotingDurationChange = (e) => {
         setVotingDuration(e.target.value);
     };
-
+    
     const fetchCandidates = async () => {
         setLoading(true);
         try {
@@ -47,12 +51,7 @@ const AdminPanel = ({ signer }) => {
         setNaslovGlasanja(event.target.value);
     };
 
-    const handleFinishEditing = (event) => {
-        if (event.type === 'blur' || (event.type === 'keypress' && event.key === 'Enter')) {
-            handleNaslovChange(event);
-            setIsEditing(false); // Izlaz iz režima uređivanja
-        }
-    };
+   
 
     const addCandidates = async () => {
         setAction("adding");
@@ -123,29 +122,74 @@ const AdminPanel = ({ signer }) => {
         }
         setLoading(false);};
 
-
+        const handleFinishEditing = (event) => {
+            if (event.type === 'blur' || (event.key === 'Enter')) {
+                setIsEditing(false);
+                setNaslovGlasanja(event.target.value);
+            }
+        };
+    
+        const handleTextChange = (index, event) => {
+            setRedoviOpcijaZaGlasanje(currentRows => {
+                const newRows = [...currentRows];
+                newRows[index].tekst = event.target.value;
+        
+                // Ako se unosi tekst u poslednji red, dodaj novi prazan red
+                if (index === currentRows.length - 1 && event.target.value.trim()) {
+                    newRows.push({ tekst: '' });
+                }
+                
+                return newRows;
+            });
+        };
+        
+        const handleRemoveRow = (indexToRemove) => {
+            setRedoviOpcijaZaGlasanje(currentRows => {
+                const newRows = currentRows.filter((_, index) => index !== indexToRemove);
+        
+                // Ako su svi redovi obrisani, osiguravamo da postoji barem jedan prazan red
+                if (newRows.length === 0) {
+                    newRows.push({ tekst: '' });
+                }
+               
+                return newRows;
+                
+            });
+        };
+    
+        useEffect(() => {
+            console.log(redoviOpcijaZaGlasanje);
+        }, [redoviOpcijaZaGlasanje]);
         
     useEffect(() => {
         fetchCandidates();  }, []);
 
+        const updateRowsFromTable = () => {
+            const rows = [];
+            const tableRows = tableRef.current.querySelectorAll("tr");
+            tableRows.forEach((tr, index) => {
+              // Preskoči zaglavlje tabele
+              if (index > 0) {
+                const input = tr.querySelector("input");
+                if (input) {
+                  const value = input.value;
+                  if (value.trim() || index === tableRows.length - 1) {
+                    // Dodaj samo ako polje nije prazno ili je poslednje polje
+                    rows.push({ id: index, tekst: value });
+                  }
+                }
+              }
+            });
+          
+            setRedoviOpcijaZaGlasanje(rows);
+          };
+          
 
-        const handleTextChange = (id, event) => {
-            const noviRedovi = [...redoviOpcijaZaGlasanje];
-            noviRedovi[id].tekst = event.target.value;
+          
         
-            // Proveravamo da li treba dodati novi prazan red
-            if (id === redoviOpcijaZaGlasanje.length - 1 && event.target.value) {
-                noviRedovi.push({ id: noviRedovi.length, tekst: '' });
-            } else if (redoviOpcijaZaGlasanje.length > 1 && !noviRedovi[redoviOpcijaZaGlasanje.length - 1].tekst && !noviRedovi[redoviOpcijaZaGlasanje.length - 2].tekst) {
-                // Ako su poslednji i pretposlednji red prazni, uklanjamo poslednji red
-                noviRedovi.pop();
-            }
+        
           
-                console.log(redoviOpcijaZaGlasanje); // Ovo će ispisati trenutno stanje redova u konzoli
           
-            
-            setRedoviOpcijaZaGlasanje(noviRedovi);
-        };
         
     return (
         <div style={backgroundStyle} className="admin-panel">
@@ -196,43 +240,49 @@ const AdminPanel = ({ signer }) => {
             </tbody>
         </table>
 
-        <div>
+        
                
-        <table>
-        <thead>
-          <tr>
-            <th>
-              <h2 onDoubleClick={() => setIsEditing(true)} style={{ cursor: 'pointer' }}>
+        <div>
+            <h2 onDoubleClick={() => setIsEditing(true)} style={{ cursor: 'pointer' }}>
                 {isEditing ? (
-                  <input
-                    type="text"
-                    defaultValue={naslovGlasanja}
-                    onBlur={handleFinishEditing}
-                    onKeyPress={handleFinishEditing}
-                    autoFocus
-                  />
+                    <input
+                        type="text"
+                        defaultValue={naslovGlasanja}
+                        onBlur={handleFinishEditing}
+                        onKeyPress={(event) => handleFinishEditing(event)}
+                        autoFocus
+                    />
                 ) : (
-                  naslovGlasanja
+                    naslovGlasanja
                 )}
-              </h2>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {redoviOpcijaZaGlasanje.map((red, index) => (
-            <tr key={red.id}>
-              <td>
-                <input
-                  type="text"
-                  value={red.tekst}
-                  onChange={(event) => handleTextChange(red.id, event)}
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-            </div>
+            </h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Naslov</th>
+                        <th>Akcije</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {redoviOpcijaZaGlasanje.map((red, index) => (
+                        <tr key={index}>
+                            <td>
+                                <input
+                                    type="text"
+                                    value={red.tekst}
+                                    onChange={(event) => handleTextChange(index, event)}
+                                />
+                            </td>
+                            <td>
+                                <button onClick={() => handleRemoveRow(index)} style={{ cursor: 'pointer' }}>
+                                    🗑️
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
     </div>
     );
 };
