@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from "react";
 import { ethers } from 'ethers';
 import { contractAbi, contractAddress } from '../Constant/constant';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Typography } from '@mui/material';
+import { Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const AdminPanel = ({ signer }) => {
@@ -250,9 +250,9 @@ const AdminPanel = ({ signer }) => {
                
         
   <div>
-    
-  <TableContainer component={Paper} sx={{ maxWidth: 'false', width: '100%', margin: 'auto' }}>
-      <Table>
+  <Container maxWidth="lg" sx={{ margin: 'auto', width: '100%' }}>
+  <TableContainer component={Paper}>
+  <Table sx={{ minWidth: 650 }}>
       <TableHead>
       <TableRow>
         <TableCell>
@@ -300,6 +300,7 @@ const AdminPanel = ({ signer }) => {
         </TableBody>
       </Table>
     </TableContainer>
+    </Container>
   </div>
     </div>
     );
