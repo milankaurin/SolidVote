@@ -54,13 +54,21 @@ body {
 
 .admin-panel-button {
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: #007bff; /* Osnovna boja za start dugme */
   color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
-  margin-bottom: 20px; /* Dodajte marginu između dugmadi */
+  margin-bottom: 20px;
+  height: 64px; /* Povećana visina */
+  width: 80%; /* Povećana širina */
+}
+.admin-panel-button.stop { /* Dodatna klasa za stop dugme */
+  background-color: red;
+  &:hover {
+    background-color: darkred;
+  }
 }
 
 .admin-panel button:disabled {

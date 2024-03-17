@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
 import MuiInput from '@mui/material/Input';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import { styled } from '@mui/material/styles';
+
 const Input = styled(MuiInput)`
-  width: 42px;
+  width: 68px;
 `;
 
 export default function InputSlider() {
@@ -18,21 +19,19 @@ export default function InputSlider() {
   };
 
   const handleInputChange = (event) => {
-    setValue(event.target.value === '' ? 0 : Number(event.target.value));
+    setValue(event.target.value === '' ? '' : Number(event.target.value));
   };
 
+  // Uklonite ograničenje iz handleBlur
   const handleBlur = () => {
     if (value < 0) {
       setValue(0);
-    } else if (value > 100) {
-      setValue(100);
     }
   };
 
   return (
-    <Box sx={{ width: 250 }}>
+    <Box sx={{ width: '100%' }}>
       <Typography id="input-slider" gutterBottom>
-        Volume
       </Typography>
       <Grid container spacing={2} alignItems="center">
         <Grid item>
@@ -40,22 +39,22 @@ export default function InputSlider() {
         </Grid>
         <Grid item xs>
           <Slider
-            value={typeof value === 'number' ? value : 0}
+            value={value > 100 ? 100 : typeof value === 'number' ? value : 0}
             onChange={handleSliderChange}
             aria-labelledby="input-slider"
+            max={100} // Postavite maksimum za slajder, ali to ne utiče na Input komponentu
           />
         </Grid>
         <Grid item>
           <Input
             value={value}
-            size="small"
+            margin="dense"
             onChange={handleInputChange}
             onBlur={handleBlur}
             inputProps={{
-              step: 10,
+              step: 1,
               min: 0,
-              max: 100,
-              type: 'number',
+              type: 'text', // Koristi 'text' da omogući unos bilo koje vrednosti
               'aria-labelledby': 'input-slider',
             }}
           />

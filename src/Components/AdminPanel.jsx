@@ -1,10 +1,10 @@
 import React, { useState,useEffect } from "react";
 import { ethers } from 'ethers';
 import { contractAbi, contractAddress } from '../Constant/constant';
-import { Container, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Typography } from '@mui/material';
+import { Container, Box, Grid,Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InputSlider from './Slider'; // Pretpostavljajući da se InputSlider nalazi u istom direktorijumu
-
+import Button from '@mui/material/Button';
 
 const AdminPanel = ({ signer }) => {
     const tableRef = React.useRef(null);
@@ -13,7 +13,7 @@ const AdminPanel = ({ signer }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [redoviOpcijaZaGlasanje, setRedoviOpcijaZaGlasanje] = useState([{ tekst: '' }]);
     const [redoviGlasaca, setRedoviGlasaca] = useState([
-        { tekst: '', broj: 0 }
+        { tekst: '', broj: '' }
     ]);
     const [inputCandidates, setInputCandidates] = useState("");
     const [loading, setLoading] = useState(false);
@@ -246,7 +246,7 @@ useEffect(() => {
         
           return (
             <Box sx={{
-                backgroundColor: '#000000', // Crna pozadina
+                backgroundColor: '#f0f4f8', // Crna pozadina
                 minHeight: '100vh', // Osigurava da pozadina pokriva celu visinu viewporta
                 padding: '20px',
                 overflowY: 'auto', // Omogućava skrolanje unutar Box-a ako je sadržaj duži od visine viewporta
@@ -259,19 +259,28 @@ useEffect(() => {
                  <Box sx={{
                   width: '100%', // Koristi celu dostupnu širinu
                   maxWidth: '70%', // Ali ne prelazi 70% širine roditelja
-                  background: 'black',
+                  background: 'f0f4f8',
                   borderRadius: '8px',
-                  boxShadow: 3,
+                  
                   padding: '20px',
                   marginBottom: '20px',
                   overflowX: 'auto', // Omogućava horizontalno skrolovanje ako je potrebno
               
                 
             }}>
-                <Typography variant="h4" sx={{ color: '#FFFF', marginBottom: '20px', textAlign: 'center' }}>
-                        Administrator Panel
-                </Typography>
-                <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
+               <Typography variant="h4" sx={{
+  color: '#7B1FA2', // Tamna ljubičasta boja
+  marginBottom: '40px',
+  textAlign: 'center',
+  fontWeight: 'bold', // Podebljan tekst
+  letterSpacing: '0.1em', // Povećani razmak slova
+  //textShadow: '2px 2px 4px rgba(0,0,0,0.5)', // Senka teksta za dodatnu dubinu
+  fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif", // Specifičan font
+}}>
+  ADMIN PANEL
+</Typography>
+
+                <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
                 <TextField
                         label="Enter voting topic here"
                         variant="outlined"
@@ -305,9 +314,7 @@ useEffect(() => {
                         </Box>
                     ))}
                 </Container>
-
-
-                <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
+                <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
                 <Typography variant="h4" sx={{ color: 'black', marginBottom: '20px', textAlign: 'center' }}>
                 Enter addresses of eligible voters here
                 </Typography>
@@ -342,32 +349,53 @@ useEffect(() => {
             )}
         </Box>
     ))}
+    </Container>
+
+    
+    <Container maxWidth="lg" sx={{
+  marginBottom: '20px',
+  background: 'white',
+  borderRadius: '8px',
+  boxShadow: 6,
+  padding: '20px', // Postojeći padding sa strane
+  pt: '40px', // Povećan padding na vrhu
+  pb: '40px', // Povećan padding na dnu
+}}>
+  <Grid container spacing={2} alignItems="center">
+    <Grid item xs={12} md={6}>
+      <Typography variant="h5" sx={{ color: 'black', mb: 3 }}>Voting Duration</Typography>
+      <Box sx={{ width: '100%', pr: 2 }}>
+        <InputSlider />
+      </Box>
+    </Grid>
+    <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 1.25 }}>
+      <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center', pl: 2 }}>
+        <Button variant="contained" onClick={startVoting} disabled={loading} sx={{
+          height: '56px',
+          width: '80%',
+          fontSize: '1rem',
+          fontWeight: 'bold',
+          mb: 2,
+          borderRadius: '25px'
+        }}>
+          Start Voting
+        </Button>
+        <Button variant="contained" color="error" onClick={stopVoting} disabled={loading} sx={{
+          height: '56px',
+          width: '80%',
+          fontSize: '1rem',
+          fontWeight: 'bold',
+          borderRadius: '25px'
+        }}>
+          Stop Voting
+        </Button>
+      </Box>
+    </Grid>
+  </Grid>
 </Container>
-
-
-            
-                <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
-                <InputSlider />
-                    <TextField
-                        label="Voting Duration (minutes)"
-                        variant="outlined"
-                        value={votingDuration}
-                        onChange={handleVotingDurationChange}
-                        disabled={loading}
-                        sx={{ minWidth: '250px' }}
-                    />
-                    <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '20px' }}>
-                        <button className="admin-panel-button" onClick={startVoting} disabled={loading} sx={{ marginBottom: '10px' }}>
-                            Start Voting
-                        </button>
-                        <button className="admin-panel-button" onClick={stopVoting} disabled={loading} sx={{ marginBottom: '10px' }}>
-                            Stop Voting
-                        </button>
-                    </Box>
-                </Container>
             
                 {/* Prva tabela u svom Container-u */}
-                <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
+                <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
                     <Typography variant="h6" sx={{ marginBottom: '10px' }}>
                         Candidates
                     </Typography>
