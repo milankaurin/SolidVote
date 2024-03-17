@@ -294,42 +294,57 @@ useEffect(() => {
                                 onChange={(event) => handleTextChange(index, event)}
                                 sx={{ marginRight: '10px' }}
                             />
-                            <IconButton onClick={() => handleRemoveRow(index)} color="error">
-                                <DeleteIcon />
-                            </IconButton>
+                          {index !== redoviOpcijaZaGlasanje.length - 1 ? (
+            <IconButton onClick={() => handleRemoveRow(index)} color="error">
+                <DeleteIcon />
+            </IconButton>
+        ) : (
+            // Dodajte prazan prostor umesto ikone za brisanje u poslednjem redu
+            <Box sx={{ width: 48, height: 48 }}></Box> // Prilagodite veličinu prema veličini DeleteIcon-a
+        )}
                         </Box>
                     ))}
                 </Container>
 
 
                 <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
-            {redoviGlasaca.map((opcija, index) => (
-                <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                    <TextField
-                        fullWidth
-                        variant="outlined"
-                        label={`Voter ${index + 1}`}
-                        value={opcija.tekst}
-                        onChange={(event) => handleTextChangeGlasaci(index, event)}
-                        sx={{ marginRight: '10px', flex: 2 }}
-                    />
-                    <TextField
-                        variant="outlined"
-                        label={`Number ${index + 1}`}
-                        type="number"
-                        value={opcija.broj}
-                        onChange={(event) => handleNumberChangeGlasaci(index, event)}
-                        sx={{ marginRight: '10px', flex: 1 }}
-                    />
-                    <IconButton onClick={() => handleRemoveRowGlasaci(index)} color="error">
-                        <DeleteIcon />
-                    </IconButton>
-                </Box>
-            ))}
-            <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
-                {/* Uklonjeno dugme za dodavanje reda, jer se redovi automatski dodaju */}
-            </Box>
-        </Container>
+                <Typography variant="h4" sx={{ color: 'black', marginBottom: '20px', textAlign: 'center' }}>
+                Enter addresses of eligible voters here
+                </Typography>
+    {redoviGlasaca.map((opcija, index) => (
+        <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+            <TextField
+                fullWidth
+                variant="outlined"
+                label={`Voter ${index + 1}`}
+                value={opcija.tekst}
+                onChange={(event) => handleTextChangeGlasaci(index, event)}
+                sx={{ marginRight: '10px', flex: 3 }} // Povećano sa flex: 2 na flex: 3
+            />
+            <TextField
+                variant="outlined"
+                label={`Number ${index + 1}`}
+                type="text"
+                value={opcija.broj}
+                onChange={(event) => handleNumberChangeGlasaci(index, event)}
+                InputProps={{
+                    inputMode: 'numeric',
+                    pattern: '[0-9]*'
+                }}
+                sx={{ marginRight: '10px', flex: 0.5 }} // Zadržano flex: 1
+            />
+            {index !== redoviGlasaca.length - 1 ? (
+                <IconButton onClick={() => handleRemoveRowGlasaci(index)} color="error">
+                    <DeleteIcon />
+                </IconButton>
+            ) : (
+                <Box sx={{ width: 42, height: 48 }}></Box>
+            )}
+        </Box>
+    ))}
+</Container>
+
+
             
                 <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
                 <InputSlider />
