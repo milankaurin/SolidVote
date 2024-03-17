@@ -259,12 +259,13 @@ useEffect(() => {
                  <Box sx={{
                   width: '100%', // Koristi celu dostupnu širinu
                   maxWidth: '70%', // Ali ne prelazi 70% širine roditelja
-                  background: 'f0f4f8',
+                  background: '#f0f4f8', // Ispravka: Dodajte # za HEX kod
                   borderRadius: '8px',
-                  
                   padding: '20px',
                   marginBottom: '20px',
                   overflowX: 'auto', // Omogućava horizontalno skrolovanje ako je potrebno
+                  transform: 'scale(0.9)', // Smanjuje veličinu Box-a na 90%
+                  transformOrigin: 'top center', // Postavlja origin transformacije na gornji centar
               
                 
             }}>
@@ -280,7 +281,7 @@ useEffect(() => {
   ADMIN PANEL
 </Typography>
 
-                <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
+                <Container maxWidth="lg" sx={{ marginBottom: '35px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
                 <TextField
                         label="Enter voting topic here"
                         variant="outlined"
@@ -314,7 +315,7 @@ useEffect(() => {
                         </Box>
                     ))}
                 </Container>
-                <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
+                <Container maxWidth="lg" sx={{ marginBottom: '35px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
                 <Typography variant="h4" sx={{ color: 'black', marginBottom: '20px', textAlign: 'center' }}>
                 Enter addresses of eligible voters here
                 </Typography>
@@ -353,10 +354,10 @@ useEffect(() => {
 
     
     <Container maxWidth="lg" sx={{
-  marginBottom: '20px',
-  background: 'white',
+  marginBottom: '35px',
+  background: 'f0f4f8',
   borderRadius: '8px',
-  boxShadow: 6,
+ // boxShadow: 6,
   padding: '20px', // Postojeći padding sa strane
   pt: '40px', // Povećan padding na vrhu
   pb: '40px', // Povećan padding na dnu
@@ -395,7 +396,7 @@ useEffect(() => {
 </Container>
             
                 {/* Prva tabela u svom Container-u */}
-                <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
+                <Container maxWidth="lg" sx={{ marginBottom: '35px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
                     <Typography variant="h6" sx={{ marginBottom: '10px' }}>
                         Candidates
                     </Typography>

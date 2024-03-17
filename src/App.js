@@ -194,9 +194,7 @@ function App() {
 
     return (
         <div className="App">
-            <header className="App-header">
-            <img src={logo} alt="Logo" className="App-logo" />
-        </header>
+            <header className="App-header"></header>
             {isConnected ? (   //Ako je korisnik povezan idi dalje u logiku, ako nije prikaži Login Panel
                 <>
                     {isOwner ? (            //ako je owner povezan, prikaži AdminPanel, u suprotnom Connected panel
