@@ -198,23 +198,38 @@ const AdminPanel = ({ signer }) => {
         
           return (
             <Box sx={{
-                backgroundColor: '#E0F7FA', // Svetlo plava pozadina
+                backgroundColor: '#000000', // Crna pozadina
                 minHeight: '100vh', // Osigurava da pozadina pokriva celu visinu viewporta
                 padding: '20px',
                 overflowY: 'auto' // Omogućava skrolanje unutar Box-a ako je sadržaj duži od visine viewporta
             }}>
-                <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
-                    <Typography variant="h4" sx={{ color: '#333', marginBottom: '20px', textAlign: 'center' }}>
+                <Typography variant="h4" sx={{ color: '#333', marginBottom: '20px', textAlign: 'center' }}>
                         Administrator Panel
+                </Typography>
+                <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
+                    <Typography variant="h6" sx={{ marginBottom: '10px' }}>
+                        Voting Options
                     </Typography>
-                    <TextField
-                        label="Candidate Names (comma separated)"
-                        variant="outlined"
-                        value={inputCandidates}
-                        onChange={handleInputCandidatesChange}
-                        disabled={loading}
-                        sx={{ minWidth: '250px', marginRight: '20px' }}
-                    />
+                    {/* Logika za prikaz i uređivanje opcija glasanja */}
+                    {redoviOpcijaZaGlasanje.map((opcija, index) => (
+                        <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                            <TextField
+                                fullWidth
+                                variant="outlined"
+                                label={`Option ${index + 1}`}
+                                value={opcija.tekst}
+                                onChange={(event) => handleTextChange(index, event)}
+                                sx={{ marginRight: '10px' }}
+                            />
+                            <IconButton onClick={() => handleRemoveRow(index)} color="error">
+                                <DeleteIcon />
+                            </IconButton>
+                        </Box>
+                    ))}
+                </Container>
+            
+                <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
+                  
                     <TextField
                         label="Voting Duration (minutes)"
                         variant="outlined"
@@ -238,8 +253,9 @@ const AdminPanel = ({ signer }) => {
                         </button>
                     </Box>
                 </Container>
-        
-                <Paper elevation={3} sx={{ overflow: 'auto', padding: '20px', margin: '20px auto', maxWidth: 'lg', background: 'white', borderRadius: '8px', boxShadow: 3 }}>
+            
+                {/* Prva tabela u svom Container-u */}
+                <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
                     <Typography variant="h6" sx={{ marginBottom: '10px' }}>
                         Candidates
                     </Typography>
@@ -263,27 +279,9 @@ const AdminPanel = ({ signer }) => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <Typography variant="h6" sx={{ marginTop: '20px', marginBottom: '10px' }}>
-                        Voting Options
-                    </Typography>
-                    {/* Logika za prikaz i uređivanje opcija glasanja */}
-                    {redoviOpcijaZaGlasanje.map((opcija, index) => (
-                        <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                label={`Option ${index + 1}`}
-                                value={opcija.tekst}
-                                onChange={(event) => handleTextChange(index, event)}
-                                sx={{ marginRight: '10px' }}
-                            />
-                            <IconButton onClick={() => handleRemoveRow(index)} color="error">
-                                <DeleteIcon />
-                            </IconButton>
-                        </Box>
-                    ))}
-                </Paper>
+                </Container>
             </Box>
+            
         );
 };
 export default AdminPanel;
