@@ -6,10 +6,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 const AdminPanel = ({ signer }) => {
     const tableRef = React.useRef(null);
-
+    const [votingtitle, setVotingTitle] = useState(""); 
     const [unosKorisnika, setUnosKorisnika] = useState('');
     const [isEditing, setIsEditing] = useState(false);
-    const [naslovGlasanja, setNaslovGlasanja] = useState('Your Question');
     const [redoviOpcijaZaGlasanje, setRedoviOpcijaZaGlasanje] = useState([{ tekst: '' }]);
 
     const [inputCandidates, setInputCandidates] = useState("");
@@ -32,6 +31,11 @@ const AdminPanel = ({ signer }) => {
     const handleVotingDurationChange = (e) => {
         setVotingDuration(e.target.value);
     };
+
+    const handleVotingTitleChange = (e) => {
+        setVotingTitle(e.target.value);
+        console.log(votingtitle);
+    };
     
     const fetchCandidates = async () => {
         setLoading(true);
@@ -49,9 +53,7 @@ const AdminPanel = ({ signer }) => {
         setLoading(false);
     };
 
-    const handleNaslovChange = (event) => {
-        setNaslovGlasanja(event.target.value);
-    };
+   
 
    
 
@@ -127,7 +129,7 @@ const AdminPanel = ({ signer }) => {
         const handleFinishEditing = (event) => {
             if (event.type === 'blur' || (event.key === 'Enter')) {
                 setIsEditing(false);
-                setNaslovGlasanja(event.target.value);
+                setVotingTitle(event.target.value);
             }
         };
     
@@ -207,6 +209,14 @@ const AdminPanel = ({ signer }) => {
                         Administrator Panel
                 </Typography>
                 <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
+                <TextField
+                        label="Enter voting topic here"
+                        variant="outlined"
+                        value={votingtitle}
+                        onChange={handleVotingTitleChange}
+                        disabled={loading}
+                        sx={{ minWidth: '250px' }}
+                    />
                     <Typography variant="h6" sx={{ marginBottom: '10px' }}>
                         Voting Options
                     </Typography>
