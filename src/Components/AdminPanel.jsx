@@ -3,6 +3,8 @@ import { ethers } from 'ethers';
 import { contractAbi, contractAddress } from '../Constant/constant';
 import { Container, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import InputSlider from './Slider'; // Pretpostavljajući da se InputSlider nalazi u istom direktorijumu
+
 
 const AdminPanel = ({ signer }) => {
     const tableRef = React.useRef(null);
@@ -278,7 +280,7 @@ const AdminPanel = ({ signer }) => {
                 </Container>
             
                 <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
-                  
+                <InputSlider />
                     <TextField
                         label="Voting Duration (minutes)"
                         variant="outlined"
@@ -294,7 +296,6 @@ const AdminPanel = ({ signer }) => {
                         <button className="admin-panel-button" onClick={stopVoting} disabled={loading} sx={{ marginBottom: '10px' }}>
                             Stop Voting
                         </button>
-
                     </Box>
                 </Container>
             
