@@ -12,7 +12,9 @@ const AdminPanel = ({ signer }) => {
     const [unosKorisnika, setUnosKorisnika] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [redoviOpcijaZaGlasanje, setRedoviOpcijaZaGlasanje] = useState([{ tekst: '' }]);
-
+    const [redoviGlasaca, setRedoviGlasaca] = useState([
+        { tekst: '', broj: 0 }
+    ]);
     const [inputCandidates, setInputCandidates] = useState("");
     const [loading, setLoading] = useState(false);
     const [votingDuration, setVotingDuration] = useState(""); // Dodato stanje za unos trajanja glasanja
@@ -166,9 +168,14 @@ const AdminPanel = ({ signer }) => {
             });
         };
     
-        useEffect(() => {
-            console.log(redoviOpcijaZaGlasanje);
-        }, [redoviOpcijaZaGlasanje]);
+       
+useEffect(() => {
+    console.log(redoviOpcijaZaGlasanje);
+}, [redoviOpcijaZaGlasanje]);
+
+useEffect(() => {
+    console.log(redoviGlasaca);
+}, [redoviGlasaca]);
         
     useEffect(() => {
         fetchCandidates();  }, []);
@@ -195,7 +202,44 @@ const AdminPanel = ({ signer }) => {
           
 
           
-        
+          const handleTextChangeGlasaci = (index, event) => {
+            setRedoviGlasaca(currentRows => {
+                let newRows = [...currentRows];
+                newRows[index].tekst = event.target.value;
+    
+                // Dodaj novi red ako se kuca u poslednjem i nije prazan
+                if (index === currentRows.length - 1 && event.target.value.trim()) {
+                    newRows.push({ tekst: '', broj: '' });
+                }
+    
+                // Ukloni prethodni prazan red ako se trenutni prazni
+                if (index === currentRows.length - 2 && !event.target.value.trim() && !newRows[currentRows.length - 1].tekst.trim()) {
+                    newRows.pop();
+                }
+    
+                return newRows;
+            });
+        };
+    
+        const handleNumberChangeGlasaci = (index, event) => {
+            setRedoviGlasaca(currentRows => {
+                const newRows = [...currentRows];
+                newRows[index].broj = event.target.value;
+                return newRows;
+            });
+        };
+    
+        const handleRemoveRowGlasaci = (index) => {
+            setRedoviGlasaca(currentRows => {
+                const newRows = currentRows.filter((_, i) => i !== index);
+                if (newRows.length === 0) {
+                    newRows.push({ tekst: '', broj: '' });
+                }
+                return newRows;
+            });
+        };
+    
+    
         
           
           
@@ -259,25 +303,33 @@ const AdminPanel = ({ signer }) => {
 
 
                 <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
-               
-                   
-                    {/* Logika za prikaz i uređivanje opcija glasanja */}
-                    {redoviOpcijaZaGlasanje.map((opcija, index) => (
-                        <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                label={`Voter ${index + 1}`}
-                                value={opcija.tekst}
-                                onChange={(event) => handleTextChange(index, event)}
-                                sx={{ marginRight: '10px' }}
-                            />
-                            <IconButton onClick={() => handleRemoveRow(index)} color="error">
-                                <DeleteIcon />
-                            </IconButton>
-                        </Box>
-                    ))}
-                </Container>
+            {redoviGlasaca.map((opcija, index) => (
+                <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        label={`Voter ${index + 1}`}
+                        value={opcija.tekst}
+                        onChange={(event) => handleTextChangeGlasaci(index, event)}
+                        sx={{ marginRight: '10px', flex: 2 }}
+                    />
+                    <TextField
+                        variant="outlined"
+                        label={`Number ${index + 1}`}
+                        type="number"
+                        value={opcija.broj}
+                        onChange={(event) => handleNumberChangeGlasaci(index, event)}
+                        sx={{ marginRight: '10px', flex: 1 }}
+                    />
+                    <IconButton onClick={() => handleRemoveRowGlasaci(index)} color="error">
+                        <DeleteIcon />
+                    </IconButton>
+                </Box>
+            ))}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
+                {/* Uklonjeno dugme za dodavanje reda, jer se redovi automatski dodaju */}
+            </Box>
+        </Container>
             
                 <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
                 <InputSlider />
