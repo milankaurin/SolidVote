@@ -203,9 +203,26 @@ const AdminPanel = ({ signer }) => {
                 backgroundColor: '#000000', // Crna pozadina
                 minHeight: '100vh', // Osigurava da pozadina pokriva celu visinu viewporta
                 padding: '20px',
-                overflowY: 'auto' // Omogućava skrolanje unutar Box-a ako je sadržaj duži od visine viewporta
+                overflowY: 'auto', // Omogućava skrolanje unutar Box-a ako je sadržaj duži od visine viewporta
+                display: 'flex', // Omogućava flex raspored
+                flexDirection: 'column', // Elementi se ređaju vertikalno
+                alignItems: 'center', // Centriranje sadržaja po horizontali
+              
+                
             }}>
-                <Typography variant="h4" sx={{ color: '#333', marginBottom: '20px', textAlign: 'center' }}>
+                 <Box sx={{
+                  width: '100%', // Koristi celu dostupnu širinu
+                  maxWidth: '70%', // Ali ne prelazi 70% širine roditelja
+                  background: 'black',
+                  borderRadius: '8px',
+                  boxShadow: 3,
+                  padding: '20px',
+                  marginBottom: '20px',
+                  overflowX: 'auto', // Omogućava horizontalno skrolovanje ako je potrebno
+              
+                
+            }}>
+                <Typography variant="h4" sx={{ color: '#FFFF', marginBottom: '20px', textAlign: 'center' }}>
                         Administrator Panel
                 </Typography>
                 <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
@@ -237,6 +254,28 @@ const AdminPanel = ({ signer }) => {
                         </Box>
                     ))}
                 </Container>
+
+
+                <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
+               
+                   
+                    {/* Logika za prikaz i uređivanje opcija glasanja */}
+                    {redoviOpcijaZaGlasanje.map((opcija, index) => (
+                        <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                            <TextField
+                                fullWidth
+                                variant="outlined"
+                                label={`Voter ${index + 1}`}
+                                value={opcija.tekst}
+                                onChange={(event) => handleTextChange(index, event)}
+                                sx={{ marginRight: '10px' }}
+                            />
+                            <IconButton onClick={() => handleRemoveRow(index)} color="error">
+                                <DeleteIcon />
+                            </IconButton>
+                        </Box>
+                    ))}
+                </Container>
             
                 <Container maxWidth="lg" sx={{ marginBottom: '20px', background: 'white', borderRadius: '8px', boxShadow: 3, padding: '20px' }}>
                   
@@ -249,18 +288,13 @@ const AdminPanel = ({ signer }) => {
                         sx={{ minWidth: '250px' }}
                     />
                     <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '20px' }}>
-                        <button className="admin-panel-button" onClick={addCandidates} disabled={loading} sx={{ marginBottom: '10px' }}>
-                            {loading ? "Adding..." : "Add Candidates"}
-                        </button>
                         <button className="admin-panel-button" onClick={startVoting} disabled={loading} sx={{ marginBottom: '10px' }}>
                             Start Voting
                         </button>
                         <button className="admin-panel-button" onClick={stopVoting} disabled={loading} sx={{ marginBottom: '10px' }}>
                             Stop Voting
                         </button>
-                        <button className="admin-panel-button" onClick={clearCandidates} disabled={loading}>
-                            Clear Candidates
-                        </button>
+
                     </Box>
                 </Container>
             
@@ -290,6 +324,7 @@ const AdminPanel = ({ signer }) => {
                         </Table>
                     </TableContainer>
                 </Container>
+                </Box>
             </Box>
             
         );
