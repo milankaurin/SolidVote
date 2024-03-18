@@ -20,13 +20,17 @@
 }
 
 .App-logo {
+  display: flex; /* Omogućava korišćenje Flexbox-a */
+  justify-content: space-between; /* Raspoređuje elemente na suprotne strane */
+  align-items: center; /* Vertikalno centriranje elemenata */
   position: fixed;
   top: 40px;
   left: 35px;
-  height: 40px; /* Primer povećane visine */
-  width: auto; /* Održava proporcionalnost slike */
+  height: 70px; /* Prilagođeno za visinu logo-a */
+  width: calc(100% - 70px); /* Oduzima levi margin plus malo prostora za disanje */
   z-index: 1000;
 }
+
 body {
   background-color: #000; /* Crna pozadina */
   color: #ffffff; /* Bela slova */

@@ -9,7 +9,9 @@ import Connected from './Components/Connected';
 import AdminPanel from './Components/AdminPanel';
 import './App.css';
 import logo from './logo.png';
-import logobeli from './logobeli.png';
+import logobeli from './logo.png';
+import Button from '@mui/material/Button';
+
 
 //Provider - omogućava čitanje podataka sa blockchaina. Signer - omogućava slanje transakcija    
 
@@ -28,6 +30,7 @@ function App() {
     const [number, setNumber] = useState('');               //čuvanje indexa odabranog kandidata
     const [canVote, setCanVote] = useState(true);           //označava da li trenutni korisnik ima pravo da glasa i menja tu dozvolu
     const [isOwner, setIsOwner] = useState(false);          //označava da li je trenutni korisnik vlasnik (owner ugovora)
+    const[textButton,setTextButton]=useState('Connect');
     
 
     // PRVI useEffect hook - 
@@ -44,6 +47,19 @@ function App() {
             }
         };
     }, []);
+
+
+
+
+
+  
+
+
+
+
+
+
+
 
     // DRUGI useEffect hook
 
@@ -85,6 +101,13 @@ function App() {
       await tx.wait();
       checkcanVote();
   }
+  useEffect(() => {
+    if (isConnected) { //<Button variant="contained" onClick= {props.connectWallet}
+      setTextButton("Disconnect");
+    } else {
+      setTextButton("Connect");
+    }
+  }, [isConnected]);
 
   // Proverava da li trenutni korisnik može da glasa u trenutnoj sesiji glasanja.
   async function checkcanVote() {
@@ -193,10 +216,40 @@ function App() {
     const handleNumberChange = (e) => {
         setNumber(e.target.value); };
 
+        const handleButton = () => {
+            if (isConnected) {
+              // Ako je isConnected true, izvrši željenu akciju
+              
+            } else {
+                connectToMetamask();
+              // Ako isConnected nije true, ovde možete izvršiti neku drugu akciju ili ne raditi ništa
+              // Ostavljeno prazno kako ste i tražili
+            }
+          };
+
+
     return (
         <div className="App">
             <header className="App-logo">
-            <img src={logobeli}style={{ height: '70px', width: 'auto' }}  alt="Logo" />
+            <img src={logobeli}style={{ height: '70px', width: 'auto' }}  alt="Logo"/>
+            <Button variant="contained" color="error" onClick={handleButton} sx={{
+  height: '56px',
+  width: 'auto', // Promenjeno da bude automatska širina, ili možete postaviti fiksnu širinu
+  minWidth: '120px', // Minimalna širina dugmeta
+  maxWidth: '200px', // Maksimalna širina dugmeta, prilagodite po potrebi
+  fontSize: '1rem',
+  fontWeight: 'bold',
+  borderRadius: '12px',
+  backgroundColor: '#CCC',
+  color: 'black',
+  margin: '0 20px 0 auto', // Dodaje marginu desno i automatski margine levo da gura dugme desno
+  '&:hover': {
+    backgroundColor: '#AAA',
+  },
+}}>
+{textButton}
+</Button>
+
             </header>
             {isConnected ? (   //Ako je korisnik povezan idi dalje u logiku, ako nije prikaži Login Panel
                 <>

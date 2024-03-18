@@ -3,20 +3,21 @@ import AdminPanel from './AdminPanel';
 
 const Connected = ({ account, candidates, remainingTime, number, handleNumberChange, voteFunction, showButton, votingStatus, isAdmin }) => {
     const backgroundStyle = {
-        backgroundImage: `url('/images/adminBackground.jpg')`,
+        backgroundColor: '#f0f4f8',
         backgroundSize: 'cover', // Pokriva celu pozadinu
         backgroundPosition: 'center', // Centrira sliku
         height: '100vh', // Visina pozadine
         width: '100vw' // Širina pozadine
     };
+     // <p className="connected-account">Metamask Account: {account}</p>
+
     // Provera da li je glasanje završeno
     const isVotingFinished = !votingStatus; 
     console.log("Voting Status:", votingStatus);
     return (
         <div  style={backgroundStyle} className="connected-container">
             <h1 className="connected-header">You are Connected to Metamask</h1>
-            <p className="connected-account">Metamask Account: {account}</p>
-
+         
             {isAdmin ? (
                 <AdminPanel />
             ) : isVotingFinished ? (
