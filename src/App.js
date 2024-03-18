@@ -9,6 +9,7 @@ import Connected from './Components/Connected';
 import AdminPanel from './Components/AdminPanel';
 import './App.css';
 import logo from './logo.png';
+import logobeli from './logobeli.png';
 
 //Provider - omogućava čitanje podataka sa blockchaina. Signer - omogućava slanje transakcija    
 
@@ -195,7 +196,7 @@ function App() {
     return (
         <div className="App">
             <header className="App-logo">
-            <img src={logo}style={{ height: '70px', width: 'auto' }}  alt="Logo" />
+            <img src={logobeli}style={{ height: '70px', width: 'auto' }}  alt="Logo" />
             </header>
             {isConnected ? (   //Ako je korisnik povezan idi dalje u logiku, ako nije prikaži Login Panel
                 <>

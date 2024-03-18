@@ -246,7 +246,7 @@ useEffect(() => {
         
           return (
             <Box sx={{
-                backgroundColor: '#f0f4f8',
+                backgroundColor: '#18141c', //f0f4f8
                 minHeight: '100vh',
                 padding: '20px',
                 overflowY: 'auto',
