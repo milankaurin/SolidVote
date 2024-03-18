@@ -270,97 +270,122 @@ useEffect(() => {
                 
             }}>
                <Typography variant="h4" sx={{
-  color: '#7B1FA2', // Tamna ljubičasta boja
+  color: '#ff007a', // Ažurirano u Uniswap ljubičastu
   marginBottom: '40px',
   textAlign: 'center',
-  fontWeight: 'bold', // Podebljan tekst
-  letterSpacing: '0.1em', // Povećani razmak slova
-  //textShadow: '2px 2px 4px rgba(0,0,0,0.5)', // Senka teksta za dodatnu dubinu
-  fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif", // Specifičan font
+  fontWeight: 'bold',
+  letterSpacing: '0.1em',
+  fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
 }}>
   ADMIN PANEL
 </Typography>
 
-                <Container maxWidth="lg" sx={{ marginBottom: '35px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
-                <TextField
-                        label="Enter voting topic here"
-                        variant="outlined"
-                        value={votingtitle}
-                        onChange={handleVotingTitleChange}
-                        disabled={loading}
-                        sx={{ minWidth: '250px' }}
-                    />
-                    <Typography variant="h6" sx={{ marginBottom: '10px' }}>
-                        Voting Options
-                    </Typography>
-                    {/* Logika za prikaz i uređivanje opcija glasanja */}
-                    {redoviOpcijaZaGlasanje.map((opcija, index) => (
-                        <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                            <TextField
-                                fullWidth
-                                variant="outlined"
-                                label={`Option ${index + 1}`}
-                                value={opcija.tekst}
-                                onChange={(event) => handleTextChange(index, event)}
-                                sx={{ marginRight: '10px' }}
-                            />
-                          {index !== redoviOpcijaZaGlasanje.length - 1 ? (
-            <IconButton onClick={() => handleRemoveRow(index)} color="error">
-                <DeleteIcon />
-            </IconButton>
-        ) : (
-            // Dodajte prazan prostor umesto ikone za brisanje u poslednjem redu
-            <Box sx={{ width: 48, height: 48 }}></Box> // Prilagodite veličinu prema veličini DeleteIcon-a
-        )}
-                        </Box>
-                    ))}
-                </Container>
-                <Container maxWidth="lg" sx={{ marginBottom: '35px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
-                <Typography variant="h4" sx={{ color: 'black', marginBottom: '20px', textAlign: 'center' }}>
-                Enter addresses of eligible voters here
-                </Typography>
-    {redoviGlasaca.map((opcija, index) => (
-        <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+<Container maxWidth="lg" sx={{ marginBottom: '50px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
+        <TextField
+          label="Enter voting topic here"
+          variant="outlined"
+          value={votingtitle}
+          onChange={handleVotingTitleChange}
+          disabled={loading}
+          sx={{ minWidth: '250px', marginBottom: '30px',marginTop: '20px' ,
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': { borderColor: '#BDBDBD' }, // Suptilnija siva za granice
+            '&:hover fieldset': { borderColor: '#9E9E9E' }, // Tamnija siva na hover
+            '&.Mui-focused fieldset': { borderColor: '#ff007a' }, // Ljubičasta za fokus na okvir
+          },
+          '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, // Menja boju labele u ljubičastu kada je fokusirano
+        }}
+        />
+       
+        {/* Logika za prikaz i uređivanje opcija glasanja */}
+        {redoviOpcijaZaGlasanje.map((opcija, index) => (
+          <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
             <TextField
-                fullWidth
-                variant="outlined"
-                label={`Voter ${index + 1}`}
-                value={opcija.tekst}
-                onChange={(event) => handleTextChangeGlasaci(index, event)}
-                sx={{ marginRight: '10px', flex: 3 }} // Povećano sa flex: 2 na flex: 3
+              fullWidth
+              variant="outlined"
+              label={`Option ${index + 1}`}
+              value={opcija.tekst}
+              onChange={(event) => handleTextChange(index, event)}
+              sx={{
+                marginRight: '10px',
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { borderColor: '#BDBDBD' }, // Suptilnija siva za granice
+                  '&:hover fieldset': { borderColor: '#9E9E9E' }, // Tamnija siva na hover
+                  '&.Mui-focused fieldset': { borderColor: '#ff007a' }, // Ljubičasta za fokus na okvir
+                },
+                '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, // Menja boju labele u ljubičastu kada je fokusirano
+              }}
+            />
+            {index !== redoviOpcijaZaGlasanje.length - 1 ? (
+              <IconButton onClick={() => handleRemoveRow(index)} sx={{ color: '#ff007a' }}>
+                  <DeleteIcon />
+              </IconButton>
+            ) : (
+              <Box sx={{ width: 44, height: 48 }}></Box> // Prilagodite veličinu prema veličini DeleteIcon-a
+            )}
+          </Box>
+        ))}
+      </Container>
+      <Container maxWidth="lg" sx={{ marginBottom: '35px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
+        <Typography variant="h5" sx={{ color: '#ff007a', marginBottom: '20px', textAlign: 'center', fontWeight: 'bold' }}>
+          Enter addresses of eligible voters here
+        </Typography>
+        {redoviGlasaca.map((opcija, index) => (
+          <Box key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              label={`Voter ${index + 1}`}
+              value={opcija.tekst}
+              onChange={(event) => handleTextChangeGlasaci(index, event)}
+              sx={{
+                marginRight: '10px', flex: 3,
+                '& .MuiOutlinedInput-root': {
+                    '& fieldset': { borderColor: '#BDBDBD' }, // Suptilnija siva za granice
+                    '&:hover fieldset': { borderColor: '#9E9E9E' }, // Tamnija siva na hover
+                    '&.Mui-focused fieldset': { borderColor: '#ff007a' }, // Ljubičasta za fokus na okvir
+                  },
+                  '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, // Menja boju labele u ljubičastu kada je fokusirano
+              }}
             />
             <TextField
-                variant="outlined"
-                label={`Number ${index + 1}`}
-                type="text"
-                value={opcija.broj}
-                onChange={(event) => handleNumberChangeGlasaci(index, event)}
-                InputProps={{
-                    inputMode: 'numeric',
-                    pattern: '[0-9]*'
-                }}
-                sx={{ marginRight: '10px', flex: 0.5 }} // Zadržano flex: 1
+              variant="outlined"
+              label={`Number ${index + 1}`}
+              type="text"
+              value={opcija.broj}
+              onChange={(event) => handleNumberChangeGlasaci(index, event)}
+              InputProps={{
+                  inputMode: 'numeric',
+                  pattern: '[0-9]*',
+              }}
+              sx={{
+                marginRight: '10px', flex: 0.5,
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { borderColor: '#BDBDBD' }, // Suptilnija siva za granice
+                  '&:hover fieldset': { borderColor: '#9E9E9E' }, // Tamnija siva na hover
+                  '&.Mui-focused fieldset': { borderColor: '#ff007a' }, // Ljubičasta za fokus na okvir
+                },
+                '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, // Menja boju labele u ljubičastu kada je fokusirano
+              }}
             />
             {index !== redoviGlasaca.length - 1 ? (
-                <IconButton onClick={() => handleRemoveRowGlasaci(index)} color="error">
-                    <DeleteIcon />
-                </IconButton>
+              <IconButton onClick={() => handleRemoveRowGlasaci(index)} sx={{ color: '#ff007a' }}>
+                  <DeleteIcon />
+              </IconButton>
             ) : (
-                <Box sx={{ width: 42, height: 48 }}></Box>
+              <Box sx={{ width: 42, height: 48 }}></Box>
             )}
-        </Box>
-    ))}
-    </Container>
-
+          </Box>
+        ))}
+      </Container>
     
     <Container maxWidth="lg" sx={{
   marginBottom: '35px',
-  background: 'f0f4f8',
+  background: '#f0f4f8', // Dodajte # za ispravnu HEX vrednost
   borderRadius: '8px',
- // boxShadow: 6,
-  padding: '20px', // Postojeći padding sa strane
-  pt: '40px', // Povećan padding na vrhu
-  pb: '40px', // Povećan padding na dnu
+  padding: '20px',
+  pt: '40px',
+  pb: '40px',
 }}>
   <Grid container spacing={2} alignItems="center">
     <Grid item xs={12} md={6}>
@@ -371,22 +396,33 @@ useEffect(() => {
     </Grid>
     <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 1.25 }}>
       <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center', pl: 2 }}>
+        {/* Start Voting Button */}
         <Button variant="contained" onClick={startVoting} disabled={loading} sx={{
           height: '56px',
           width: '80%',
           fontSize: '1rem',
           fontWeight: 'bold',
           mb: 2,
-          borderRadius: '25px'
+          borderRadius: '12px', // Manje zaobljeni uglovi
+          backgroundColor: '#ff007a', // Uniswap ljubičasta
+          '&:hover': {
+            backgroundColor: '#e60072', // Tamnija nijansa za hover efekat
+          },
         }}>
           Start Voting
         </Button>
+        {/* Stop Voting Button */}
         <Button variant="contained" color="error" onClick={stopVoting} disabled={loading} sx={{
           height: '56px',
           width: '80%',
           fontSize: '1rem',
           fontWeight: 'bold',
-          borderRadius: '25px'
+          borderRadius: '12px', // Manje zaobljeni uglovi
+          backgroundColor: '#CCC', // Sivkasta boja za Stop dugme
+          color: 'black', // Crna boja teksta za bolju čitljivost
+          '&:hover': {
+            backgroundColor: '#AAA', // Tamnija nijansa sive za hover efekat
+          },
         }}>
           Stop Voting
         </Button>
@@ -394,6 +430,7 @@ useEffect(() => {
     </Grid>
   </Grid>
 </Container>
+
             
                 {/* Prva tabela u svom Container-u */}
                 <Container maxWidth="lg" sx={{ marginBottom: '35px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
