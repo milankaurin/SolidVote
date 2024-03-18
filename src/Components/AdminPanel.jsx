@@ -246,32 +246,32 @@ useEffect(() => {
         
           return (
             <Box sx={{
-                backgroundColor: '#f0f4f8', // Crna pozadina
-                minHeight: '100vh', // Osigurava da pozadina pokriva celu visinu viewporta
+                backgroundColor: '#f0f4f8',
+                minHeight: '100vh',
                 padding: '20px',
-                overflowY: 'auto', // Omogućava skrolanje unutar Box-a ako je sadržaj duži od visine viewporta
-                display: 'flex', // Omogućava flex raspored
-                flexDirection: 'column', // Elementi se ređaju vertikalno
-                alignItems: 'center', // Centriranje sadržaja po horizontali
-              
-                
-            }}>
-                 <Box sx={{
+                overflowY: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}>
+                <Box sx={{
                   width: '100%', // Koristi celu dostupnu širinu
                   maxWidth: '70%', // Ali ne prelazi 70% širine roditelja
-                  background: '#f0f4f8', // Ispravka: Dodajte # za HEX kod
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  background: '#f0f4f8',
                   borderRadius: '8px',
                   padding: '20px',
                   marginBottom: '20px',
                   overflowX: 'auto', // Omogućava horizontalno skrolovanje ako je potrebno
                   transform: 'scale(0.9)', // Smanjuje veličinu Box-a na 90%
                   transformOrigin: 'top center', // Postavlja origin transformacije na gornji centar
-              
-                
-            }}>
+                }}>
                <Typography variant="h4" sx={{
   color: '#ff007a', // Ažurirano u Uniswap ljubičastu
   marginBottom: '40px',
+  marginTop: '40px',
   textAlign: 'center',
   fontWeight: 'bold',
   letterSpacing: '0.1em',
@@ -433,31 +433,29 @@ useEffect(() => {
 
             
                 {/* Prva tabela u svom Container-u */}
-                <Container maxWidth="lg" sx={{ marginBottom: '35px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
-                    <Typography variant="h6" sx={{ marginBottom: '10px' }}>
-                        Candidates
-                    </Typography>
-                    <TableContainer component={Paper} sx={{ marginBottom: '20px' }}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Index</TableCell>
-                                    <TableCell>Candidate Name</TableCell>
-                                    <TableCell>Vote Count</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {candidates.map((candidate, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell>{index}</TableCell>
-                                        <TableCell>{candidate.name}</TableCell>
-                                        <TableCell>{candidate.voteCount}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Container>
+                <Box sx={{ width: '100%', maxWidth: '80%', display: 'flex', justifyContent: 'center' }}>
+    <TableContainer component={Paper} sx={{ background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px', width: '100%' }}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Index</TableCell>
+            <TableCell>Candidate Name</TableCell>
+            <TableCell>Vote Count</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {candidates.map((candidate, index) => (
+            <TableRow key={index}>
+              <TableCell>{index}</TableCell>
+              <TableCell>{candidate.name}</TableCell>
+              <TableCell>{candidate.voteCount}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+     </Box>
+    
                 </Box>
             </Box>
             

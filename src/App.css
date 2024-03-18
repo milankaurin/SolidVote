@@ -21,9 +21,9 @@
 
 .App-logo {
   position: fixed;
-  top: 25px;
-  left: 25px;
-  height: 90px; /* Primer povećane visine */
+  top: 40px;
+  left: 35px;
+  height: 40px; /* Primer povećane visine */
   width: auto; /* Održava proporcionalnost slike */
   z-index: 1000;
 }
