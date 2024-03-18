@@ -11,6 +11,8 @@ import './App.css';
 import logo from './logo.png';
 import logobeli from './logo.png';
 import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
 
 
 //Provider - omogućava čitanje podataka sa blockchaina. Signer - omogućava slanje transakcija    
@@ -38,7 +40,7 @@ function App() {
     useEffect(() => {   //zadužen za promenu trenutnog naloga u MetaMask-u
         if (window.ethereum) {
             window.ethereum.on('accountsChanged', handleAccountsChanged);
-            connectToMetamask();
+           // connectToMetamask();
         }
 
         return () => {
@@ -47,19 +49,6 @@ function App() {
             }
         };
     }, []);
-
-
-
-
-
-  
-
-
-
-
-
-
-
 
     // DRUGI useEffect hook
 
@@ -181,7 +170,8 @@ function App() {
     const hours = Math.floor(time / 3600);
     const minutes = Math.floor((time % 3600) / 60);
     const seconds = time % 60;
-    setRemainingTime(`${hours}h ${minutes}m ${seconds}s`); }
+
+      setRemainingTime(`${hours}h ${minutes}m ${seconds}s`); }
 
   //Povezivanje aplikacije sa MetaMask novčanikom korisnika, traži od njega dozvolu za pristup
 
@@ -216,43 +206,74 @@ function App() {
     const handleNumberChange = (e) => {
         setNumber(e.target.value); };
 
+
+        const disconnectMetamask = () => {
+            // Resetovanje lokalnog stanja aplikacije koje prati povezanost sa MetaMask novčanikom
+            setIsConnected(false);
+            setAccount(null);
+            // Dodatno, ovde možete resetovati i druge delove stanja koji zavise od povezanosti sa novčanikom
+            // Na primer, resetovanje stanja povezanog sa pravima glasa, izabranim kandidatima, itd.
+        
+            console.log("Metamask is disconnected from the app. Please also disconnect in MetaMask if needed.");
+        };
+
+
         const handleButton = () => {
             if (isConnected) {
-              // Ako je isConnected true, izvrši željenu akciju
+                disconnectMetamask();
               
             } else {
                 connectToMetamask();
-              // Ako isConnected nije true, ovde možete izvršiti neku drugu akciju ili ne raditi ništa
-              // Ostavljeno prazno kako ste i tražili
+              
             }
           };
 
 
+      function formatAddress(account) {
+            return `${account.substring(0, 4)}...${account.substring(account.length - 4)}`;
+          }
+
+
     return (
         <div className="App">
-            <header className="App-logo">
-            <img src={logobeli}style={{ height: '70px', width: 'auto' }}  alt="Logo"/>
-            <Button variant="contained" color="error" onClick={handleButton} sx={{
-  height: '56px',
-  width: 'auto', // Promenjeno da bude automatska širina, ili možete postaviti fiksnu širinu
-  minWidth: '120px', // Minimalna širina dugmeta
-  maxWidth: '200px', // Maksimalna širina dugmeta, prilagodite po potrebi
-  fontSize: '1rem',
-  fontWeight: 'bold',
-  borderRadius: '12px',
-  backgroundColor: '#CCC',
-  color: 'black',
-  margin: '0 20px 0 auto', // Dodaje marginu desno i automatski margine levo da gura dugme desno
-  '&:hover': {
-    backgroundColor: '#AAA',
-  },
-}}>
-{textButton}
-</Button>
-
-            </header>
+             <header className="App-logo">
+            <img src={logobeli} style={{ height: '70px', width: 'auto' }} alt="Logo"/>
+            
+            {/* Kontejner za dugme i Chip, koji ne utiče na položaj ostalih komponenata */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+            {isConnected && (
+                    <Chip
+                        label={formatAddress(account)}
+                        color="primary"
+                        sx={{
+                            height: '30px',
+                            marginLeft: '10px', // Dodaje malo prostora između dugmeta i Chip-a
+                        }}
+                    />
+                )}
+               
+                <Button variant="contained" color="error" onClick={handleButton} sx={{
+                    height: '56px',
+                    minWidth: '120px',
+                    maxWidth: '200px',
+                    fontSize: '1rem',
+                    fontWeight: 'bold',
+                    borderRadius: '12px',
+                    backgroundColor: '#CCC',
+                    color: 'black',
+                    '&:hover': { backgroundColor: '#AAA' },
+                }}>
+                    {textButton}
+                </Button>
+                
+                
+            </div>
+        </header>
             {isConnected ? (   //Ako je korisnik povezan idi dalje u logiku, ako nije prikaži Login Panel
                 <>
+                
+                   
+                    
                     {isOwner ? (            //ako je owner povezan, prikaži AdminPanel, u suprotnom Connected panel
                         <AdminPanel signer={signer} />
                     ) : (
