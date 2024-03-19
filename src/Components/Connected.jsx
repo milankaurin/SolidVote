@@ -1,15 +1,18 @@
 import React from "react";
 import AdminPanel from './AdminPanel';
+//import { Radio, RadioGroup, FormControlLabel, FormControl } from '@mui/material';
+
 
 const Connected = ({ account, candidates, remainingTime, number, handleNumberChange, voteFunction, showButton, votingStatus, isAdmin }) => {
     const backgroundStyle = {
-        backgroundColor: '#f0f4f8',
+        backgroundColor: 'blue',
         backgroundSize: 'cover', // Pokriva celu pozadinu
         backgroundPosition: 'center', // Centrira sliku
         height: '100vh', // Visina pozadine
         width: '100vw' // Širina pozadine
     };
      // <p className="connected-account">Metamask Account: {account}</p>
+
 
     // Provera da li je glasanje završeno
     const isVotingFinished = !votingStatus; 
@@ -58,5 +61,21 @@ const Connected = ({ account, candidates, remainingTime, number, handleNumberCha
         </div>
     );
 };
+
+
+// // <FormControl component="fieldset">
+// <RadioGroup aria-label="candidate" name="candidate" value={selectedCandidate} onChange={handleRadioChange}>
+// {candidates.map((candidate, index) => (
+//     <FormControlLabel key={index} value={candidate.index.toString()} control={<Radio />} label={`${candidate.name} (${candidate.voteCount} votes)`} />
+// ))}
+// </RadioGroup>
+// <button className="login-button" onClick={vote}>Vote</button>
+// </FormControl>
+
+// const [selectedCandidate, setSelectedCandidate] = useState('');
+
+// const handleRadioChange = (event) => {
+//     setSelectedCandidate(event.target.value);
+// };
 
 export default Connected;
