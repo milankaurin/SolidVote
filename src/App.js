@@ -9,7 +9,7 @@ import Connected from './Components/Connected';
 import AdminPanel from './Components/AdminPanel';
 import './App.css';
 import logo from './logo.png';
-import logobeli from './logo.png';
+import logobeli from './logobeli.png';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
