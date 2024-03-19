@@ -247,7 +247,7 @@ function App() {
                         color="primary"
                         sx={{
                             height: '30px',
-                            marginLeft: '10px', // Dodaje malo prostora između dugmeta i Chip-a
+                            marginRight: '10px', // Dodaje malo prostora između dugmeta i Chip-a
                         }}
                     />
                 )}
