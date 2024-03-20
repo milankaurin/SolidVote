@@ -90,6 +90,10 @@ function App() {
       await tx.wait();
       checkcanVote();
   }
+
+
+
+  
   useEffect(() => {
     if (isConnected) { //<Button variant="contained" onClick= {props.connectWallet}
       setTextButton("Disconnect");

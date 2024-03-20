@@ -40,11 +40,14 @@ contract Voting {
     }
 
 
-    function startVoting(uint256 _durationInMinutes) public onlyOwner {
+    function startVoting(uint256 _durationInMinutes, address[] memory glasaci,string[] memory names) public onlyOwner {
         require(votingEnd <= block.timestamp, "Voting has already been started or has not been stopped.");
+        clearCandidates();
+        addVoters(glasaci);
+        addCandidates(names);
         votingStart = block.timestamp;
         votingEnd = block.timestamp + (_durationInMinutes * 1 minutes);
-       // addVoters(glasaci);
+         
         votingSessionId++; // Povećava se za svako novo glasanje
     }
 
@@ -89,7 +92,7 @@ contract Voting {
         require(block.timestamp >= votingStart && block.timestamp < votingEnd, "Voting is not active.");
         require(_candidateIndex < candidates.length, "Invalid candidate index.");
         require(lastVotedSession[msg.sender] < votingSessionId, "You have already voted in this session.");
-       require(addressInArray(),"You are not eligible to vote.");
+        require(addressInArray(),"You are not eligible to vote.");
 
         candidates[_candidateIndex].voteCount++;
         lastVotedSession[msg.sender] = votingSessionId;

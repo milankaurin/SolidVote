@@ -61,30 +61,30 @@ const AdminPanel = ({ signer }) => {
 
    
 
-    const addCandidates = async () => {
-        setAction("adding");
-        if (!inputCandidates.trim()) {
-            alert("Please enter candidate names.");
-            return;
-        }
+    // const addCandidates = async () => {
+    //     setAction("adding");
+    //     if (!inputCandidates.trim()) {
+    //         alert("Please enter candidate names.");
+    //         return;
+    //     }
 
-        setLoading(true);
-        try {
-            const candidatesArray = inputCandidates.split(",");
-            const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+    //     setLoading(true);
+    //     try {
+    //         const candidatesArray = inputCandidates.split(",");
+    //         const contract = new ethers.Contract(contractAddress, contractAbi, signer);
 
-            // Pozovite funkciju addCandidates iz pametnog ugovora i prosledite niz kandidata
-            const transaction = await contract.addCandidates(candidatesArray);
-            await transaction.wait();
+    //         // Pozovite funkciju addCandidates iz pametnog ugovora i prosledite niz kandidata
+    //         const transaction = await contract.addCandidates(candidatesArray);
+    //         await transaction.wait();
 
-            alert(`Candidates added successfully.`);
-            setInputCandidates(""); // Resetovanje polja nakon dodavanja
-        } catch (error) {
-            console.error("Error adding candidates:", error);
-            alert("Failed to add candidates.");
-        }
-        setLoading(false);
-    };
+    //         alert(`Candidates added successfully.`);
+    //         setInputCandidates(""); // Resetovanje polja nakon dodavanja
+    //     } catch (error) {
+    //         console.error("Error adding candidates:", error);
+    //         alert("Failed to add candidates.");
+    //     }
+    //     setLoading(false);
+    // };
 
     const startVoting = async () => {
         setAction("starting");
@@ -94,14 +94,29 @@ const AdminPanel = ({ signer }) => {
                 alert("Please enter a valid positive number for voting duration.");
                 return;
             }
+
+     // Priprema liste kandidata i glasača za pametni ugovor
+        const candidateNames = redoviOpcijaZaGlasanje.filter(row => row.tekst.trim()).map(row => row.tekst);
+         const voterAddresses = redoviGlasaca.filter(row => row.tekst.trim()).map(row => row.tekst);
+
+         if (candidateNames.length === 0 || voterAddresses.length === 0) {
+         alert("Please ensure there are candidates and voters before starting the vote.");
+         return;
+        }
+
+
             const contract = new ethers.Contract(contractAddress, contractAbi, signer);
-            const transaction = await contract.startVoting(durationInMinutes);
+            const transaction = await contract.startVoting(durationInMinutes, voterAddresses, candidateNames);
             await transaction.wait();
             alert("Voting has started.");
         } catch (error) {
             console.error("Error starting the voting:", error);
             alert("Failed to start voting.");
         } };
+
+
+
+        
     const stopVoting = async () => {
         setAction("stoping");
         setLoading(true);
