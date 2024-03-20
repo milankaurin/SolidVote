@@ -40,15 +40,22 @@ const UniswapSliderThumb = styled(SliderThumb)({
   },
 });
 
-export default function InputSlider() {
+export default function InputSlider(props) {
   const [value, setValue] = React.useState(30);
 
   const handleSliderChange = (event, newValue) => {
     setValue(newValue);
+    props.onSliderChange(newValue); // Poziva callback funkciju sa novom vrednošću
   };
 
   const handleInputChange = (event) => {
-    setValue(event.target.value === '' ? '' : Number(event.target.value));
+    let newValue = event.target.value === '' ? '' : Number(event.target.value);
+    newValue = !isNaN(newValue) ? newValue : 0; // Ako nije broj, postavi na 0
+    newValue = Math.min(Math.max(newValue, 0), 10000); // Ograničava vrednosti unutar dozvoljenog opsega
+    setValue(newValue);
+    if (props.onSliderChange) {
+      props.onSliderChange(newValue); // Prosleđuje novu vrednost roditeljskoj komponenti
+    }
   };
 
   return (

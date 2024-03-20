@@ -8,17 +8,21 @@ import Button from '@mui/material/Button';
 
 const AdminPanel = ({ signer }) => {
     const tableRef = React.useRef(null);
-    const [votingtitle, setVotingTitle] = useState(""); 
-    const [unosKorisnika, setUnosKorisnika] = useState('');
+    const [votingtitle, setVotingTitle] = useState("");  //naslov!!
+    const [unosKorisnika, setUnosKorisnika] = useState(''); 
     const [isEditing, setIsEditing] = useState(false);
-    const [redoviOpcijaZaGlasanje, setRedoviOpcijaZaGlasanje] = useState([{ tekst: '' }]);
-    const [redoviGlasaca, setRedoviGlasaca] = useState([
+    const [redoviOpcijaZaGlasanje, setRedoviOpcijaZaGlasanje] = useState([{ tekst: '' }]); //kandidati
+    const [redoviGlasaca, setRedoviGlasaca] = useState([  //voteri
         { tekst: '', broj: '' }
     ]);
     const [inputCandidates, setInputCandidates] = useState("");
     const [loading, setLoading] = useState(false);
     const [votingDuration, setVotingDuration] = useState(""); // Dodato stanje za unos trajanja glasanja
     const [candidates, setCandidates] = useState([]); 
+
+    const handleSliderChange = (newValue) => {
+      setVotingDuration(newValue); // Pretpostavljam da želite da ažurirate votingDuration
+    };
    
     const backgroundStyle = {
         backgroundImage: `url('/images/adminBackground.jpg')`,
@@ -86,6 +90,10 @@ const AdminPanel = ({ signer }) => {
     //     setLoading(false);
     // };
 
+
+
+
+
     const startVoting = async () => {
         setAction("starting");
         try {
@@ -97,7 +105,9 @@ const AdminPanel = ({ signer }) => {
 
      // Priprema liste kandidata i glasača za pametni ugovor
         const candidateNames = redoviOpcijaZaGlasanje.filter(row => row.tekst.trim()).map(row => row.tekst);
+        
          const voterAddresses = redoviGlasaca.filter(row => row.tekst.trim()).map(row => row.tekst);
+         const voterPoints = redoviGlasaca.filter(row=>row.broj.trim()).map(row=>row.broj);
 
          if (candidateNames.length === 0 || voterAddresses.length === 0) {
          alert("Please ensure there are candidates and voters before starting the vote.");
@@ -106,7 +116,9 @@ const AdminPanel = ({ signer }) => {
 
 
             const contract = new ethers.Contract(contractAddress, contractAbi, signer);
-            const transaction = await contract.startVoting(durationInMinutes, voterAddresses, candidateNames);
+            const transaction = await contract.startVoting(durationInMinutes, voterAddresses, voterPoints,candidateNames, votingtitle);
+
+  
             await transaction.wait();
             alert("Voting has started.");
         } catch (error) {
@@ -187,6 +199,12 @@ const AdminPanel = ({ signer }) => {
 useEffect(() => {
     console.log(redoviOpcijaZaGlasanje);
 }, [redoviOpcijaZaGlasanje]);
+
+
+useEffect(() => {
+  console.log(votingDuration);
+}, [votingDuration]);
+
 
 useEffect(() => {
     console.log(redoviGlasaca);
@@ -406,7 +424,7 @@ useEffect(() => {
     <Grid item xs={12} md={6}>
       <Typography variant="h5" sx={{ color: 'black', mb: 3 }}>Voting Duration</Typography>
       <Box sx={{ width: '100%', pr: 2 }}>
-        <InputSlider />
+        <InputSlider onSliderChange={handleSliderChange}/>
       </Box>
     </Grid>
     <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 1.25 }}>
