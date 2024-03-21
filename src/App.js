@@ -8,8 +8,8 @@ import Login from './Components/Login';                             //Komponente
 import Connected from './Components/Connected';
 import AdminPanel from './Components/AdminPanel';
 import './App.css';
-import logo from './logo.png';
-import logobeli from './logobeli.png';
+import logobeli from './logo.png';
+import logo from './logobeli.png';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
@@ -33,6 +33,12 @@ function App() {
     const [canVote, setCanVote] = useState(true);           //označava da li trenutni korisnik ima pravo da glasa i menja tu dozvolu
     const [isOwner, setIsOwner] = useState(false);          //označava da li je trenutni korisnik vlasnik (owner ugovora)
     const[textButton,setTextButton]=useState('Connect');
+    const [isAddressExpanded, setIsAddressExpanded] = useState(false);
+    const [votingTitle, setvotingTitle] = useState('');
+    
+    const toggleAddress = () => {
+        setIsAddressExpanded(!isAddressExpanded);
+    };
     
 
     // PRVI useEffect hook - 
@@ -59,6 +65,7 @@ function App() {
             getRemainingTime();
             getCurrentStatus();
             checkcanVote();
+            getVotingTitle();
         }
     }, [account]);
 
@@ -78,7 +85,7 @@ function App() {
     };
 
     //Omogućava trenutnom korisniku da glasa za odabranog kandidata.
-    async function vote() {
+    async function vote(index) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
@@ -86,7 +93,7 @@ function App() {
         contractAddress, contractAbi, signer
       );
 
-      const tx = await contractInstance.vote(number);
+      const tx = await contractInstance.vote(index);
       await tx.wait();
       checkcanVote();
   }
@@ -161,6 +168,20 @@ function App() {
       setVotingStatus(status);
   }
 
+  async function getVotingTitle() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const contractInstance = new ethers.Contract (
+      contractAddress, contractAbi, signer
+    );
+    const title = await contractInstance.getVotingTitle();
+    console.log(title);
+    setvotingTitle(title);
+    return title;
+}
+
+
   //Uzima informaciju o preostalom vremenu iz ugovora i parsira ga
 
   async function getRemainingTime() {
@@ -207,8 +228,7 @@ function App() {
             setIsConnected(false);
             setAccount(null);
         }  };
-    const handleNumberChange = (e) => {
-        setNumber(e.target.value); };
+  
 
 
         const disconnectMetamask = () => {
@@ -245,33 +265,43 @@ function App() {
             
             {/* Kontejner za dugme i Chip, koji ne utiče na položaj ostalih komponenata */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-            {isConnected && (
-                    <Chip
-                        label={formatAddress(account)}
-                        color="primary"
-                        sx={{
-                            height: '30px',
-                            marginRight: '10px', // Dodaje malo prostora između dugmeta i Chip-a
-                        }}
-                    />
-                )}
-               
-                <Button variant="contained" color="error" onClick={handleButton} sx={{
-                    height: '56px',
-                    minWidth: '120px',
-                    maxWidth: '200px',
-                    fontSize: '1rem',
-                    fontWeight: 'bold',
-                    borderRadius: '12px',
-                    backgroundColor: '#CCC',
-                    color: 'black',
-                    '&:hover': { backgroundColor: '#AAA' },
-                }}>
-                    {textButton}
-                </Button>
-                
-                
-            </div>
+    {isConnected && (
+      <Chip
+      label={isAddressExpanded ? account : formatAddress(account)}
+      color="primary"
+      onClick={toggleAddress} // Dodajte onClick event
+      sx={{
+          height: '46px',
+          marginRight: '10px',
+          backgroundColor: '#ff007a', // Uniswap ljubičasta
+          color: 'white',
+          borderRadius: '12px',
+          fontSize: '0.875rem',
+          cursor: 'pointer', // Dodajte pokazivač cursor kako bi korisnik znao da je klikabilno
+          '&:hover': {
+              backgroundColor: '#e60074', // Tamnija ljubičasta/sivlja boja pri prelasku mišem
+          },
+      }}
+  />
+  
+   
+    )}
+    
+    <Button variant="contained" onClick={handleButton} sx={{
+        height: '56px',
+        minWidth: '120px',
+        maxWidth: '200px',
+        fontSize: '1rem',
+        fontWeight: 'bold',
+        borderRadius: '12px',
+        backgroundColor: '#CCC', // Zadržava se siva boja kao osnovna
+        color: 'black',
+        '&:hover': { backgroundColor: '#AAA' }, // Tamnija siva pri prelasku mišem
+    }}>
+        {textButton}
+    </Button>
+</div>
+
         </header>
             {isConnected ? (   //Ako je korisnik povezan idi dalje u logiku, ako nije prikaži Login Panel
                 <>
@@ -286,10 +316,10 @@ function App() {
                             candidates={candidates}
                             remainingTime={remainingTime}
                             number={number}
-                            handleNumberChange={handleNumberChange}
                             voteFunction={vote}
                             showButton={canVote}
                             votingStatus={votingStatus}
+                            Title={votingTitle}
                         />
                     )}
                 </>

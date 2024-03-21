@@ -122,6 +122,15 @@ contract Voting {
         return candidates;
     }
 
+    function getVotingTitle() public view returns (string memory) {
+    return currentQuestion;
+    }
+
+     function getALLVotersAdressAndWeight() public view returns (Voter[] memory) {
+        return voters;
+    }
+
+
     function getVotingStatus() public view returns (bool) {
         return (block.timestamp >= votingStart && block.timestamp < votingEnd);
     }
