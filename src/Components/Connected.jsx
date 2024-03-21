@@ -40,7 +40,10 @@ useEffect(() => {
             {Title} {/* Ažurirajte ovde ako Title treba biti pozvan kao funkcija ili je dinamički prop */}
         </Typography>
     
-        <TableContainer component={Paper} sx={{ maxWidth: '65%', margin: '20px auto', overflowX: 'auto' }}>
+        <TableContainer component={Paper} sx={{  maxWidth: '65%', 
+          margin: '20px auto', 
+          overflowX: 'auto',
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',}}>
             <Table aria-label="candidates table">
                 <TableHead>
                     <TableRow>
