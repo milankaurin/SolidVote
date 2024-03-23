@@ -41,6 +41,7 @@ function App() {
     };
     const [voters, setVoters] = useState([]);
 
+
     useEffect(() => {
         // Asinhrono dohvatite početno vreme iz ugovora prilikom montiranja komponente
         async function fetchInitialTime() {
@@ -336,6 +337,7 @@ async function getVoters() {
             return `${account.substring(0, 4)}...${account.substring(account.length - 4)}`;
           }
 
+        const [showResults, setShowResults] = useState(false);
 
     return (
         <div className="App">
@@ -391,7 +393,9 @@ async function getVoters() {
                        <AdminPanel
                        signer={signer}
                        voters={voters}
-                       initialCandidates={candidates} // Ako je ovo ispravan prop
+                       initialCandidates={candidates}
+                       showResults={showResults}
+                       setShowResults={setShowResults} // Ako je ovo ispravan prop
                      />
                      
                     ) : (
@@ -404,6 +408,7 @@ async function getVoters() {
                             showButton={canVote}
                             votingStatus={votingStatus}
                             Title={votingTitle}
+                            showResults={showResults}
                             
                         />
                     )}

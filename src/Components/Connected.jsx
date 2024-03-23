@@ -4,7 +4,7 @@ import React, { useState,useEffect } from "react";
 import { Radio, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Typography } from '@mui/material';
 
 
-const Connected = ({ account, candidates, remainingTime, voteFunction, showButton, votingStatus,Title, isAdmin }) => {
+const Connected = ({ account, candidates, remainingTime, voteFunction, showButton, votingStatus,Title, isAdmin,showResults }) => {
     const [selectedCandidate, setSelectedCandidate] = useState('');
 
     const handleRadioChange = (event) => {
@@ -33,6 +33,11 @@ useEffect(() => {
         width: '100vw'
     };
 
+
+    useEffect(() => {
+        console.log("showResults prop in Connected:", showResults);
+      }, [showResults]);
+
     return (
         <div style={backgroundStyle} className="connected-container">
         
@@ -49,8 +54,7 @@ useEffect(() => {
                     <TableRow>
                         <TableCell align="center">Index</TableCell>
                         <TableCell align="center">Candidate name</TableCell>
-                        <TableCell align="center">Votes</TableCell>
-                        <TableCell align="center">Vote</TableCell>
+                        {showResults && <TableCell align="center">Votes</TableCell>}                        <TableCell align="center">Vote</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody sx={{
@@ -65,7 +69,7 @@ useEffect(() => {
                         <TableRow key={index}>
                             <TableCell align="center">{candidate.index}</TableCell>
                             <TableCell align="center">{candidate.name}</TableCell>
-                            <TableCell align="center">{candidate.voteCount}</TableCell>
+                            {showResults && <TableCell align="center">{candidate.voteCount}</TableCell>}
                             <TableCell align="center">
                                 <Radio
                                     checked={selectedCandidate === candidate.index.toString()}

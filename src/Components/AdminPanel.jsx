@@ -5,8 +5,10 @@ import { Container, Box, Grid,Table, TableBody, TableCell, TableContainer, Table
 import DeleteIcon from '@mui/icons-material/Delete';
 import InputSlider from './Slider'; // Pretpostavljajući da se InputSlider nalazi u istom direktorijumu
 import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
-const AdminPanel = ({ signer, voters, candidates: initialCandidates  }) => {
+const AdminPanel = ({ signer, voters, candidates: initialCandidates, showResults, setShowResults  }) => {
     const tableRef = React.useRef(null);
     const [votingtitle, setVotingTitle] = useState("");  //naslov!!
     const [unosKorisnika, setUnosKorisnika] = useState(''); 
@@ -282,7 +284,10 @@ useEffect(() => {
         };
     
     
-        
+        const handleChange = (e) => {
+          setShowResults(e.target.checked);
+          console.log("Checkbox changed:", e.target.checked);
+      };
           
           
         
@@ -470,9 +475,18 @@ useEffect(() => {
         </Button>
       </Box>
     </Grid>
-  </Grid>
+   </Grid>
 </Container>
-
+<div><FormControlLabel
+        control={
+          <Checkbox
+          checked={showResults}
+          onChange={handleChange}
+          name="showResults"
+          />
+        }
+        label="Prikaži rezultate glasanja korisnicima" sx={{ color: 'black' }} 
+      /></div>
             
                 {/* Prva tabela u svom Container-u */}
                 <Box sx={{ width: '100%', maxWidth: '80%', display: 'flex', justifyContent: 'center' }}>
@@ -485,7 +499,14 @@ useEffect(() => {
             <TableCell>Vote Count</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
+        <TableBody sx={{
+                    '& .MuiTableRow-root:nth-of-type(odd)': {
+                        backgroundColor: '#f3e5f5', // lagana ljubičasta
+                    },
+                    '& .MuiTableRow-root:nth-of-type(even)': {
+                        backgroundColor: '#f7f7f7', // lagana sivkasta
+                    },
+                }}>
           {candidates.map((candidate, index) => (
             <TableRow key={index}>
               <TableCell>{index}</TableCell>
