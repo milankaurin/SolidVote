@@ -54,10 +54,9 @@ const Login = (props) => {
                 opacity: opacity,
                 transition: 'opacity 1s ease-in-out',
                 padding: '60px',
-                maxWidth: '90%', // Ograničava širinu teksta
-                whiteSpace: 'nowrap', // Sprečava lomljenje teksta
-                overflow: 'hidden', // Sakriva deo teksta koji prelazi maksimalnu širinu
-                textOverflow: 'ellipsis', // Dodaje tri tačke za tekst koji prelazi
+                maxWidth: '90%', // Dozvoljava širinu teksta do 90%
+                marginBottom: '20px', // Dodaje malo prostora između teksta i dugmeta
+                // Uklonjene su postavke koje sprečavaju lomljenje teksta
             }}
         >
             {currentText}
@@ -68,7 +67,7 @@ const Login = (props) => {
             minWidth: '250px', // Minimalna širina
             fontSize: '1.5rem',
             fontFamily: "'Basel', sans-serif",
-            mb: 2,
+            mb: 2, // Margin-bottom osigurava prostor ispod dugmeta
             borderRadius: '12px',
             fontWeight: 'bold',
             backgroundColor: '#ff007a',
@@ -81,6 +80,7 @@ const Login = (props) => {
             Connect Metamask Wallet
         </Button>
     </div>
+    
     );
 };
 
