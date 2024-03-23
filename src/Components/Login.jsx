@@ -44,39 +44,43 @@ const Login = (props) => {
     };
 
     return (
-        <div style={backgroundStyle} className="login-container">
-            <Typography
-                sx={{
-                    fontSize: '3rem',
-                    fontWeight: 'bold',
-                    color: 'black',
-                    textAlign: 'center',
-                    opacity: opacity,
-                    transition: 'opacity 1s ease-in-out',
-                    padding: '60px',
-                }}
-            >
-                {currentText}
-            </Typography>
-            
-            <Button variant="contained" onClick={props.connectWallet} sx={{
-    height: '70px', // Veća visina
-    width: '20%', // Širina
-    fontSize: '1.5rem', // Veća veličina fonta
-    fontFamily: "'Basel', sans-serif",
-    mb: 2,
-    borderRadius: '12px',
-    fontWeight: 'bold',
-    backgroundColor: '#ff007a', // Specifična boja pozadine
-    color: 'white', // Beli tekst
-    textTransform: 'none',
-    '&:hover': {
-        backgroundColor: '#e60072', // Tamnija nijansa za hover efekat
-    },
-}}>
-    Connect Metamask Wallet
-</Button>
-        </div>
+        <div style={{...backgroundStyle, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px'}} className="login-container">
+        <Typography
+            sx={{
+                fontSize: '3rem',
+                fontWeight: 'bold',
+                color: 'black',
+                textAlign: 'center',
+                opacity: opacity,
+                transition: 'opacity 1s ease-in-out',
+                padding: '60px',
+                maxWidth: '90%', // Ograničava širinu teksta
+                whiteSpace: 'nowrap', // Sprečava lomljenje teksta
+                overflow: 'hidden', // Sakriva deo teksta koji prelazi maksimalnu širinu
+                textOverflow: 'ellipsis', // Dodaje tri tačke za tekst koji prelazi
+            }}
+        >
+            {currentText}
+        </Typography>
+        
+        <Button variant="contained" onClick={props.connectWallet} sx={{
+            minHeight: '70px', // Minimalna visina
+            minWidth: '250px', // Minimalna širina
+            fontSize: '1.5rem',
+            fontFamily: "'Basel', sans-serif",
+            mb: 2,
+            borderRadius: '12px',
+            fontWeight: 'bold',
+            backgroundColor: '#ff007a',
+            color: 'white',
+            textTransform: 'none',
+            '&:hover': {
+                backgroundColor: '#e60072',
+            },
+        }}>
+            Connect Metamask Wallet
+        </Button>
+    </div>
     );
 };
 

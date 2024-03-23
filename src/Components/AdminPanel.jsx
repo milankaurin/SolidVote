@@ -6,7 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import InputSlider from './Slider'; // Pretpostavljajući da se InputSlider nalazi u istom direktorijumu
 import Button from '@mui/material/Button';
 
-const AdminPanel = ({ signer }) => {
+const AdminPanel = ({ signer, voters, candidates: initialCandidates  }) => {
     const tableRef = React.useRef(null);
     const [votingtitle, setVotingTitle] = useState("");  //naslov!!
     const [unosKorisnika, setUnosKorisnika] = useState(''); 
@@ -62,8 +62,17 @@ const AdminPanel = ({ signer }) => {
     };
 
    
-
-   
+    useEffect(() => {
+      if (initialCandidates) {
+        const initialRows = initialCandidates.map(candidate => ({
+          tekst: candidate.name,
+        }));
+        
+        setRedoviOpcijaZaGlasanje(initialRows);
+      }
+    }, [initialCandidates]);
+    
+    
 
     // const addCandidates = async () => {
     //     setAction("adding");

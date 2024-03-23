@@ -35,12 +35,71 @@ function App() {
     const[textButton,setTextButton]=useState('Connect');
     const [isAddressExpanded, setIsAddressExpanded] = useState(false);
     const [votingTitle, setvotingTitle] = useState('');
-    
+    const [remainingSeconds, setRemainingSeconds] = useState(0);
     const toggleAddress = () => {
         setIsAddressExpanded(!isAddressExpanded);
     };
-    
+    const [voters, setVoters] = useState([]);
 
+    useEffect(() => {
+        // Asinhrono dohvatite početno vreme iz ugovora prilikom montiranja komponente
+        async function fetchInitialTime() {
+            const timeInSeconds = await getRemainingTimeFromContract();
+            setRemainingSeconds(timeInSeconds > 0 ? timeInSeconds : 0); // Ako je vreme manje od 0, postavite na 0
+        }
+    
+        fetchInitialTime();
+    
+        // Pokrenite tajmer
+        const interval = setInterval(() => {
+            setRemainingSeconds((prevSeconds) => {
+                if (prevSeconds <= 0) {
+                    clearInterval(interval); // Zaustavite interval kada dođete do 0
+                    return 0; // Sprečite da vreme ide ispod 0
+                } else {
+                    return prevSeconds - 1;
+                }
+            });
+        }, 1000);
+    
+        // Periodično sinhronizujte sa ugovorom
+        const syncInterval = setInterval(() => {
+            syncTimeWithContract();
+        }, 70000); // Svake minute za primer
+    
+        return () => {
+            clearInterval(interval);
+            clearInterval(syncInterval);
+        };
+    }, []);
+    
+    async function syncTimeWithContract() {
+        const timeInSeconds = await getRemainingTimeFromContract();
+        setRemainingSeconds(timeInSeconds > 0 ? timeInSeconds : 0); // Ponovo, sprečite negativne vrednosti
+    }
+
+    async function getRemainingTimeFromContract() {
+        // Slično vašoj implementaciji
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
+        const timeInSeconds = await contractInstance.getRemainingTime();
+        return parseInt(timeInSeconds);
+    }
+    
+    async function syncTimeWithContract() {
+        const timeInSeconds = await getRemainingTimeFromContract();
+        // Ako je odstupanje veće od 120 sekundi (2 minuta), ažurirajte vreme
+        if (Math.abs(timeInSeconds - remainingSeconds) > 150) {
+            setRemainingSeconds(timeInSeconds);
+        }
+    }
+    
+    // Pretvaranje sekundi u sati, minute i sekunde za prikaz
+    const hours = Math.floor(remainingSeconds / 3600);
+    const minutes = Math.floor((remainingSeconds % 3600) / 60);
+    const seconds = remainingSeconds % 60;
     // PRVI useEffect hook - 
 
     useEffect(() => {   //zadužen za promenu trenutnog naloga u MetaMask-u
@@ -66,6 +125,7 @@ function App() {
             getCurrentStatus();
             checkcanVote();
             getVotingTitle();
+            getVoters();
         }
     }, [account]);
 
@@ -181,6 +241,24 @@ function App() {
     return title;
 }
 
+async function getVoters() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const contractInstance = new ethers.Contract (
+      contractAddress, contractAbi, signer
+    );
+    const unformattedvoters = await contractInstance.getVoters();
+    const formatttedVoters = unformattedvoters.map((voter, index) => {
+      return {
+        index: index,
+        name: voter.Adresa,
+        voteCount: voter.Poeni.toNumber()
+      }
+    });
+    setVoters(formatttedVoters);
+}
+
 
   //Uzima informaciju o preostalom vremenu iz ugovora i parsira ga
 
@@ -197,6 +275,7 @@ function App() {
     const seconds = time % 60;
 
       setRemainingTime(`${hours}h ${minutes}m ${seconds}s`); }
+      const timeString = `${hours}h ${minutes}m ${seconds}s`;
 
   //Povezivanje aplikacije sa MetaMask novčanikom korisnika, traži od njega dozvolu za pristup
 
@@ -309,17 +388,23 @@ function App() {
                    
                     
                     {isOwner ? (            //ako je owner povezan, prikaži AdminPanel, u suprotnom Connected panel
-                        <AdminPanel signer={signer} />
+                       <AdminPanel
+                       signer={signer}
+                       voters={voters}
+                       initialCandidates={candidates} // Ako je ovo ispravan prop
+                     />
+                     
                     ) : (
                         <Connected      //postavi stanja
                             account={account}
                             candidates={candidates}
-                            remainingTime={remainingTime}
+                            remainingTime={timeString}
                             number={number}
                             voteFunction={vote}
                             showButton={canVote}
                             votingStatus={votingStatus}
                             Title={votingTitle}
+                            
                         />
                     )}
                 </>
