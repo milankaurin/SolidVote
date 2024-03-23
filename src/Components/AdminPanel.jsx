@@ -307,7 +307,7 @@ useEffect(() => {
                   padding: '20px',
                   marginBottom: '20px',
                   overflowX: 'auto', // Omogućava horizontalno skrolovanje ako je potrebno
-                  transform: 'scale(0.9)', // Smanjuje veličinu Box-a na 90%
+                  transform: 'scale(0.75)', // Smanjuje veličinu Box-a na 90%
                   transformOrigin: 'top center', // Postavlja origin transformacije na gornji centar
                 }}>
                <Typography variant="h4" sx={{

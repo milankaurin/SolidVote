@@ -12,10 +12,10 @@ const Login = (props) => {
         "Bienvenido a una aplicación de votación descentralizada, segura y anónima", // Španski
         "Bienvenue dans une application de vote décentralisée, sécurisée et anonyme", // Francuski
         "Willkommen bei einer dezentralen, sicheren und anonymen Wahl-App", // Nemački
-        "欢迎来到去中心化、安全、匿名的投票应用", // Kineski
+        "欢迎使用我们的去中心化、安全和匿名投票应用程序，让您参与并表达您的声音！ "  , // Kineski
         "Добро пожаловать в децентрализованное, безопасное приложение для голосования", // Ruski
         "Benvenuti in un'applicazione di voto decentralizzata, sicura e anonima", // Italijanski
-        "ようこそ、分散型で安全、匿名の投票アプリへ", // Japanski
+        "ようこそ、分散型で安全、匿名の投票アプリへ。あなたの声を聞かせてください！"  , // Japanski
     ];
 
     useEffect(() => {
@@ -44,43 +44,51 @@ const Login = (props) => {
     };
 
     return (
-        <div style={{...backgroundStyle, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px'}} className="login-container">
-        <Typography
-            sx={{
-                fontSize: '3rem',
+        <div style={{
+            ...backgroundStyle, 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            justifyContent: 'center', // Ovo centriranje ce raditi za celu visinu
+            minHeight: '400px', 
+        }} className="login-container">
+            <Typography
+                sx={{
+                    fontSize: '3rem',
+                    fontWeight: 'bold',
+                    color: 'black',
+                    textAlign: 'center',
+                    opacity: opacity,
+                    transition: 'opacity 1s ease-in-out',
+                    padding: '20px 60px', // Smanjena padding za manji razmak
+                    maxWidth: '90%',
+                    margin: '0', // Uklonjena donja margina
+                    marginBottom: '10px', // Dodajemo manji razmak između teksta i dugmeta
+                }}
+            >
+                {currentText}
+            </Typography>
+            
+            <Button variant="contained" onClick={props.connectWallet} sx={{
+                minHeight: '70px', 
+                minWidth: '250px', 
+                fontSize: '1.5rem',
+                fontFamily: "'Basel', sans-serif",
+                borderRadius: '12px',
                 fontWeight: 'bold',
-                color: 'black',
-                textAlign: 'center',
-                opacity: opacity,
-                transition: 'opacity 1s ease-in-out',
-                padding: '60px',
-                maxWidth: '90%', // Dozvoljava širinu teksta do 90%
-                marginBottom: '20px', // Dodaje malo prostora između teksta i dugmeta
-                // Uklonjene su postavke koje sprečavaju lomljenje teksta
-            }}
-        >
-            {currentText}
-        </Typography>
+                backgroundColor: '#ff007a',
+                color: 'white',
+                textTransform: 'none',
+                mb: 2, // Osiguravamo prostor ispod dugmeta ako je potrebno dodatno centriranje
+                '&:hover': {
+                    backgroundColor: '#e60072',
+                },
+            }}>
+                Connect Metamask Wallet
+            </Button>
+        </div>
         
-        <Button variant="contained" onClick={props.connectWallet} sx={{
-            minHeight: '70px', // Minimalna visina
-            minWidth: '250px', // Minimalna širina
-            fontSize: '1.5rem',
-            fontFamily: "'Basel', sans-serif",
-            mb: 2, // Margin-bottom osigurava prostor ispod dugmeta
-            borderRadius: '12px',
-            fontWeight: 'bold',
-            backgroundColor: '#ff007a',
-            color: 'white',
-            textTransform: 'none',
-            '&:hover': {
-                backgroundColor: '#e60072',
-            },
-        }}>
-            Connect Metamask Wallet
-        </Button>
-    </div>
-    
+        
     );
 };
 
