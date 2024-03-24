@@ -21,7 +21,6 @@ const AdminPanel = ({ signer, voters,remainingTime,Title, candidates: initialCan
     const [loading, setLoading] = useState(false);
     const [votingDuration, setVotingDuration] = useState(""); // Dodato stanje za unos trajanja glasanja
     const [candidates, setCandidates] = useState([]); 
-
     const handleSliderChange = (newValue) => {
       setVotingDuration(newValue); // Pretpostavljam da želite da ažurirate votingDuration
     };
@@ -62,6 +61,7 @@ const AdminPanel = ({ signer, voters,remainingTime,Title, candidates: initialCan
         }
         setLoading(false);
     };
+
 
    
     useEffect(() => {
@@ -289,7 +289,40 @@ useEffect(() => {
           console.log("Checkbox changed:", e.target.checked);
       };
           
-          
+    
+    //   useEffect(() => {
+    //     const fetchDataFromContract = async () => {
+    //         try {
+    //             const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+    
+    //             // Dohvati listu kandidata
+    //             // const candidatesArray = await contract.getAllVotesOfCandiates();
+    //             // const initialCandidates = candidatesArray.map(candidate => ({
+    //             //     name: candidate.name,
+    //             // }));
+    //             // setRedoviOpcijaZaGlasanje(initialCandidates);
+    //             // console.log(initialCandidates);
+
+    //             // Dohvati listu glasača
+    //             const votersArray = await contract.getALLVotersAdressAndWeight();
+    //             const initialVoters = votersArray.map(voter => ({
+    //                 tekst: voter.Adresa,
+    //                 broj: voter.Poeni.toString(), // Pretpostavljamo da je broj tipa uint256
+    //             }));
+    //             setRedoviGlasaca(initialVoters);
+    
+    //             // Dohvati naslov glasanja
+    //             const votingTitle = await contract.getVotingTitle();
+    //             setVotingTitle(votingTitle);
+    //         } catch (error) {
+    //             console.error("Error fetching data from contract:", error);
+    //         }
+    //     };
+    
+    //     fetchDataFromContract();
+    // }, []);
+
+
         
           return (
             <Box sx={{
@@ -327,10 +360,11 @@ useEffect(() => {
   ADMIN PANEL
 </Typography>
 
-<Container maxWidth="lg" sx={{ marginBottom: '50px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
+<Container maxWidth="lg" sx={{ marginBottom: '50px', background: 'f0f4f8', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
         <TextField
           label="Enter voting topic here"
           variant="outlined"
+          color="warning"
           value={votingtitle}
           onChange={handleVotingTitleChange}
           disabled={loading}
@@ -340,7 +374,8 @@ useEffect(() => {
             '&:hover fieldset': { borderColor: '#9E9E9E' }, // Tamnija siva na hover
             '&.Mui-focused fieldset': { borderColor: '#ff007a' }, // Ljubičasta za fokus na okvir
           },
-          '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, // Menja boju labele u ljubičastu kada je fokusirano
+          '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, 
+          
         }}
         />
        
@@ -361,6 +396,8 @@ useEffect(() => {
                   '&.Mui-focused fieldset': { borderColor: '#ff007a' }, // Ljubičasta za fokus na okvir
                 },
                 '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, // Menja boju labele u ljubičastu kada je fokusirano
+                '& input': {
+                  fontSize: '1.5rem'}
               }}
             />
             {index !== redoviOpcijaZaGlasanje.length - 1 ? (
@@ -374,7 +411,7 @@ useEffect(() => {
         ))}
       </Container>
       <Container maxWidth="lg" sx={{ marginBottom: '35px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
-        <Typography variant="h5" sx={{ color: 'black', marginBottom: '20px', textAlign: 'center', fontWeight: '' }}>
+        <Typography variant="h5" sx={{ color: 'black', marginBottom: '20px', textAlign: 'center', fontWeight: '500', fontFamily: "'Robot', sans-serif", fontSize: '2rem' }}>
           Enter addresses of eligible voters here
         </Typography>
         {redoviGlasaca.map((opcija, index) => (
@@ -385,7 +422,7 @@ useEffect(() => {
               label={`Voter ${index + 1}`}
               value={opcija.tekst}
               onChange={(event) => handleTextChangeGlasaci(index, event)}
-              sx={{
+              sx={{  
                 marginRight: '10px', flex: 3,
                 '& .MuiOutlinedInput-root': {
                     '& fieldset': { borderColor: '#BDBDBD' }, // Suptilnija siva za granice
@@ -393,6 +430,8 @@ useEffect(() => {
                     '&.Mui-focused fieldset': { borderColor: '#ff007a' }, // Ljubičasta za fokus na okvir
                   },
                   '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, // Menja boju labele u ljubičastu kada je fokusirano
+                  '& input': {
+                    fontSize: '1.5rem'}
               }}
             />
             <TextField
@@ -413,6 +452,9 @@ useEffect(() => {
                   '&.Mui-focused fieldset': { borderColor: '#ff007a' }, // Ljubičasta za fokus na okvir
                 },
                 '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, // Menja boju labele u ljubičastu kada je fokusirano
+                '& input': {
+                  fontSize: '1.5rem'}
+              
               }}
             />
             {index !== redoviGlasaca.length - 1 ? (
@@ -436,7 +478,7 @@ useEffect(() => {
 }}>
   <Grid container spacing={2} alignItems="center">
     <Grid item xs={12} md={6}>
-      <Typography variant="h5" sx={{ color: 'black', mb: 3 }}>Voting Duration</Typography>
+      <Typography variant="h5" sx={{ color: 'black', mb: 3 }}>Voting duration (in minutes)</Typography>
       <Box sx={{ width: '100%', pr: 2 }}>
         <InputSlider onSliderChange={handleSliderChange}/>
         <FormControlLabel
@@ -476,7 +518,7 @@ useEffect(() => {
           borderRadius: '12px', // Manje zaobljeni uglovi
           backgroundColor: '#ff007a', // Uniswap ljubičasta
           '&:hover': {
-            backgroundColor: '#e60072', // Tamnija nijansa za hover efekat
+            backgroundColor: '#463346', // Tamnija nijansa za hover efekat
           },
         }}>
           Start Voting

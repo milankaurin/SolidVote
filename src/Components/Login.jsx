@@ -38,7 +38,7 @@ const Login = (props) => {
 
 
     const backgroundStyle = {
-        backgroundColor: '#f0f4f8',
+        backgroundColor: '#171515',
         height: '100vh',
         width: '100vw',
     };
@@ -55,15 +55,16 @@ const Login = (props) => {
             <Typography
                 sx={{
                     fontSize: '3rem',
-                    fontWeight: 'bold',
-                    color: 'black',
+                    fontWeight: '450', //bilo je bold
+                    color: 'white',
                     textAlign: 'center',
                     opacity: opacity,
                     transition: 'opacity 1s ease-in-out',
-                    padding: '20px 60px', // Smanjena padding za manji razmak
+                    padding: '20px 60px', 
                     maxWidth: '90%',
-                    margin: '0', // Uklonjena donja margina
+                    margin: '0', 
                     marginBottom: '10px', // Dodajemo manji razmak između teksta i dugmeta
+                    fontFamily: 'Roboto, sans-serif' // ovo nije bilo
                 }}
             >
                 {currentText}
@@ -73,18 +74,18 @@ const Login = (props) => {
                 minHeight: '70px', 
                 minWidth: '250px', 
                 fontSize: '1.5rem',
-                fontFamily: "'Basel', sans-serif",
+                fontFamily: "'Robot', sans-serif",
                 borderRadius: '12px',
-                fontWeight: 'bold',
+                fontWeight: '530',
                 backgroundColor: '#ff007a',
                 color: 'white',
                 textTransform: 'none',
                 mb: 2, // Osiguravamo prostor ispod dugmeta ako je potrebno dodatno centriranje
                 '&:hover': {
-                    backgroundColor: '#e60072',
+                    backgroundColor: '#311c31', //311c31  //e60072
                 },
             }}>
-                Connect Metamask Wallet
+                Connect MetaMask wallet
             </Button>
         </div>
         

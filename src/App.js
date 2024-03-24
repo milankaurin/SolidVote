@@ -8,7 +8,7 @@ import Login from './Components/Login';                             //Komponente
 import Connected from './Components/Connected';
 import AdminPanel from './Components/AdminPanel';
 import './App.css';
-import logobeli from './logo.png';
+import logobeli from './logobeli.png';
 import logo from './logobeli.png';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -360,7 +360,7 @@ async function getVoters() {
           fontSize: '0.875rem',
           cursor: 'pointer', // Dodajte pokazivač cursor kako bi korisnik znao da je klikabilno
           '&:hover': {
-              backgroundColor: '#e60074', // Tamnija ljubičasta/sivlja boja pri prelasku mišem
+              backgroundColor: '#463346', // Tamnija ljubičasta/sivlja boja pri prelasku mišem
           },
       }}
   />
