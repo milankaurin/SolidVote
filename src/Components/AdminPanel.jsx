@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-const AdminPanel = ({ signer, voters, candidates: initialCandidates, showResults, setShowResults  }) => {
+const AdminPanel = ({ signer, voters,remainingTime,Title, candidates: initialCandidates, showResults, setShowResults  }) => {
     const tableRef = React.useRef(null);
     const [votingtitle, setVotingTitle] = useState("");  //naslov!!
     const [unosKorisnika, setUnosKorisnika] = useState(''); 
@@ -316,7 +316,7 @@ useEffect(() => {
                   transformOrigin: 'top center', // Postavlja origin transformacije na gornji centar
                 }}>
                <Typography variant="h4" sx={{
-  color: '#ff007a', // Ažurirano u Uniswap ljubičastu
+  color: 'black', // Ažurirano u Uniswap ljubičastu ff007a
   marginBottom: '40px',
   marginTop: '40px',
   textAlign: 'center',
@@ -374,7 +374,7 @@ useEffect(() => {
         ))}
       </Container>
       <Container maxWidth="lg" sx={{ marginBottom: '35px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
-        <Typography variant="h5" sx={{ color: '#ff007a', marginBottom: '20px', textAlign: 'center', fontWeight: 'bold' }}>
+        <Typography variant="h5" sx={{ color: 'black', marginBottom: '20px', textAlign: 'center', fontWeight: '' }}>
           Enter addresses of eligible voters here
         </Typography>
         {redoviGlasaca.map((opcija, index) => (
@@ -439,6 +439,29 @@ useEffect(() => {
       <Typography variant="h5" sx={{ color: 'black', mb: 3 }}>Voting Duration</Typography>
       <Box sx={{ width: '100%', pr: 2 }}>
         <InputSlider onSliderChange={handleSliderChange}/>
+        <FormControlLabel
+        control={
+          <Checkbox  sx={{ mt: '30px' ,
+            color: '#ff007a', // Uniswap ljubičasta za CheckBox
+            '&.Mui-checked': {
+              color: '#e60072', // Tamnija nijansa kada je CheckBox označen
+            },
+            '& svg': {
+              fontSize: '2rem', // Veća ikona za CheckBox
+            }
+          }}
+          checked={showResults}
+          onChange={handleChange}
+          name="showResults"
+          />
+        }
+        label={<Typography sx={{ fontSize: '1.2rem',color:'black', mt: '30px'  }}>Allow voters to see current results</Typography>}
+        sx={{
+          mb: 2,
+          width: '100%',
+          justifyContent: 'center', // Centriranje label teksta sa Checkbox-om
+        }}
+      />
       </Box>
     </Grid>
     <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 1.25 }}>
@@ -477,19 +500,18 @@ useEffect(() => {
     </Grid>
    </Grid>
 </Container>
-<div><FormControlLabel
-        control={
-          <Checkbox
-          checked={showResults}
-          onChange={handleChange}
-          name="showResults"
-          />
-        }
-        label="Prikaži rezultate glasanja korisnicima" sx={{ color: 'black' }} 
-      /></div>
-            
+
+<Box sx={{ width: '100%', maxWidth: '90%', display: 'flex', justifyContent: 'center', color: 'black', fontSize: '20px' , mb:'20px'}}>
+   {Title}
+</Box>
+
+
+
                 {/* Prva tabela u svom Container-u */}
-                <Box sx={{ width: '100%', maxWidth: '80%', display: 'flex', justifyContent: 'center' }}>
+                <Box sx={{ width: '100%', maxWidth: '90%', display: 'flex', justifyContent: 'center',color:'black' }}>
+               
+   
+
     <TableContainer component={Paper} sx={{ background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px', width: '100%' }}>
       <Table>
         <TableHead>
@@ -518,7 +540,9 @@ useEffect(() => {
       </Table>
     </TableContainer>
      </Box>
-    
+     <Box sx={{ width: '100%', maxWidth: '90%', display: 'flex', justifyContent: 'center', color: 'black', fontSize: '20px' , mb:'20px',mt:'20px'}}>
+    Remaining time: {remainingTime}
+</Box>
                 </Box>
             </Box>
             

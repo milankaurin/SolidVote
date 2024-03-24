@@ -395,6 +395,8 @@ async function getVoters() {
                        voters={voters}
                        initialCandidates={candidates}
                        showResults={showResults}
+                       remainingTime={timeString}
+                       Title={votingTitle}
                        setShowResults={setShowResults} // Ako je ovo ispravan prop
                      />
                      
