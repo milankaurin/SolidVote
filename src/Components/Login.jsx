@@ -38,7 +38,7 @@ const Login = (props) => {
 
 
     const backgroundStyle = {
-        backgroundColor: '#171515',
+        backgroundColor: '#1e1f23',
         height: '100vh',
         width: '100vw',
     };

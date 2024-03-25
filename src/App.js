@@ -375,9 +375,9 @@ async function getVoters() {
         fontSize: '1rem',
         fontWeight: 'bold',
         borderRadius: '12px',
-        backgroundColor: '#CCC', // Zadržava se siva boja kao osnovna
-        color: 'black',
-        '&:hover': { backgroundColor: '#AAA' }, // Tamnija siva pri prelasku mišem
+        backgroundColor: '#323538', // Zadržava se siva boja kao osnovna
+        color: 'f2f2f2',
+        '&:hover': { backgroundColor: '#AAA', color:'dimgray' }, // Tamnija siva pri prelasku mišem
     }}>
         {textButton}
     </Button>
