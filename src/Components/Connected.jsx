@@ -27,7 +27,7 @@ useEffect(() => {
 }, [selectedCandidate]);
 
     const backgroundStyle = {
-        backgroundColor: '#f0f4f8',
+        backgroundColor: '#1e1f23',
         height: '100vh',
         width: '100vw'
     };
@@ -40,13 +40,14 @@ useEffect(() => {
     return (
         <div style={backgroundStyle} className="connected-container">
         
-        <Typography variant="h4" sx={{ color: 'black', marginBottom: '10px', textAlign: 'center',mt:'80px' }}>
+        <Typography variant="h4" sx={{ color: 'white', marginBottom: '10px', textAlign: 'center',mt:'80px' }}>
             {Title} {/* Ažurirajte ovde ako Title treba biti pozvan kao funkcija ili je dinamički prop */}
         </Typography>
     
         <TableContainer 
     component={Paper} 
     sx={{  
+        background: '#1e1f23',
         maxWidth: '70%', // Povećan maxWidth za šire zauzimanje prostora
         margin: '20px auto', 
         overflowX: 'auto',
@@ -54,19 +55,19 @@ useEffect(() => {
     }}
 >
     <Table aria-label="candidates table" size="small"> {/* Dodato size="small" za manje redove */}
-        <TableHead>
+        <TableHead sx={{backgroundColor:'1e1f23'}}>
             <TableRow>
-                <TableCell align="center" sx={{ fontSize: '0.875rem' }}>Index</TableCell>
-                <TableCell align="center" sx={{ fontSize: '0.875rem' }}>Candidate name</TableCell>
-                {showResults && <TableCell align="center" sx={{ fontSize: '0.875rem' }}>Votes</TableCell>}
-                <TableCell align="center" sx={{ fontSize: '0.875rem' }}>Vote</TableCell>
+                <TableCell align="center" sx={{ fontSize: '0.875rem',color:'white' }}>Index</TableCell>
+                <TableCell align="center" sx={{ fontSize: '0.875rem' ,color:'white'}}>Candidate name</TableCell>
+                {showResults && <TableCell align="center" sx={{ fontSize: '0.875rem',color:'white' }}>Votes</TableCell>}
+                <TableCell align="center" sx={{ fontSize: '0.875rem',color:'white' }}>Vote</TableCell>
             </TableRow>
         </TableHead>
         <TableBody sx={{
             '& .MuiTableRow-root': {
                 '& td': {
                     padding: '6px', // Smanjeni padding za ćelije
-                    fontSize: '0.75rem', // Smanjena veličina fonta za tekst unutar ćelija
+                    fontSize: '1.2rem', // Smanjena veličina fonta za tekst unutar ćelija
                 },
                 '&:nth-of-type(odd)': {
                     backgroundColor: '#f3e5f5', // lagana ljubičasta

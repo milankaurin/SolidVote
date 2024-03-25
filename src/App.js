@@ -339,6 +339,9 @@ async function getVoters() {
 
         const [showResults, setShowResults] = useState(false);
 
+       
+        
+
     return (
         <div className="App">
              <header className="App-logo">

@@ -25,6 +25,7 @@ const AdminPanel = ({ signer, voters,remainingTime,Title, candidates: initialCan
       setVotingDuration(newValue); // Pretpostavljam da želite da ažurirate votingDuration
     };
    
+
     const backgroundStyle = {
         backgroundImage: `url('/images/adminBackground.jpg')`,
         backgroundSize: 'cover', // Pokriva celu pozadinu
@@ -103,7 +104,7 @@ const AdminPanel = ({ signer, voters,remainingTime,Title, candidates: initialCan
 
 
 
-
+    
 
     const startVoting = async () => {
         setAction("starting");
