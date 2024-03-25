@@ -327,7 +327,7 @@ useEffect(() => {
         
           return (
             <Box sx={{
-                backgroundColor: '#1e1f23', //f0f4f8
+                backgroundColor: '#1c1c1c', //f0f4f8 //1c1c1c
                 minHeight: '100vh',
                 padding: '20px',
                 overflowY: 'auto',
@@ -341,7 +341,7 @@ useEffect(() => {
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  background: '#1e1f23',
+                  background: '#1c1c1c',
                   borderRadius: '8px',
                   padding: '20px',
                   marginBottom: '20px',
@@ -407,7 +407,7 @@ useEffect(() => {
               }}
             />
             {index !== redoviOpcijaZaGlasanje.length - 1 ? (
-              <IconButton onClick={() => handleRemoveRow(index)} sx={{ color: '#ff007a' }}>
+              <IconButton onClick={() => handleRemoveRow(index)} sx={{ color: '#f3e5f5' }}>
                   <DeleteIcon />
               </IconButton>
             ) : (
@@ -469,7 +469,7 @@ useEffect(() => {
               }}
             />
             {index !== redoviGlasaca.length - 1 ? (
-              <IconButton onClick={() => handleRemoveRowGlasaci(index)} sx={{ color: '#ff007a' }}>
+              <IconButton onClick={() => handleRemoveRowGlasaci(index)} sx={{ color: '#f3e5f5' }}>
                   <DeleteIcon />
               </IconButton>
             ) : (
@@ -486,6 +486,7 @@ useEffect(() => {
   padding: '20px',
   pt: '40px',
   pb: '40px',
+  boxShadow: 6
 }}>
   <Grid container spacing={2} alignItems="center">
     <Grid item xs={12} md={6}>
@@ -515,7 +516,7 @@ useEffect(() => {
             color: '#e60072', // Tamnija nijansa kada je CheckBox označen
           },
           '& svg': {
-            fontSize: '2rem', // Veća ikona za CheckBox
+            fontSize: '3rem', // Veća ikona za CheckBox
           }
         }}
         checked={showResults}
@@ -527,7 +528,7 @@ useEffect(() => {
       <Typography
         className="label-text"
         sx={{
-          fontSize: '1.2rem',
+          fontSize: '1.4rem',
           color: '#909090',
           mt: '30px',
         }}
@@ -588,9 +589,9 @@ useEffect(() => {
 
 
                 {/* Prva tabela u svom Container-u */}
-                <Box sx={{ width: '100%', maxWidth: '95%', display: 'flex', justifyContent: 'center', color: '#1e1f23' }}>
-    <TableContainer component={Paper} sx={{ background: '#1e1f23', borderRadius: '8px', boxShadow: 6, padding: '20px', width: '100%' }}>
-        <Table sx={{ minWidth: 650, fontSize: '2rem' }}> {/* Podesi veličinu fonta ovde */}
+                <Box sx={{ width: '100%', maxWidth: '95%', display: 'flex', justifyContent: 'center', color: '#1e1f23',boxShadow: 6 }}>
+    <TableContainer component={Paper} sx={{ background: '#1e1f23', borderRadius: '8px', boxShadow: 6, padding: '20px', width: '100%',borderRadius: '10px'}}>
+        <Table sx={{ minWidth: 650, fontSize: '2rem',borderRadius: '10px'}}> {/* Podesi veličinu fonta ovde */}
             <TableHead>
                 <TableRow>
                     <TableCell sx={{ fontSize: '1.5rem',color:'#909090' }}>Index</TableCell>
@@ -600,11 +601,11 @@ useEffect(() => {
             </TableHead>
             <TableBody sx={{
                 '& .MuiTableRow-root:nth-of-type(odd)': {
-                    backgroundColor: '#b39ddb', // lagana ljubičasta
+                    backgroundColor: '#cccccc', // lagana ljubičasta
                 },
                 '& .MuiTableRow-root:nth-of-type(even)': {
-                    backgroundColor: '#f7f7f7', // lagana sivkasta
-                },fontSize: '5rem'
+                    backgroundColor: '#AAA', // lagana sivkasta
+                },fontSize: '5rem',borderRadius: '10px'
             }}>
                 {candidates.map((candidate, index) => (
                     <TableRow key={index}>

@@ -52,6 +52,7 @@ useEffect(() => {
         margin: '20px auto', 
         overflowX: 'auto',
         boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+        borderRadius: '10px'
     }}
 >
     <Table aria-label="candidates table" size="small"> {/* Dodato size="small" za manje redove */}
@@ -97,7 +98,7 @@ useEffect(() => {
     </Table>
 </TableContainer>
 
-        <Typography variant="h6" sx={{ color: '#6e6e6e', marginBottom: '10px', marginTop: '20px', textAlign: 'center' }}>
+        <Typography variant="h6" sx={{fontWeight: '400', color: '#white', marginBottom: '10px', marginTop: '20px', textAlign: 'center' }}>
             Remaining Time: {remainingTime}
         </Typography>
         {!isVotingFinished && !showButton && (
