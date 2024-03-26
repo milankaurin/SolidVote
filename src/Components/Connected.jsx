@@ -68,14 +68,15 @@ useEffect(() => {
                 
                 <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Index</TableCell>
                 {showResultsLocal && showButton && (<Box sx={{ width: 10, height: 48 }}></Box> )}
+                {showResultsLocal && (<Box sx={{ width: 5, height: 48 }}></Box> )}
                 <TableCell align="center" sx={{ fontSize: '1.2rem' , color:'black'}}>Candidate name</TableCell>
                 {showResultsLocal && <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Votes</TableCell>}
                 {!isVotingFinished && !showButton && (
-            // Ako niti jedan od gore navedenih uvjeta nije istinit, prikazujemo "Vote"
             <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Vote</TableCell>
         ) }
         {!showResultsLocal && showButton && (<Box sx={{ width: 84, height: 48 }}></Box> )}
         {showResultsLocal && showButton && (<Box sx={{ width: 5, height: 48 }}></Box> )}
+        {showResultsLocal && (<Box sx={{ width: 5, height: 48 }}></Box> )}
             </TableRow>
         </TableHead>
         <TableBody sx={{
@@ -95,7 +96,8 @@ useEffect(() => {
             {candidates.map((candidate, index) => (
                 <TableRow key={index}>
                     <TableCell align="center">{candidate.index}</TableCell>
-                    {showResultsLocal && showButton && (<Box sx={{ width: 10, height: 48 }}></Box> )}
+                    {showResultsLocal &&  (<Box sx={{ width: 10, height: 48 }}></Box> )}
+                    
                     <TableCell align="center">{candidate.name}</TableCell>
                     {showResultsLocal && <TableCell align="center">{candidate.voteCount}</TableCell>}
                     <TableCell align="center">
