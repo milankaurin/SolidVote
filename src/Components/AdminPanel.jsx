@@ -611,10 +611,10 @@ useEffect(() => {
             </TableHead>
             <TableBody sx={{
                 '& .MuiTableRow-root:nth-of-type(odd)': {
-                    backgroundColor: '#f3e5f5', // lagana ljubičasta
+                    backgroundColor: '#e4c4f2', 
                 },
                 '& .MuiTableRow-root:nth-of-type(even)': {
-                    backgroundColor: '#f7f7f7', // lagana sivkasta #CCC f7f7f7
+                    backgroundColor: '#f7f7f7', 
                 },fontSize: '5rem',borderRadius: '10px'
             }}>
                 {candidates.map((candidate, index) => (
