@@ -25,6 +25,7 @@ const AdminPanel = ({ signer, voters,remainingTime,Title, candidates: initialCan
       setVotingDuration(newValue); // Pretpostavljam da želite da ažurirate votingDuration
     };
    
+
     const backgroundStyle = {
         backgroundImage: `url('/images/adminBackground.jpg')`,
         backgroundSize: 'cover', // Pokriva celu pozadinu
@@ -103,7 +104,7 @@ const AdminPanel = ({ signer, voters,remainingTime,Title, candidates: initialCan
 
 
 
-
+    
 
     const startVoting = async () => {
         setAction("starting");
@@ -285,10 +286,19 @@ useEffect(() => {
     
     
         const handleChange = (e) => {
-          setShowResults(e.target.checked);
-          console.log("Checkbox changed:", e.target.checked);
+          const checked = e.target.checked;
+          setShowResults(checked);
+          localStorage.setItem('showResults', JSON.stringify(checked));
       };
-          
+      useEffect(() => {
+        const showResultsLocalStorage = localStorage.getItem('showResults');
+        console.log("showResultsLocalStorage:", showResultsLocalStorage); // Provjerite da li je pročitana vrijednost iz lokalnog skladišta
+        if (showResultsLocalStorage !== null) {
+          const parsedShowResults = JSON.parse(showResultsLocalStorage);
+          console.log("parsedShowResults:", parsedShowResults); // Provjerite parsiranu vrijednost iz lokalnog skladišta
+          setShowResults(parsedShowResults);
+        }
+      }, []);
     
     //   useEffect(() => {
     //     const fetchDataFromContract = async () => {
@@ -326,7 +336,7 @@ useEffect(() => {
         
           return (
             <Box sx={{
-                backgroundColor: '#f0f4f8', //f0f4f8
+                backgroundColor: '#1c1c1c', //f0f4f8 //1c1c1c
                 minHeight: '100vh',
                 padding: '20px',
                 overflowY: 'auto',
@@ -340,7 +350,7 @@ useEffect(() => {
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  background: '#f0f4f8',
+                  background: '#1c1c1c',
                   borderRadius: '8px',
                   padding: '20px',
                   marginBottom: '20px',
@@ -349,7 +359,7 @@ useEffect(() => {
                   transformOrigin: 'top center', // Postavlja origin transformacije na gornji centar
                 }}>
                <Typography variant="h4" sx={{
-  color: 'black', // Ažurirano u Uniswap ljubičastu ff007a
+  color:'white', // Ažurirano u Uniswap ljubičastu ff007a
   marginBottom: '40px',
   marginTop: '40px',
   textAlign: 'center',
@@ -360,24 +370,28 @@ useEffect(() => {
   ADMIN PANEL
 </Typography>
 
-<Container maxWidth="lg" sx={{ marginBottom: '50px', background: 'f0f4f8', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
-        <TextField
-          label="Enter voting topic here"
-          variant="outlined"
-          color="warning"
-          value={votingtitle}
-          onChange={handleVotingTitleChange}
-          disabled={loading}
-          sx={{ minWidth: '250px', marginBottom: '30px',marginTop: '20px' ,
-          '& .MuiOutlinedInput-root': {
-            '& fieldset': { borderColor: '#BDBDBD' }, // Suptilnija siva za granice
-            '&:hover fieldset': { borderColor: '#9E9E9E' }, // Tamnija siva na hover
-            '&.Mui-focused fieldset': { borderColor: '#ff007a' }, // Ljubičasta za fokus na okvir
-          },
-          '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, 
-          
-        }}
-        />
+<Container maxWidth="lg" sx={{ marginBottom: '50px', background: '#1e1f23', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
+<TextField
+  label="Enter voting topic here"
+  variant="outlined"
+  value={votingtitle}
+  onChange={handleVotingTitleChange}
+  disabled={loading}
+  sx={{
+    '& .MuiInputLabel-root': { color: 'white' }, // White label text
+    '& .MuiOutlinedInput-input': { color: 'white' }, // White input text
+    minWidth: '250px',
+    marginBottom: '30px',
+    marginTop: '20px',
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': { borderColor: '#BDBDBD' }, // Suptilnija siva za granice
+      '&:hover fieldset': { borderColor: '#9E9E9E' }, // Tamnija siva na hover
+      '&.Mui-focused fieldset': { borderColor: '#ff007a' }, // Ljubičasta za fokus na okvir
+    },
+    '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, 
+  }}
+/>
+
        
         {/* Logika za prikaz i uređivanje opcija glasanja */}
         {redoviOpcijaZaGlasanje.map((opcija, index) => (
@@ -388,7 +402,8 @@ useEffect(() => {
               label={`Option ${index + 1}`}
               value={opcija.tekst}
               onChange={(event) => handleTextChange(index, event)}
-              sx={{
+              sx={{ '& .MuiInputLabel-root': { color: 'white' }, // White label text
+              '& .MuiOutlinedInput-input': { color: 'white' }, // White input text
                 marginRight: '10px',
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': { borderColor: '#BDBDBD' }, // Suptilnija siva za granice
@@ -401,7 +416,7 @@ useEffect(() => {
               }}
             />
             {index !== redoviOpcijaZaGlasanje.length - 1 ? (
-              <IconButton onClick={() => handleRemoveRow(index)} sx={{ color: '#ff007a' }}>
+              <IconButton onClick={() => handleRemoveRow(index)} sx={{ color: '#f3e5f5' }}>
                   <DeleteIcon />
               </IconButton>
             ) : (
@@ -410,8 +425,8 @@ useEffect(() => {
           </Box>
         ))}
       </Container>
-      <Container maxWidth="lg" sx={{ marginBottom: '35px', background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
-        <Typography variant="h5" sx={{ color: 'black', marginBottom: '20px', textAlign: 'center', fontWeight: '500', fontFamily: "'Robot', sans-serif", fontSize: '2rem' }}>
+      <Container maxWidth="lg" sx={{ marginBottom: '35px', background: '#1e1f23', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
+        <Typography variant="h5" sx={{ color: 'white', marginBottom: '20px', textAlign: 'center', fontWeight: '500', fontFamily: "'Robot', sans-serif", fontSize: '2rem' }}>
           Enter addresses of eligible voters here
         </Typography>
         {redoviGlasaca.map((opcija, index) => (
@@ -423,6 +438,8 @@ useEffect(() => {
               value={opcija.tekst}
               onChange={(event) => handleTextChangeGlasaci(index, event)}
               sx={{  
+                '& .MuiInputLabel-root': { color: 'white' }, // White label text
+                  '& .MuiOutlinedInput-input': { color: 'white' }, // White input text
                 marginRight: '10px', flex: 3,
                 '& .MuiOutlinedInput-root': {
                     '& fieldset': { borderColor: '#BDBDBD' }, // Suptilnija siva za granice
@@ -445,6 +462,9 @@ useEffect(() => {
                   pattern: '[0-9]*',
               }}
               sx={{
+                '& .MuiInputLabel-root': { color: 'white' }, // White label text
+                '& .MuiOutlinedInput-input': { color: 'white' }, // White input text
+
                 marginRight: '10px', flex: 0.5,
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': { borderColor: '#BDBDBD' }, // Suptilnija siva za granice
@@ -458,7 +478,7 @@ useEffect(() => {
               }}
             />
             {index !== redoviGlasaca.length - 1 ? (
-              <IconButton onClick={() => handleRemoveRowGlasaci(index)} sx={{ color: '#ff007a' }}>
+              <IconButton onClick={() => handleRemoveRowGlasaci(index)} sx={{ color: '#f3e5f5' }}>
                   <DeleteIcon />
               </IconButton>
             ) : (
@@ -470,40 +490,68 @@ useEffect(() => {
     
     <Container maxWidth="lg" sx={{
   marginBottom: '35px',
-  background: '#f0f4f8', // Dodajte # za ispravnu HEX vrednost
+  background: '#1e1f23', // Dodajte # za ispravnu HEX vrednost
   borderRadius: '8px',
   padding: '20px',
   pt: '40px',
   pb: '40px',
+  boxShadow: 6
 }}>
   <Grid container spacing={2} alignItems="center">
     <Grid item xs={12} md={6}>
-      <Typography variant="h5" sx={{ color: 'black', mb: 3 }}>Voting duration (in minutes)</Typography>
+      <Typography variant="h5" sx={{ color: 'white', mb: 3 }}>Voting duration (in minutes)</Typography>
       <Box sx={{ width: '100%', pr: 2 }}>
         <InputSlider onSliderChange={handleSliderChange}/>
-        <FormControlLabel
-        control={
-          <Checkbox  sx={{ mt: '30px' ,
-            color: '#ff007a', // Uniswap ljubičasta za CheckBox
-            '&.Mui-checked': {
-              color: '#e60072', // Tamnija nijansa kada je CheckBox označen
-            },
-            '& svg': {
-              fontSize: '2rem', // Veća ikona za CheckBox
-            }
-          }}
-          checked={showResults}
-          onChange={handleChange}
-          name="showResults"
-          />
-        }
-        label={<Typography sx={{ fontSize: '1.2rem',color:'black', mt: '30px'  }}>Allow voters to see current results</Typography>}
+       
+        <Box
+  sx={{
+    '&:hover': {
+      '& .MuiCheckbox-root': {
+        color: 'white', // Change checkbox color to white on hover
+      },
+      '& .label-text': {
+        color: 'white', // Change label text color to white on hover
+      },
+    },
+  }}
+>
+  <FormControlLabel
+    control={
+      <Checkbox
         sx={{
-          mb: 2,
-          width: '100%',
-          justifyContent: 'center', // Centriranje label teksta sa Checkbox-om
+          mt: '30px',
+          color: '#ff007a', // Uniswap ljubičasta za CheckBox
+          '&.Mui-checked': {
+            color: '#e60072', // Tamnija nijansa kada je CheckBox označen
+          },
+          '& svg': {
+            fontSize: '3rem', // Veća ikona za CheckBox
+          }
         }}
+        checked={showResults}
+        onChange={handleChange}
+        name="showResults"
       />
+    }
+    label={
+      <Typography
+        className="label-text"
+        sx={{
+          fontSize: '1.4rem',
+          color: '#909090',
+          mt: '30px',
+        }}
+      >
+        Allow voters to see current results
+      </Typography>
+    }
+    sx={{
+      mb: 2,
+      width: '100%',
+      justifyContent: 'center', // Centriranje label teksta sa Checkbox-om
+    }}
+  />
+      </Box>   {/*checkbox*/}
       </Box>
     </Grid>
     <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 1.25 }}>
@@ -543,46 +591,43 @@ useEffect(() => {
    </Grid>
 </Container>
 
-<Box sx={{ width: '100%', maxWidth: '90%', display: 'flex', justifyContent: 'center', color: 'black', fontSize: '20px' , mb:'20px'}}>
+<Box sx={{ width: '100%', maxWidth: '90%', display: 'flex', justifyContent: 'center', color: 'white', fontSize: '2rem' , mb:'20px'}}>
    {Title}
 </Box>
 
 
 
                 {/* Prva tabela u svom Container-u */}
-                <Box sx={{ width: '100%', maxWidth: '90%', display: 'flex', justifyContent: 'center',color:'black' }}>
-               
-   
-
-    <TableContainer component={Paper} sx={{ background: 'white', borderRadius: '8px', boxShadow: 6, padding: '20px', width: '100%' }}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Index</TableCell>
-            <TableCell>Candidate Name</TableCell>
-            <TableCell>Vote Count</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody sx={{
-                    '& .MuiTableRow-root:nth-of-type(odd)': {
-                        backgroundColor: '#f3e5f5', // lagana ljubičasta
-                    },
-                    '& .MuiTableRow-root:nth-of-type(even)': {
-                        backgroundColor: '#f7f7f7', // lagana sivkasta
-                    },
-                }}>
-          {candidates.map((candidate, index) => (
-            <TableRow key={index}>
-              <TableCell>{index}</TableCell>
-              <TableCell>{candidate.name}</TableCell>
-              <TableCell>{candidate.voteCount}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+                <Box sx={{ width: '100%', maxWidth: '95%', display: 'flex', justifyContent: 'center', color: '#1e1f23',boxShadow: 6 }}>
+    <TableContainer component={Paper} sx={{ background: '#1e1f23', borderRadius: '8px', boxShadow: 6, padding: '20px', width: '100%',borderRadius: '10px'}}>
+        <Table sx={{ minWidth: 650, fontSize: '2rem',borderRadius: '10px'}}> {/* Podesi veličinu fonta ovde */}
+            <TableHead>
+                <TableRow>
+                    <TableCell sx={{ fontSize: '1.5rem',color:'#909090' }}>Index</TableCell>
+                    <TableCell sx={{ fontSize: '1.5rem',color:'#909090' }}>Candidate Name</TableCell>
+                    <TableCell sx={{ fontSize: '1.5rem',color:'#909090' }}>Vote Count</TableCell>
+                </TableRow>
+            </TableHead>
+            <TableBody sx={{
+                '& .MuiTableRow-root:nth-of-type(odd)': {
+                    backgroundColor: '#cccccc', // lagana ljubičasta
+                },
+                '& .MuiTableRow-root:nth-of-type(even)': {
+                    backgroundColor: '#AAA', // lagana sivkasta
+                },fontSize: '5rem',borderRadius: '10px'
+            }}>
+                {candidates.map((candidate, index) => (
+                    <TableRow key={index}>
+                        <TableCell sx={{ fontSize: '1.5rem' }}>{index}</TableCell>
+                        <TableCell sx={{ fontSize: '1.5rem' }}>{candidate.name}</TableCell>
+                        <TableCell sx={{ fontSize: '1.5rem' }}>{candidate.voteCount}</TableCell>
+                    </TableRow>
+                ))}
+            </TableBody>
+        </Table>
     </TableContainer>
-     </Box>
-     <Box sx={{ width: '100%', maxWidth: '90%', display: 'flex', justifyContent: 'center', color: 'black', fontSize: '20px' , mb:'20px',mt:'20px'}}>
+</Box>
+     <Box sx={{ width: '100%', maxWidth: '90%', display: 'flex', justifyContent: 'center', color: 'white', fontSize: '2rem' , mb:'20px',mt:'20px'}}>
     Remaining time: {remainingTime}
 </Box>
                 </Box>
