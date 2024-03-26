@@ -286,10 +286,19 @@ useEffect(() => {
     
     
         const handleChange = (e) => {
-          setShowResults(e.target.checked);
-          console.log("Checkbox changed:", e.target.checked);
+          const checked = e.target.checked;
+          setShowResults(checked);
+          localStorage.setItem('showResults', JSON.stringify(checked));
       };
-          
+      useEffect(() => {
+        const showResultsLocalStorage = localStorage.getItem('showResults');
+        console.log("showResultsLocalStorage:", showResultsLocalStorage); // Provjerite da li je pročitana vrijednost iz lokalnog skladišta
+        if (showResultsLocalStorage !== null) {
+          const parsedShowResults = JSON.parse(showResultsLocalStorage);
+          console.log("parsedShowResults:", parsedShowResults); // Provjerite parsiranu vrijednost iz lokalnog skladišta
+          setShowResults(parsedShowResults);
+        }
+      }, []);
     
     //   useEffect(() => {
     //     const fetchDataFromContract = async () => {

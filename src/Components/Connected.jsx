@@ -3,7 +3,7 @@ import React, { useState,useEffect } from "react";
 import { Radio, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Typography } from '@mui/material';
 
 
-const Connected = ({ account, candidates, remainingTime, voteFunction, showButton, votingStatus,Title, isAdmin,showResults }) => {
+const Connected = ({ account, candidates, remainingTime, voteFunction, showButton, votingStatus,Title, isAdmin,showResults,canVote }) => {
     const [selectedCandidate, setSelectedCandidate] = useState('');
 
     const handleRadioChange = (event) => {
@@ -32,11 +32,18 @@ useEffect(() => {
         width: '100vw'
     };
 
+    const [showResultsLocal, setShowResultsLocal] = useState(() => {
+        // Uzimanje vrednosti iz localStorage-a prilikom inicijalizacije
+        const showResultsLocalStorage = localStorage.getItem('showResults');
+        return showResultsLocalStorage ? JSON.parse(showResultsLocalStorage) : showResults;
+    });
+
 
     useEffect(() => {
-        console.log("showResults prop in Connected:", showResults);
-      }, [showResults]);
-
+        console.log("showResults prop in Connected:", showResultsLocal);
+        // Čuvanje vrednosti u localStorage-u
+        localStorage.setItem('showResults', JSON.stringify(showResultsLocal));
+    }, [showResultsLocal]);
     return (
         <div style={backgroundStyle} className="connected-container">
         
@@ -60,8 +67,12 @@ useEffect(() => {
             <TableRow>
                 <TableCell align="center" sx={{ fontSize: '0.875rem',color:'white' }}>Index</TableCell>
                 <TableCell align="center" sx={{ fontSize: '0.875rem' ,color:'white'}}>Candidate name</TableCell>
-                {showResults && <TableCell align="center" sx={{ fontSize: '0.875rem',color:'white' }}>Votes</TableCell>}
-                <TableCell align="center" sx={{ fontSize: '0.875rem',color:'white' }}>Vote</TableCell>
+                {showResultsLocal && <TableCell align="center" sx={{ fontSize: '0.875rem',color:'white' }}>Votes</TableCell>}
+                {!isVotingFinished && !showButton &&(
+            // Ako niti jedan od gore navedenih uvjeta nije istinit, prikazujemo "Vote"
+            <TableCell align="center" sx={{ fontSize: '0.875rem',color:'white' }}>Vote</TableCell>
+        )}
+
             </TableRow>
         </TableHead>
         <TableBody sx={{
@@ -82,16 +93,22 @@ useEffect(() => {
                 <TableRow key={index}>
                     <TableCell align="center">{candidate.index}</TableCell>
                     <TableCell align="center">{candidate.name}</TableCell>
-                    {showResults && <TableCell align="center">{candidate.voteCount}</TableCell>}
+                    {showResultsLocal && <TableCell align="center">{candidate.voteCount}</TableCell>}
                     <TableCell align="center">
-                        <Radio
-                            checked={selectedCandidate === candidate.index.toString()}
-                            onChange={handleRadioChange}
-                            value={candidate.index.toString()}
-                            name="radio-buttons"
-                            sx={{ '& .MuiSvgIcon-root': { fontSize: '1.25rem' } }} // Prilagodite veličinu ikone Radio button-a ako je potrebno
-                        />
-                    </TableCell>
+    {!isVotingFinished && !showButton &&( // Provjera je li glasanje završeno ili je korisnik već glasao ili je korisnik administrator
+        // Ako je bilo koji od gore navedenih uvjeta istinit, ne prikazujemo Radio gumb
+        
+     
+        // Inače prikazujemo Radio gumb za glasanje
+        <Radio
+            checked={selectedCandidate === candidate.index.toString()}
+            onChange={handleRadioChange}
+            value={candidate.index.toString()}
+            name="radio-buttons"
+            sx={{ '& .MuiSvgIcon-root': { fontSize: '1.25rem', color:'#ff007a' } }}
+        />
+    )}
+</TableCell>
                 </TableRow>
             ))}
         </TableBody>
@@ -113,7 +130,7 @@ useEffect(() => {
             borderRadius: '16px', // Blago zaobljeni uglovi
             backgroundColor: '#ff007a', // Specifična ljubičasta boja
             '&:hover': {
-                backgroundColor: '#e60072', // Tamnija nijansa za hover efekat
+                backgroundColor: '#463346', // Tamnija nijansa za hover efekat
             },
         }}>
             Vote

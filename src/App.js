@@ -414,7 +414,7 @@ async function getVoters() {
                             votingStatus={votingStatus}
                             Title={votingTitle}
                             showResults={showResults}
-                            
+                
                         />
                     )}
                 </>
