@@ -1,6 +1,6 @@
 
 import React, { useState,useEffect } from "react";
-import { Radio, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Typography } from '@mui/material';
+import { Radio, Table, TableBody, TableCell, TableContainer,Box, TableHead, TableRow, Paper, Button, Typography } from '@mui/material';
 
 
 const Connected = ({ account, candidates, remainingTime, voteFunction, showButton, votingStatus,Title, isAdmin,showResults,canVote }) => {
@@ -63,16 +63,19 @@ useEffect(() => {
     }}
 >
     <Table aria-label="candidates table" size="small"> {/* Dodato size="small" za manje redove */}
-        <TableHead sx={{backgroundColor:'1e1f23'}}>
+        <TableHead sx={{backgroundColor:'#f7f7f7'}}>
             <TableRow>
-                <TableCell align="center" sx={{ fontSize: '0.875rem',color:'white' }}>Index</TableCell>
-                <TableCell align="center" sx={{ fontSize: '0.875rem' ,color:'white'}}>Candidate name</TableCell>
-                {showResultsLocal && <TableCell align="center" sx={{ fontSize: '0.875rem',color:'white' }}>Votes</TableCell>}
-                {!isVotingFinished && !showButton &&(
+                
+                <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Index</TableCell>
+                {showResultsLocal && showButton && (<Box sx={{ width: 10, height: 48 }}></Box> )}
+                <TableCell align="center" sx={{ fontSize: '1.2rem' , color:'black'}}>Candidate name</TableCell>
+                {showResultsLocal && <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Votes</TableCell>}
+                {!isVotingFinished && !showButton && (
             // Ako niti jedan od gore navedenih uvjeta nije istinit, prikazujemo "Vote"
-            <TableCell align="center" sx={{ fontSize: '0.875rem',color:'white' }}>Vote</TableCell>
-        )}
-
+            <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Vote</TableCell>
+        ) }
+        {!showResultsLocal && showButton && (<Box sx={{ width: 84, height: 48 }}></Box> )}
+        {showResultsLocal && showButton && (<Box sx={{ width: 5, height: 48 }}></Box> )}
             </TableRow>
         </TableHead>
         <TableBody sx={{
@@ -92,6 +95,7 @@ useEffect(() => {
             {candidates.map((candidate, index) => (
                 <TableRow key={index}>
                     <TableCell align="center">{candidate.index}</TableCell>
+                    {showResultsLocal && showButton && (<Box sx={{ width: 10, height: 48 }}></Box> )}
                     <TableCell align="center">{candidate.name}</TableCell>
                     {showResultsLocal && <TableCell align="center">{candidate.voteCount}</TableCell>}
                     <TableCell align="center">
