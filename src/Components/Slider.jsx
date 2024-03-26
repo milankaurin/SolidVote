@@ -8,9 +8,9 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { styled } from '@mui/material/styles';
 
 const Input = styled(MuiInput)({
-  width: 68,
+  width: 50,
   '& input': {
-    color: '#ff007a', // Uniswap ljubičasta za tekst unutar inputa
+    color: 'white', // Uniswap ljubičasta za tekst unutar inputa
   },
   // Uklonite stilove za '.Mui-focused' ako ste ih ranije dodali za outline
   '&:hover:not(.Mui-disabled):before': {

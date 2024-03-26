@@ -370,7 +370,7 @@ useEffect(() => {
   ADMIN PANEL
 </Typography>
 
-<Container maxWidth="lg" sx={{ marginBottom: '50px', background: '#1e1f23', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
+<Container maxWidth="lg" sx={{ marginBottom: '50px', background: '#222329', borderRadius: '11px', boxShadow: 6, padding: '20px' }}>
 <TextField
   label="Enter voting topic here"
   variant="outlined"
@@ -425,7 +425,7 @@ useEffect(() => {
           </Box>
         ))}
       </Container>
-      <Container maxWidth="lg" sx={{ marginBottom: '35px', background: '#1e1f23', borderRadius: '8px', boxShadow: 6, padding: '20px' }}>
+      <Container maxWidth="lg" sx={{ marginBottom: '35px', background: '#222329', borderRadius: '11px', boxShadow: 6, padding: '20px' }}>
         <Typography variant="h5" sx={{ color: 'white', marginBottom: '20px', textAlign: 'center', fontWeight: '500', fontFamily: "'Robot', sans-serif", fontSize: '2rem' }}>
           Enter addresses of eligible voters here
         </Typography>
@@ -490,12 +490,12 @@ useEffect(() => {
     
     <Container maxWidth="lg" sx={{
   marginBottom: '35px',
-  background: '#1e1f23', // Dodajte # za ispravnu HEX vrednost
-  borderRadius: '8px',
+  background: '#1c1c1c', // Dodajte # za ispravnu HEX vrednost
+  borderRadius: '11px',
   padding: '20px',
   pt: '40px',
   pb: '40px',
-  boxShadow: 6
+  boxShadow: 0
 }}>
   <Grid container spacing={2} alignItems="center">
     <Grid item xs={12} md={6}>
@@ -507,10 +507,10 @@ useEffect(() => {
   sx={{
     '&:hover': {
       '& .MuiCheckbox-root': {
-        color: 'white', // Change checkbox color to white on hover
+        color: '#ff007a', // Change checkbox color to white on hover
       },
       '& .label-text': {
-        color: 'white', // Change label text color to white on hover
+        color: '#ff007a', // Change label text color to white on hover
       },
     },
   }}
@@ -520,12 +520,12 @@ useEffect(() => {
       <Checkbox
         sx={{
           mt: '30px',
-          color: '#ff007a', // Uniswap ljubičasta za CheckBox
+          color: 'white', // Uniswap ljubičasta za CheckBox
           '&.Mui-checked': {
             color: '#e60072', // Tamnija nijansa kada je CheckBox označen
           },
           '& svg': {
-            fontSize: '3rem', // Veća ikona za CheckBox
+            fontSize: '2rem', // Veća ikona za CheckBox
           }
         }}
         checked={showResults}
@@ -538,7 +538,7 @@ useEffect(() => {
         className="label-text"
         sx={{
           fontSize: '1.4rem',
-          color: '#909090',
+          color: 'white',
           mt: '30px',
         }}
       >
@@ -558,9 +558,9 @@ useEffect(() => {
       <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center', pl: 2 }}>
         {/* Start Voting Button */}
         <Button variant="contained" onClick={startVoting} disabled={loading} sx={{
-          height: '56px',
-          width: '80%',
-          fontSize: '1rem',
+          height: '65px',
+          width: '85%',
+          fontSize: '1.2rem',
           fontWeight: 'bold',
           mb: 2,
           borderRadius: '12px', // Manje zaobljeni uglovi
@@ -573,9 +573,9 @@ useEffect(() => {
         </Button>
         {/* Stop Voting Button */}
         <Button variant="contained" color="error" onClick={stopVoting} disabled={loading} sx={{
-          height: '56px',
-          width: '80%',
-          fontSize: '1rem',
+          height: '65px',
+          width: '85%',
+          fontSize: '1.2rem',
           fontWeight: 'bold',
           borderRadius: '12px', // Manje zaobljeni uglovi
           backgroundColor: '#CCC', // Sivkasta boja za Stop dugme
@@ -591,36 +591,38 @@ useEffect(() => {
    </Grid>
 </Container>
 
-<Box sx={{ width: '100%', maxWidth: '90%', display: 'flex', justifyContent: 'center', color: 'white', fontSize: '2rem' , mb:'20px'}}>
+<Box sx={{ width: '100%', maxWidth: '90%', display: 'flex', justifyContent: 'center', color: 'white', fontSize: '2rem' , mb:'20px', fontFamily: 'Roboto, sans-serif' }}>
    {Title}
 </Box>
 
 
 
                 {/* Prva tabela u svom Container-u */}
-                <Box sx={{ width: '100%', maxWidth: '95%', display: 'flex', justifyContent: 'center', color: '#1e1f23',boxShadow: 6 }}>
-    <TableContainer component={Paper} sx={{ background: '#1e1f23', borderRadius: '8px', boxShadow: 6, padding: '20px', width: '100%',borderRadius: '10px'}}>
+                <Box sx={{ width: '100%', maxWidth: '95%', display: 'flex', justifyContent: 'center', color: '#f7f7f7',boxShadow: 6 }}>
+    <TableContainer component={Paper} sx={{ background: '#f7f7f7', borderRadius: '8px', boxShadow: 6, padding: '20px', width: '100%',borderRadius: '10px'}}>
         <Table sx={{ minWidth: 650, fontSize: '2rem',borderRadius: '10px'}}> {/* Podesi veličinu fonta ovde */}
             <TableHead>
                 <TableRow>
-                    <TableCell sx={{ fontSize: '1.5rem',color:'#909090' }}>Index</TableCell>
-                    <TableCell sx={{ fontSize: '1.5rem',color:'#909090' }}>Candidate Name</TableCell>
-                    <TableCell sx={{ fontSize: '1.5rem',color:'#909090' }}>Vote Count</TableCell>
+                    <TableCell align='center' sx={{ fontSize: '1.5rem',color:'black' }}>Index</TableCell>
+                    <Box sx={{ width: 5, height: 48 }}></Box>
+                    <TableCell align='center' sx={{ fontSize: '1.5rem',color:'black' }}>Candidate Name</TableCell>
+                    <TableCell align='center' sx={{ fontSize: '1.5rem',color:'black' }}>Vote Count</TableCell>
                 </TableRow>
             </TableHead>
             <TableBody sx={{
                 '& .MuiTableRow-root:nth-of-type(odd)': {
-                    backgroundColor: '#cccccc', // lagana ljubičasta
+                    backgroundColor: '#f3e5f5', // lagana ljubičasta
                 },
                 '& .MuiTableRow-root:nth-of-type(even)': {
-                    backgroundColor: '#AAA', // lagana sivkasta
+                    backgroundColor: '#f7f7f7', // lagana sivkasta #CCC f7f7f7
                 },fontSize: '5rem',borderRadius: '10px'
             }}>
                 {candidates.map((candidate, index) => (
                     <TableRow key={index}>
-                        <TableCell sx={{ fontSize: '1.5rem' }}>{index}</TableCell>
-                        <TableCell sx={{ fontSize: '1.5rem' }}>{candidate.name}</TableCell>
-                        <TableCell sx={{ fontSize: '1.5rem' }}>{candidate.voteCount}</TableCell>
+                        <TableCell align='center' sx={{ fontSize: '1.5rem' }}>{index}</TableCell>
+                        <Box sx={{ width: 60, height: 48 }}></Box>
+                        <TableCell align='center' sx={{ fontSize: '1.5rem' }}>{candidate.name}</TableCell>
+                        <TableCell align='center' sx={{ fontSize: '1.5rem' }}>{candidate.voteCount}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>
