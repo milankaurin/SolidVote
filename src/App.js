@@ -1,10 +1,10 @@
 
-//IMPORTOVANJE neophodnih modula i komponenata 
 
-import React, { useState, useEffect } from 'react';                 //React hooks - koriste se za upravljanje stanjem i životnim ciklusom komponente
+
+import React, { useState, useEffect } from 'react';                
 import { ethers } from 'ethers';                                    //Biblioteka koja omogućava komunikaciju sa blockchainom
-import { contractAbi, contractAddress } from './Constant/constant'; //Konstante importovane, adresa ugovora i ABI (Application Binary Interface)
-import Login from './Components/Login';                             //Komponente koje služe za upravljanje različitim delovima interfejsa
+import { contractAbi, contractAddress } from './Constant/constant'; 
+import Login from './Components/Login';                             
 import Connected from './Components/Connected';
 import AdminPanel from './Components/AdminPanel';
 import './App.css';
@@ -15,23 +15,21 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 
 
-//Provider - omogućava čitanje podataka sa blockchaina. Signer - omogućava slanje transakcija    
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
 
-//useState - hook koji definiše pojedinačno stanje i funkciju koja se koristi za ažuriranje tog stanja (SET)
 
 function App() {    
     const [provider, setProvider] = useState(null);  
-    const [account, setAccount] = useState(null);           //čuva adresu povezanog korisnika i ažurira je kada se promeni nalog
-    const [isConnected, setIsConnected] = useState(false);  //vrednost (bool) koji govori da li je korisnik povezan preko MetaMask novčanika
-    const [votingStatus, setVotingStatus] = useState(true); //označava da li je trenutno aktivno glasanje i ažurira stanje
-    const [remainingTime, setRemainingTime] = useState(''); //čuva informaciju o preostalom vremenu i ažurira je
-    const [candidates, setCandidates] = useState([]);       //sadrži informacije o listi kandidata i ažurira ih
-    const [number, setNumber] = useState('');               //čuvanje indexa odabranog kandidata
-    const [canVote, setCanVote] = useState(true);           //označava da li trenutni korisnik ima pravo da glasa i menja tu dozvolu
-    const [isOwner, setIsOwner] = useState(false);          //označava da li je trenutni korisnik vlasnik (owner ugovora)
+    const [account, setAccount] = useState(null);           
+    const [isConnected, setIsConnected] = useState(false); 
+    const [votingStatus, setVotingStatus] = useState(true); 
+    const [remainingTime, setRemainingTime] = useState('');
+    const [candidates, setCandidates] = useState([]);       
+    const [number, setNumber] = useState('');               
+    const [canVote, setCanVote] = useState(true);           
+    const [isOwner, setIsOwner] = useState(false);          
     const[textButton,setTextButton]=useState('Connect');
     const [isAddressExpanded, setIsAddressExpanded] = useState(false);
     const [votingTitle, setvotingTitle] = useState('');
@@ -97,13 +95,13 @@ function App() {
         }
     }
     
-    // Pretvaranje sekundi u sati, minute i sekunde za prikaz
+    
     const hours = Math.floor(remainingSeconds / 3600);
     const minutes = Math.floor((remainingSeconds % 3600) / 60);
     const seconds = remainingSeconds % 60;
-    // PRVI useEffect hook - 
+   
 
-    useEffect(() => {   //zadužen za promenu trenutnog naloga u MetaMask-u
+    useEffect(() => {  
         if (window.ethereum) {
             window.ethereum.on('accountsChanged', handleAccountsChanged);
            // connectToMetamask();
@@ -116,9 +114,9 @@ function App() {
         };
     }, []);
 
-    // DRUGI useEffect hook
+    
 
-    useEffect(() => {   // reaguje na promene u account stanju
+    useEffect(() => {   
         if (account) {
             checkIfOwner();
             getCandidates();
@@ -130,7 +128,6 @@ function App() {
         }
     }, [account]);
 
-   // Proverava da li je trenutno povezani korisnik vlasnik pametnog ugovora. 
     const checkIfOwner = async () => {
         try {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -145,7 +142,6 @@ function App() {
         }
     };
 
-    //Omogućava trenutnom korisniku da glasa za odabranog kandidata.
     async function vote(index) {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
@@ -163,14 +159,13 @@ function App() {
 
   
   useEffect(() => {
-    if (isConnected) { //<Button variant="contained" onClick= {props.connectWallet}
+    if (isConnected) { 
       setTextButton("Disconnect");
     } else {
       setTextButton("Connect");
     }
   }, [isConnected]);
 
-  // Proverava da li trenutni korisnik može da glasa u trenutnoj sesiji glasanja.
   async function checkcanVote() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
@@ -181,23 +176,17 @@ function App() {
         signer
     );
 
-    // Dohvata adresu trenutnog korisnika
     const userAddress = await signer.getAddress();
 
-    // Dohvata ID sesije u kojoj je korisnik poslednji put glasao
     const sessionVoted = await contractInstance.lastVotedSession(userAddress);
 
-    // Dohvata trenutni ID sesije glasanja
     const currentSession = await contractInstance.votingSessionId();
 
-    // Proverava da li je korisnik već glasao u trenutnoj sesiji
     const hasVoted = sessionVoted.toString() >= currentSession.toString();
 
-    // Postavlja stanje u React komponenti na osnovu toga da li korisnik može da glasa
     setCanVote(hasVoted);
 }
 
-  //Preuzimanje liste kandidata iz pametnog ugovora
   async function getCandidates() {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
@@ -216,7 +205,6 @@ function App() {
       setCandidates(formattedCandidates);
   }
 
-  //Proverava da li je glasanje trenutno aktivno
   async function getCurrentStatus() {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
@@ -261,7 +249,6 @@ async function getVoters() {
 }
 
 
-  //Uzima informaciju o preostalom vremenu iz ugovora i parsira ga
 
   async function getRemainingTime() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -269,7 +256,6 @@ async function getVoters() {
     const signer = provider.getSigner();
     const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
     const timeInSeconds = await contractInstance.getRemainingTime();
-    //prevođenje vremena u sate, minute i sekunde
     const time = parseInt(timeInSeconds); 
     const hours = Math.floor(time / 3600);
     const minutes = Math.floor((time % 3600) / 60);
@@ -278,7 +264,6 @@ async function getVoters() {
       setRemainingTime(`${hours}h ${minutes}m ${seconds}s`); }
       const timeString = `${hours}h ${minutes}m ${seconds}s`;
 
-  //Povezivanje aplikacije sa MetaMask novčanikom korisnika, traži od njega dozvolu za pristup
 
   const connectToMetamask = async () => {
         if (window.ethereum) {
@@ -298,7 +283,6 @@ async function getVoters() {
             console.error("Metamask is not detected in the browser");
         } };
 
-    //Reagovanje na promenu naloga u MetaMask novčaniku
 
     const handleAccountsChanged = (accounts) => {
         if (accounts.length > 0) {
@@ -312,11 +296,8 @@ async function getVoters() {
 
 
         const disconnectMetamask = () => {
-            // Resetovanje lokalnog stanja aplikacije koje prati povezanost sa MetaMask novčanikom
             setIsConnected(false);
             setAccount(null);
-            // Dodatno, ovde možete resetovati i druge delove stanja koji zavise od povezanosti sa novčanikom
-            // Na primer, resetovanje stanja povezanog sa pravima glasa, izabranim kandidatima, itd.
         
             console.log("Metamask is disconnected from the app. Please also disconnect in MetaMask if needed.");
         };
@@ -353,17 +334,17 @@ async function getVoters() {
       <Chip
       label={isAddressExpanded ? account : formatAddress(account)}
       color="primary"
-      onClick={toggleAddress} // Dodajte onClick event
+      onClick={toggleAddress} 
       sx={{
           height: '46px',
           marginRight: '10px',
-          backgroundColor: '#ff007a', // Uniswap ljubičasta
+          backgroundColor: '#ff007a', 
           color: 'white',
           borderRadius: '12px',
           fontSize: '0.875rem',
-          cursor: 'pointer', // Dodajte pokazivač cursor kako bi korisnik znao da je klikabilno
+          cursor: 'pointer', 
           '&:hover': {
-              backgroundColor: '#463346', // Tamnija ljubičasta/sivlja boja pri prelasku mišem
+              backgroundColor: '#463346', 
           },
       }}
   />
@@ -378,21 +359,21 @@ async function getVoters() {
         fontSize: '1rem',
         fontWeight: 'bold',
         borderRadius: '12px',
-        backgroundColor: '#323538', // Zadržava se siva boja kao osnovna
+        backgroundColor: '#323538', 
         color: 'f2f2f2',
-        '&:hover': { backgroundColor: '#AAA', color:'dimgray' }, // Tamnija siva pri prelasku mišem
+        '&:hover': { backgroundColor: '#AAA', color:'dimgray' }, 
     }}>
         {textButton}
     </Button>
 </div>
 
         </header>
-            {isConnected ? (   //Ako je korisnik povezan idi dalje u logiku, ako nije prikaži Login Panel
+            {isConnected ? (   
                 <>
                 
                    
                     
-                    {isOwner ? (            //ako je owner povezan, prikaži AdminPanel, u suprotnom Connected panel
+                    {isOwner ? (            
                        <AdminPanel
                        signer={signer}
                        voters={voters}
@@ -400,11 +381,11 @@ async function getVoters() {
                        showResults={showResults}
                        remainingTime={timeString}
                        Title={votingTitle}
-                       setShowResults={setShowResults} // Ako je ovo ispravan prop
+                       setShowResults={setShowResults} 
                      />
                      
                     ) : (
-                        <Connected      //postavi stanja
+                        <Connected      
                             account={account}
                             candidates={candidates}
                             remainingTime={timeString}

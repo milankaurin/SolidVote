@@ -7,33 +7,32 @@ const Login = (props) => {
     const [opacity, setOpacity] = useState(1);
 
     const texts = [
-        "Dobrodošli na decentralizovanu, sigurnu i anonimnu aplikaciju za glasanje", // Srpski
-        "Welcome to a decentralized, secure, and anonymous voting application", // Engleski
-        "Bienvenido a una aplicación de votación descentralizada, segura y anónima", // Španski
-        "Bienvenue dans une application de vote décentralisée, sécurisée et anonyme", // Francuski
-        "Willkommen bei einer dezentralen, sicheren und anonymen Wahl-App", // Nemački
-        "欢迎使用我们的去中心化、安全和匿名投票应用程序，让您参与并表达您的声音！ "  , // Kineski
-        "Добро пожаловать в децентрализованное, безопасное приложение для голосования", // Ruski
-        "Benvenuti in un'applicazione di voto decentralizzata, sicura e anonima", // Italijanski
-        "ようこそ、分散型で安全、匿名の投票アプリへ。あなたの声を聞かせてください！"  , // Japanski
-    ];
-
+        "Dobrodošli na decentralizovanu, sigurnu i anonimnu aplikaciju za glasanje", 
+        "Welcome to a decentralized, secure, and anonymous voting application", 
+        "Bienvenido a una aplicación de votación descentralizada, segura y anónima", 
+        "Bienvenue dans une application de vote décentralisée, sécurisée et anonyme", 
+        "Willkommen bei einer dezentralen, sicheren und anonymen Wahl-App", 
+        "欢迎使用我们的去中心化、安全和匿名投票应用程序，让您参与并表达您的声音！ "  ,
+        "Добро пожаловать в децентрализованное, безопасное приложение для голосования", 
+        "Benvenuti in un'applicazione di voto decentralizzata, sicura e anonima", 
+        "ようこそ、分散型で安全、匿名の投票アプリへ。あなたの声を聞かせてください！"  , 
+    ]
     useEffect(() => {
       let currentTextIndex = 0;
       setCurrentText(texts[currentTextIndex]);
   
       const changeText = () => {
-          setOpacity(0); // Počinje efekat nestajanja
+          setOpacity(0); 
           setTimeout(() => {
               currentTextIndex = (currentTextIndex + 1) % texts.length;
               setCurrentText(texts[currentTextIndex]);
-              setOpacity(1); // Počinje efekat pojavljivanja
-          }, 1000); // 1 sekunda pauze pre nego što se tekst promeni (duži prelaz)
+              setOpacity(1);
+          }, 1000); 
       };
   
-      const intervalId = setInterval(changeText, 2500); // Menja tekst svakih 5 sekundi (uključujući 1 sekundu animacije)
+      const intervalId = setInterval(changeText, 2500); 
   
-      return () => clearInterval(intervalId); // Čišćenje intervala
+      return () => clearInterval(intervalId); 
         }, []);
 
 
@@ -49,13 +48,13 @@ const Login = (props) => {
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: 'center', 
-            justifyContent: 'center', // Ovo centriranje ce raditi za celu visinu
+            justifyContent: 'center', 
             minHeight: '400px', 
         }} className="login-container">
             <Typography
                 sx={{
                     fontSize: '3rem',
-                    fontWeight: '450', //bilo je bold
+                    fontWeight: '450', 
                     color: 'white',
                     textAlign: 'center',
                     opacity: opacity,
@@ -63,8 +62,8 @@ const Login = (props) => {
                     padding: '20px 60px', 
                     maxWidth: '90%',
                     margin: '0', 
-                    marginBottom: '10px', // Dodajemo manji razmak između teksta i dugmeta
-                    fontFamily: 'Roboto, sans-serif' // ovo nije bilo
+                    marginBottom: '10px', 
+                    fontFamily: 'Roboto, sans-serif'
                 }}
             >
                 {currentText}
@@ -80,9 +79,9 @@ const Login = (props) => {
                 backgroundColor: '#ff007a',
                 color: 'white',
                 textTransform: 'none',
-                mb: 2, // Osiguravamo prostor ispod dugmeta ako je potrebno dodatno centriranje
+                mb: 2, 
                 '&:hover': {
-                    backgroundColor: '#311c31', //311c31  //e60072
+                    backgroundColor: '#311c31', 
                 },
             }}>
                 Connect MetaMask wallet

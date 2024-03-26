@@ -33,36 +33,36 @@ useEffect(() => {
     };
 
     const [showResultsLocal, setShowResultsLocal] = useState(() => {
-        // Uzimanje vrednosti iz localStorage-a prilikom inicijalizacije
+        
         const showResultsLocalStorage = localStorage.getItem('showResults');
         return showResultsLocalStorage ? JSON.parse(showResultsLocalStorage) : showResults;
     });
 
 
-    useEffect(() => {
+    useEffect(() => {   //checkbox storing
         console.log("showResults prop in Connected:", showResultsLocal);
-        // Čuvanje vrednosti u localStorage-u
+        
         localStorage.setItem('showResults', JSON.stringify(showResultsLocal));
     }, [showResultsLocal]);
     return (
         <div style={backgroundStyle} className="connected-container">
         
         <Typography variant="h4" sx={{ color: 'white', marginBottom: '10px', textAlign: 'center',mt:'80px' }}>
-            {Title} {/* Ažurirajte ovde ako Title treba biti pozvan kao funkcija ili je dinamički prop */}
+            {Title} 
         </Typography>
     
         <TableContainer 
     component={Paper} 
     sx={{  
         background: '#1e1f23',
-        maxWidth: '70%', // Povećan maxWidth za šire zauzimanje prostora
+        maxWidth: '70%', 
         margin: '20px auto', 
         overflowX: 'auto',
         boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
         borderRadius: '10px'
     }}
 >
-    <Table aria-label="candidates table" size="small"> {/* Dodato size="small" za manje redove */}
+    <Table aria-label="candidates table" size="small"> 
         <TableHead sx={{backgroundColor:'#f7f7f7'}}>
             <TableRow>
                 
@@ -82,14 +82,14 @@ useEffect(() => {
         <TableBody sx={{
             '& .MuiTableRow-root': {
                 '& td': {
-                    padding: '6px', // Smanjeni padding za ćelije
-                    fontSize: '1.2rem', // Smanjena veličina fonta za tekst unutar ćelija
+                    padding: '6px', 
+                    fontSize: '1.2rem',
                 },
                 '&:nth-of-type(odd)': {
-                    backgroundColor: '#f3e5f5', // lagana ljubičasta
+                    backgroundColor: '#f3e5f5', 
                 },
                 '&:nth-of-type(even)': {
-                    backgroundColor: '#f7f7f7', // lagana sivkasta
+                    backgroundColor: '#f7f7f7', 
                 },
             },
         }}>
@@ -101,11 +101,7 @@ useEffect(() => {
                     <TableCell align="center">{candidate.name}</TableCell>
                     {showResultsLocal && <TableCell align="center">{candidate.voteCount}</TableCell>}
                     <TableCell align="center">
-    {!isVotingFinished && !showButton &&( // Provjera je li glasanje završeno ili je korisnik već glasao ili je korisnik administrator
-        // Ako je bilo koji od gore navedenih uvjeta istinit, ne prikazujemo Radio gumb
-        
-     
-        // Inače prikazujemo Radio gumb za glasanje
+    {!isVotingFinished && !showButton &&( 
         <Radio
             checked={selectedCandidate === candidate.index.toString()}
             onChange={handleRadioChange}
@@ -129,14 +125,14 @@ useEffect(() => {
             marginTop: '20px', 
             marginBottom: '50px', 
             display: 'block', 
-            marginX: 'auto', // Centriranje dugmeta
-            fontSize: '1.5rem', // Veća veličina fonta
-            fontWeight: 'bold', // Podebljani tekst
-            padding: '15px 30px', // Povećan prostor oko teksta (visina x širina)
-            borderRadius: '16px', // Blago zaobljeni uglovi
-            backgroundColor: '#ff007a', // Specifična ljubičasta boja
+            marginX: 'auto', 
+            fontSize: '1.5rem',
+            fontWeight: 'bold', 
+            padding: '15px 30px', 
+            borderRadius: '16px', 
+            backgroundColor: '#ff007a', 
             '&:hover': {
-                backgroundColor: '#463346', // Tamnija nijansa za hover efekat
+                backgroundColor: '#463346', 
             },
         }}>
             Vote

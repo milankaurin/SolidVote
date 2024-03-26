@@ -3,23 +3,23 @@ import { ethers } from 'ethers';
 import { contractAbi, contractAddress } from '../Constant/constant';
 import { Container, Box, Grid,Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import InputSlider from './Slider'; // Pretpostavljajući da se InputSlider nalazi u istom direktorijumu
+import InputSlider from './Slider'; 
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 const AdminPanel = ({ signer, voters,remainingTime,Title, candidates: initialCandidates, showResults, setShowResults  }) => {
     const tableRef = React.useRef(null);
-    const [votingtitle, setVotingTitle] = useState("");  //naslov!!
+    const [votingtitle, setVotingTitle] = useState("");  
     const [unosKorisnika, setUnosKorisnika] = useState(''); 
     const [isEditing, setIsEditing] = useState(false);
-    const [redoviOpcijaZaGlasanje, setRedoviOpcijaZaGlasanje] = useState([{ tekst: '' }]); //kandidati
-    const [redoviGlasaca, setRedoviGlasaca] = useState([  //voteri
+    const [redoviOpcijaZaGlasanje, setRedoviOpcijaZaGlasanje] = useState([{ tekst: '' }]); 
+    const [redoviGlasaca, setRedoviGlasaca] = useState([ 
         { tekst: '', broj: '' }
     ]);
     const [inputCandidates, setInputCandidates] = useState("");
     const [loading, setLoading] = useState(false);
-    const [votingDuration, setVotingDuration] = useState(""); // Dodato stanje za unos trajanja glasanja
+    const [votingDuration, setVotingDuration] = useState(""); 
     const [candidates, setCandidates] = useState([]); 
     const handleSliderChange = (newValue) => {
       setVotingDuration(newValue); // Pretpostavljam da želite da ažurirate votingDuration
@@ -77,31 +77,6 @@ const AdminPanel = ({ signer, voters,remainingTime,Title, candidates: initialCan
     
     
 
-    // const addCandidates = async () => {
-    //     setAction("adding");
-    //     if (!inputCandidates.trim()) {
-    //         alert("Please enter candidate names.");
-    //         return;
-    //     }
-
-    //     setLoading(true);
-    //     try {
-    //         const candidatesArray = inputCandidates.split(",");
-    //         const contract = new ethers.Contract(contractAddress, contractAbi, signer);
-
-    //         // Pozovite funkciju addCandidates iz pametnog ugovora i prosledite niz kandidata
-    //         const transaction = await contract.addCandidates(candidatesArray);
-    //         await transaction.wait();
-
-    //         alert(`Candidates added successfully.`);
-    //         setInputCandidates(""); // Resetovanje polja nakon dodavanja
-    //     } catch (error) {
-    //         console.error("Error adding candidates:", error);
-    //         alert("Failed to add candidates.");
-    //     }
-    //     setLoading(false);
-    // };
-
 
 
     
@@ -109,13 +84,13 @@ const AdminPanel = ({ signer, voters,remainingTime,Title, candidates: initialCan
     const startVoting = async () => {
         setAction("starting");
         try {
-            const durationInMinutes = parseInt(votingDuration); // Pretvorite unos u broj
+            const durationInMinutes = parseInt(votingDuration); 
             if (isNaN(durationInMinutes) || durationInMinutes <= 0) {
                 alert("Please enter a valid positive number for voting duration.");
                 return;
             }
 
-     // Priprema liste kandidata i glasača za pametni ugovor
+     //preparing lists for smart contract
         const candidateNames = redoviOpcijaZaGlasanje.filter(row => row.tekst.trim()).map(row => row.tekst);
         
          const voterAddresses = redoviGlasaca.filter(row => row.tekst.trim()).map(row => row.tekst);
@@ -229,13 +204,13 @@ useEffect(() => {
             const rows = [];
             const tableRows = tableRef.current.querySelectorAll("tr");
             tableRows.forEach((tr, index) => {
-              // Preskoči zaglavlje tabele
+             
               if (index > 0) {
                 const input = tr.querySelector("input");
                 if (input) {
                   const value = input.value;
                   if (value.trim() || index === tableRows.length - 1) {
-                    // Dodaj samo ako polje nije prazno ili je poslednje polje
+                   
                     rows.push({ id: index, tekst: value });
                   }
                 }
@@ -290,53 +265,22 @@ useEffect(() => {
           setShowResults(checked);
           localStorage.setItem('showResults', JSON.stringify(checked));
       };
-      useEffect(() => {
+      useEffect(() => {   //storing checkbox
         const showResultsLocalStorage = localStorage.getItem('showResults');
-        console.log("showResultsLocalStorage:", showResultsLocalStorage); // Provjerite da li je pročitana vrijednost iz lokalnog skladišta
+        console.log("showResultsLocalStorage:", showResultsLocalStorage); 
         if (showResultsLocalStorage !== null) {
           const parsedShowResults = JSON.parse(showResultsLocalStorage);
-          console.log("parsedShowResults:", parsedShowResults); // Provjerite parsiranu vrijednost iz lokalnog skladišta
+          console.log("parsedShowResults:", parsedShowResults); 
           setShowResults(parsedShowResults);
         }
       }, []);
     
-    //   useEffect(() => {
-    //     const fetchDataFromContract = async () => {
-    //         try {
-    //             const contract = new ethers.Contract(contractAddress, contractAbi, signer);
-    
-    //             // Dohvati listu kandidata
-    //             // const candidatesArray = await contract.getAllVotesOfCandiates();
-    //             // const initialCandidates = candidatesArray.map(candidate => ({
-    //             //     name: candidate.name,
-    //             // }));
-    //             // setRedoviOpcijaZaGlasanje(initialCandidates);
-    //             // console.log(initialCandidates);
-
-    //             // Dohvati listu glasača
-    //             const votersArray = await contract.getALLVotersAdressAndWeight();
-    //             const initialVoters = votersArray.map(voter => ({
-    //                 tekst: voter.Adresa,
-    //                 broj: voter.Poeni.toString(), // Pretpostavljamo da je broj tipa uint256
-    //             }));
-    //             setRedoviGlasaca(initialVoters);
-    
-    //             // Dohvati naslov glasanja
-    //             const votingTitle = await contract.getVotingTitle();
-    //             setVotingTitle(votingTitle);
-    //         } catch (error) {
-    //             console.error("Error fetching data from contract:", error);
-    //         }
-    //     };
-    
-    //     fetchDataFromContract();
-    // }, []);
-
+  
 
         
           return (
             <Box sx={{
-                backgroundColor: '#1c1c1c', //f0f4f8 //1c1c1c
+                backgroundColor: '#1c1c1c', 
                 minHeight: '100vh',
                 padding: '20px',
                 overflowY: 'auto',
@@ -345,8 +289,8 @@ useEffect(() => {
                 alignItems: 'center',
               }}>
                 <Box sx={{
-                  width: '100%', // Koristi celu dostupnu širinu
-                  maxWidth: '70%', // Ali ne prelazi 70% širine roditelja
+                  width: '100%', 
+                  maxWidth: '70%', 
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -354,12 +298,12 @@ useEffect(() => {
                   borderRadius: '8px',
                   padding: '20px',
                   marginBottom: '20px',
-                  overflowX: 'auto', // Omogućava horizontalno skrolovanje ako je potrebno
-                  transform: 'scale(0.75)', // Smanjuje veličinu Box-a na 90%
-                  transformOrigin: 'top center', // Postavlja origin transformacije na gornji centar
+                  overflowX: 'auto', 
+                  transform: 'scale(0.75)', 
+                  transformOrigin: 'top center',
                 }}>
                <Typography variant="h4" sx={{
-  color:'white', // Ažurirano u Uniswap ljubičastu ff007a
+  color:'white', 
   marginBottom: '40px',
   marginTop: '40px',
   textAlign: 'center',
@@ -378,15 +322,15 @@ useEffect(() => {
   onChange={handleVotingTitleChange}
   disabled={loading}
   sx={{
-    '& .MuiInputLabel-root': { color: 'white' }, // White label text
-    '& .MuiOutlinedInput-input': { color: 'white' }, // White input text
+    '& .MuiInputLabel-root': { color: 'white' },
+    '& .MuiOutlinedInput-input': { color: 'white' }, 
     minWidth: '250px',
     marginBottom: '30px',
     marginTop: '20px',
     '& .MuiOutlinedInput-root': {
-      '& fieldset': { borderColor: '#BDBDBD' }, // Suptilnija siva za granice
-      '&:hover fieldset': { borderColor: '#9E9E9E' }, // Tamnija siva na hover
-      '&.Mui-focused fieldset': { borderColor: '#ff007a' }, // Ljubičasta za fokus na okvir
+      '& fieldset': { borderColor: '#BDBDBD' }, 
+      '&:hover fieldset': { borderColor: '#9E9E9E' }, 
+      '&.Mui-focused fieldset': { borderColor: '#ff007a' }, 
     },
     '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, 
   }}
@@ -402,15 +346,15 @@ useEffect(() => {
               label={`Option ${index + 1}`}
               value={opcija.tekst}
               onChange={(event) => handleTextChange(index, event)}
-              sx={{ '& .MuiInputLabel-root': { color: 'white' }, // White label text
-              '& .MuiOutlinedInput-input': { color: 'white' }, // White input text
+              sx={{ '& .MuiInputLabel-root': { color: 'white' }, 
+              '& .MuiOutlinedInput-input': { color: 'white' }, 
                 marginRight: '10px',
                 '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: '#BDBDBD' }, // Suptilnija siva za granice
-                  '&:hover fieldset': { borderColor: '#9E9E9E' }, // Tamnija siva na hover
-                  '&.Mui-focused fieldset': { borderColor: '#ff007a' }, // Ljubičasta za fokus na okvir
+                  '& fieldset': { borderColor: '#BDBDBD' }, 
+                  '&:hover fieldset': { borderColor: '#9E9E9E' }, 
+                  '&.Mui-focused fieldset': { borderColor: '#ff007a' }, 
                 },
-                '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, // Menja boju labele u ljubičastu kada je fokusirano
+                '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' },
                 '& input': {
                   fontSize: '1.5rem'}
               }}
@@ -420,7 +364,7 @@ useEffect(() => {
                   <DeleteIcon />
               </IconButton>
             ) : (
-              <Box sx={{ width: 44, height: 48 }}></Box> // Prilagodite veličinu prema veličini DeleteIcon-a
+              <Box sx={{ width: 44, height: 48 }}></Box> 
             )}
           </Box>
         ))}
@@ -438,15 +382,15 @@ useEffect(() => {
               value={opcija.tekst}
               onChange={(event) => handleTextChangeGlasaci(index, event)}
               sx={{  
-                '& .MuiInputLabel-root': { color: 'white' }, // White label text
-                  '& .MuiOutlinedInput-input': { color: 'white' }, // White input text
+                '& .MuiInputLabel-root': { color: 'white' }, 
+                  '& .MuiOutlinedInput-input': { color: 'white' }, 
                 marginRight: '10px', flex: 3,
                 '& .MuiOutlinedInput-root': {
-                    '& fieldset': { borderColor: '#BDBDBD' }, // Suptilnija siva za granice
-                    '&:hover fieldset': { borderColor: '#9E9E9E' }, // Tamnija siva na hover
-                    '&.Mui-focused fieldset': { borderColor: '#ff007a' }, // Ljubičasta za fokus na okvir
+                    '& fieldset': { borderColor: '#BDBDBD' }, 
+                    '&:hover fieldset': { borderColor: '#9E9E9E' }, 
+                    '&.Mui-focused fieldset': { borderColor: '#ff007a' }, 
                   },
-                  '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, // Menja boju labele u ljubičastu kada je fokusirano
+                  '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, 
                   '& input': {
                     fontSize: '1.5rem'}
               }}
@@ -462,16 +406,16 @@ useEffect(() => {
                   pattern: '[0-9]*',
               }}
               sx={{
-                '& .MuiInputLabel-root': { color: 'white' }, // White label text
-                '& .MuiOutlinedInput-input': { color: 'white' }, // White input text
+                '& .MuiInputLabel-root': { color: 'white' }, 
+                '& .MuiOutlinedInput-input': { color: 'white' }, 
 
                 marginRight: '10px', flex: 0.5,
                 '& .MuiOutlinedInput-root': {
-                  '& fieldset': { borderColor: '#BDBDBD' }, // Suptilnija siva za granice
-                  '&:hover fieldset': { borderColor: '#9E9E9E' }, // Tamnija siva na hover
-                  '&.Mui-focused fieldset': { borderColor: '#ff007a' }, // Ljubičasta za fokus na okvir
+                  '& fieldset': { borderColor: '#BDBDBD' }, 
+                  '&:hover fieldset': { borderColor: '#9E9E9E' }, 
+                  '&.Mui-focused fieldset': { borderColor: '#ff007a' }, 
                 },
-                '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, // Menja boju labele u ljubičastu kada je fokusirano
+                '& .MuiInputLabel-root.Mui-focused': { color: '#ff007a' }, 
                 '& input': {
                   fontSize: '1.5rem'}
               
@@ -490,7 +434,7 @@ useEffect(() => {
     
     <Container maxWidth="lg" sx={{
   marginBottom: '35px',
-  background: '#1c1c1c', // Dodajte # za ispravnu HEX vrednost
+  background: '#1c1c1c', 
   borderRadius: '11px',
   padding: '20px',
   pt: '40px',
@@ -507,10 +451,10 @@ useEffect(() => {
   sx={{
     '&:hover': {
       '& .MuiCheckbox-root': {
-        color: '#ff007a', // Change checkbox color to white on hover
+        color: '#ff007a', 
       },
       '& .label-text': {
-        color: '#ff007a', // Change label text color to white on hover
+        color: '#ff007a', 
       },
     },
   }}
@@ -520,12 +464,12 @@ useEffect(() => {
       <Checkbox
         sx={{
           mt: '30px',
-          color: 'white', // Uniswap ljubičasta za CheckBox
+          color: 'white', 
           '&.Mui-checked': {
-            color: '#e60072', // Tamnija nijansa kada je CheckBox označen
+            color: '#e60072', 
           },
           '& svg': {
-            fontSize: '2rem', // Veća ikona za CheckBox
+            fontSize: '2rem',
           }
         }}
         checked={showResults}
@@ -548,7 +492,7 @@ useEffect(() => {
     sx={{
       mb: 2,
       width: '100%',
-      justifyContent: 'center', // Centriranje label teksta sa Checkbox-om
+      justifyContent: 'center',
     }}
   />
       </Box>   {/*checkbox*/}
@@ -563,10 +507,10 @@ useEffect(() => {
           fontSize: '1.2rem',
           fontWeight: 'bold',
           mb: 2,
-          borderRadius: '12px', // Manje zaobljeni uglovi
-          backgroundColor: '#ff007a', // Uniswap ljubičasta
+          borderRadius: '12px', 
+          backgroundColor: '#ff007a', 
           '&:hover': {
-            backgroundColor: '#463346', // Tamnija nijansa za hover efekat
+            backgroundColor: '#463346', 
           },
         }}>
           Start Voting
@@ -577,11 +521,11 @@ useEffect(() => {
           width: '85%',
           fontSize: '1.2rem',
           fontWeight: 'bold',
-          borderRadius: '12px', // Manje zaobljeni uglovi
-          backgroundColor: '#CCC', // Sivkasta boja za Stop dugme
-          color: 'black', // Crna boja teksta za bolju čitljivost
+          borderRadius: '12px',
+          backgroundColor: '#CCC', 
+          color: 'black', 
           '&:hover': {
-            backgroundColor: '#AAA', // Tamnija nijansa sive za hover efekat
+            backgroundColor: '#AAA',
           },
         }}>
           Stop Voting
@@ -597,10 +541,10 @@ useEffect(() => {
 
 
 
-                {/* Prva tabela u svom Container-u */}
+                {/*table in container */}
                 <Box sx={{ width: '100%', maxWidth: '95%', display: 'flex', justifyContent: 'center', color: '#f7f7f7',boxShadow: 6 }}>
     <TableContainer component={Paper} sx={{ background: '#f7f7f7', borderRadius: '8px', boxShadow: 6, padding: '20px', width: '100%',borderRadius: '10px'}}>
-        <Table sx={{ minWidth: 650, fontSize: '2rem',borderRadius: '10px'}}> {/* Podesi veličinu fonta ovde */}
+        <Table sx={{ minWidth: 650, fontSize: '2rem',borderRadius: '10px'}}> 
             <TableHead>
                 <TableRow>
                     <TableCell align='center' sx={{ fontSize: '1.5rem',color:'black' }}>Index</TableCell>
