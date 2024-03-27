@@ -19,7 +19,7 @@ const AdminPanel = ({ signer, voters,remainingTime,Title, candidates: initialCan
     ]);
     const [inputCandidates, setInputCandidates] = useState("");
     const [loading, setLoading] = useState(false);
-    const [votingDuration, setVotingDuration] = useState(""); 
+    const [votingDuration, setVotingDuration] = useState("30"); 
     const [candidates, setCandidates] = useState([]); 
     const handleSliderChange = (newValue) => {
       setVotingDuration(newValue); // Pretpostavljam da želite da ažurirate votingDuration
