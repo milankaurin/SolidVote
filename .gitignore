@@ -53,3 +53,4 @@ node_modules
 /coverage.json
 src/Constant/constant.js
 *.env
+src/Constant/constant.js

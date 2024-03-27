@@ -67,16 +67,16 @@ useEffect(() => {
             <TableRow>
                 
                 <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Index</TableCell>
-                {showResultsLocal && showButton && (<Box sx={{ width: 10, height: 48 }}></Box> )}
-                {showResultsLocal && (<Box sx={{ width: 5, height: 48 }}></Box> )}
+                {showResultsLocal && showButton && (<Box sx={{ width: 10, height: 30 }}></Box> )}
+                {showResultsLocal && (<Box sx={{ width: 5, height: 30 }}></Box> )}
                 <TableCell align="center" sx={{ fontSize: '1.2rem' , color:'black'}}>Candidate name</TableCell>
                 {showResultsLocal && <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Votes</TableCell>}
                 {!isVotingFinished && !showButton && (
             <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Vote</TableCell>
         ) }
-        {!showResultsLocal && showButton && (<Box sx={{ width: 84, height: 48 }}></Box> )}
-        {showResultsLocal && showButton && (<Box sx={{ width: 5, height: 48 }}></Box> )}
-        {showResultsLocal && (<Box sx={{ width: 5, height: 48 }}></Box> )}
+        {!showResultsLocal && showButton && (<Box sx={{ width: 84, height: 30 }}></Box> )}
+        {showResultsLocal && showButton && (<Box sx={{ width: 5, height: 30 }}></Box> )}
+        {showResultsLocal && (<Box sx={{ width: 0, height: 30 }}></Box> )}
             </TableRow>
         </TableHead>
         <TableBody sx={{
