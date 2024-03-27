@@ -47,7 +47,7 @@ useEffect(() => {
     return (
         <div style={backgroundStyle} className="connected-container">
         
-        <Typography variant="h4" sx={{ color: 'white', marginBottom: '10px', textAlign: 'center',mt:'80px' }}>
+        <Typography variant="h4" sx={{ color: 'white', marginBottom: '3px', textAlign: 'center',mt:'150px' }}>
             {Title} 
         </Typography>
     
@@ -67,16 +67,16 @@ useEffect(() => {
             <TableRow>
                 
                 <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Index</TableCell>
-                {showResultsLocal && showButton && (<Box sx={{ width: 10, height: 30 }}></Box> )}
-                {showResultsLocal && (<Box sx={{ width: 5, height: 30 }}></Box> )}
+                {showResultsLocal && showButton && (<Box sx={{ width: 10, height: 50 }}></Box> )}
+                {showResultsLocal && (<Box sx={{ width: 5, height: 0 }}></Box> )}
                 <TableCell align="center" sx={{ fontSize: '1.2rem' , color:'black'}}>Candidate name</TableCell>
                 {showResultsLocal && <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Votes</TableCell>}
                 {!isVotingFinished && !showButton && (
             <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Vote</TableCell>
         ) }
-        {!showResultsLocal && showButton && (<Box sx={{ width: 84, height: 30 }}></Box> )}
-        {showResultsLocal && showButton && (<Box sx={{ width: 5, height: 30 }}></Box> )}
-        {showResultsLocal && (<Box sx={{ width: 0, height: 30 }}></Box> )}
+        {!showResultsLocal && showButton && (<Box sx={{ width: 84, height: 50 }}></Box> )}
+        {showResultsLocal && showButton && (<Box sx={{ width: 5, height: 50 }}></Box> )}
+        {showResultsLocal && (<Box sx={{ width: 0, height: 0 }}></Box> )}
             </TableRow>
         </TableHead>
         <TableBody sx={{
@@ -117,13 +117,13 @@ useEffect(() => {
     </Table>
 </TableContainer>
 
-        <Typography variant="h6" sx={{fontWeight: '400', color: '#white', marginBottom: '10px', marginTop: '20px', textAlign: 'center' }}>
+        <Typography variant="h6" sx={{fontWeight: '400', color: '#white', marginBottom: '5px', marginTop: '5px', textAlign: 'center' }}>
             Remaining Time: {remainingTime}
         </Typography>
         {!isVotingFinished && !showButton && (
           <Button variant="contained" onClick={voteClick} sx={{ 
-            marginTop: '20px', 
-            marginBottom: '50px', 
+            marginTop: '10px', 
+            marginBottom: '20px', 
             display: 'block', 
             marginX: 'auto', 
             fontSize: '1.5rem',
