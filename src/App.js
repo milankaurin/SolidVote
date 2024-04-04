@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';                
 import { ethers } from 'ethers';                                    //Biblioteka koja omogućava komunikaciju sa blockchainom
-import { contractAbi, contractAddress } from './Constant/constant'; 
+import { contractAbi, contractAddress, TransferAbi,TransferAddress } from './Constant/constant'; 
 import Login from './Components/Login';                             
 import Connected from './Components/Connected';
 import AdminPanel from './Components/AdminPanel';
@@ -38,8 +38,19 @@ function App() {
         setIsAddressExpanded(!isAddressExpanded);
     };
     const [voters, setVoters] = useState([]);
+    const [kolicinaZaSlanje, setKolicinaZaSlanje] = useState("0"); // Količina ethera za slanje, u wei
+
+    const postaviKolicinuZaSlanje = (novaKolicina) => {
+        setKolicinaZaSlanje(novaKolicina);
+    };
+    
+    const [redoviGlasaca, setRedoviGlasaca] = useState();
+    // U App.js
 
 
+const updateRedoviGlasaca = (newRows) => {
+    setRedoviGlasaca(newRows);
+  };
     useEffect(() => {
         // Asinhrono dohvatite početno vreme iz ugovora prilikom montiranja komponente
         async function fetchInitialTime() {
@@ -264,7 +275,71 @@ async function getVoters() {
       setRemainingTime(`${hours}h ${minutes}m ${seconds}s`); }
       const timeString = `${hours}h ${minutes}m ${seconds}s`;
 
+     /*  const posaljiEther = async () => {
+        if (!signer || redoviGlasaca.length === 0 || kolicinaZaSlanje <= 0) {
+            console.error("Signer nije dostupan, lista glasača je prazna, ili količina za slanje nije ispravna.");
+            return;
+        }
+    
+        const contract = new ethers.Contract(TransferAddress, TransferAbi, signer);
+        
+        const recipients = redoviGlasaca.map(glasac => glasac.tekst);
+        // Ako svi primaoci treba da dobiju isti iznos, nije potrebno mapiranje za amounts
+        const totalAmountWei = ethers.utils.parseUnits((kolicinaZaSlanje * redoviGlasaca.length).toString(), "wei");
+    
+        try {
+            // Pošto svi dobijaju istu količinu, šaljemo niz istih iznosa
+            const amounts = new Array(recipients.length).fill(ethers.utils.parseUnits(kolicinaZaSlanje, "wei").toString());
+            
+            const transaction = await contract.batchTransfer(recipients, amounts, {
+                value: totalAmountWei, // Ovde šaljemo ukupan iznos
+                gasLimit: ethers.utils.hexlify(1000000) // Primer gas limita, treba ga prilagoditi
+            });
+            await transaction.wait();
+            console.log(`Uspješno poslato ${ethers.utils.formatEther(totalAmountWei)} ETH na navedene adrese.`);
+        } catch (error) {
+            console.error("Greška pri slanju ethera:", error);
+        }
+    }; */
 
+
+    const posaljiEther = async () => {
+        try {
+            // Proveravamo da li je Ethereum objekat dostupan u globalnom window objektu
+            if (!window.ethereum) throw new Error("Ethereum browser extension not available");
+            
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            await provider.send("eth_requestAccounts", []);
+            const signer = provider.getSigner();
+    
+            // Kreiranje instance ugovora sa adresom ugovora, ABI-om, i signer-om
+            const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+    
+            // Priprema adresa primatelja i iznosa u wei za slanje
+            const recipients = redoviGlasaca.map(glasac => glasac.tekst);
+            const amounts = recipients.map(() => ethers.utils.parseUnits(kolicinaZaSlanje, "ether")); // Pretpostavka da je `kolicinaZaSlanje` u etherima, konvertujemo u wei
+    
+            // Izračunavanje ukupnog iznosa za slanje
+            const totalAmountWei = amounts.reduce((total, amount) => total.add(amount), ethers.BigNumber.from(0));
+    
+            // Poziv batchTransfer funkcije sa definisanim adresama, iznosima i ukupnom vrednošću
+            const transactionResponse = await contract.batchTransfer(recipients, amounts, {
+                value: totalAmountWei, // Ovde šaljemo ukupan iznos u wei
+            });
+    
+            console.log("Transaction response:", transactionResponse);
+            console.log("Čekanje na potvrdu transakcije...");
+    
+            // Čekanje na potvrdu transakcije
+            await transactionResponse.wait();
+    
+            console.log("Transakcija potvrđena. Hash transakcije:", transactionResponse.hash);
+        } catch (error) {
+            console.error("Došlo je do greške:", error);
+        }
+    };
+    
+    
   const connectToMetamask = async () => {
         if (window.ethereum) {
             try {
@@ -381,7 +456,11 @@ async function getVoters() {
                        showResults={showResults}
                        remainingTime={timeString}
                        Title={votingTitle}
+                       SlanjaNaAdreseGlasace= {posaljiEther}
                        setShowResults={setShowResults} 
+                       postaviKolicinuZaSlanje={postaviKolicinuZaSlanje} 
+                       redoviGlasaca={redoviGlasaca}
+                       updateRedoviGlasaca={updateRedoviGlasaca} 
                      />
                      
                     ) : (
@@ -395,6 +474,7 @@ async function getVoters() {
                             votingStatus={votingStatus}
                             Title={votingTitle}
                             showResults={showResults}
+                            
                 
                         />
                     )}

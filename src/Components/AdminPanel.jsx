@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-const AdminPanel = ({ signer, voters,remainingTime,Title, candidates: initialCandidates, showResults, setShowResults  }) => {
+const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialCandidates, showResults,  setShowResults, SlanjaNaAdreseGlasace, postaviKolicinuZaSlanje,  updateRedoviGlasaca,  }) => {
     const tableRef = React.useRef(null);
     const [votingtitle, setVotingTitle] = useState("");  
     const [unosKorisnika, setUnosKorisnika] = useState(''); 
@@ -24,6 +24,8 @@ const AdminPanel = ({ signer, voters,remainingTime,Title, candidates: initialCan
     const handleSliderChange = (newValue) => {
       setVotingDuration(newValue); // Pretpostavljam da želite da ažurirate votingDuration
     };
+    const [kolicinaZaSlanje, setKolicinaZaSlanje] = useState("0"); // Količina ethera za slanje, u wei
+
    
 
     const backgroundStyle = {
@@ -226,7 +228,7 @@ useEffect(() => {
             setRedoviGlasaca(currentRows => {
                 let newRows = [...currentRows];
                 newRows[index].tekst = event.target.value;
-    
+                
                 // Dodaj novi red ako se kuca u poslednjem i nije prazan
                 if (index === currentRows.length - 1 && event.target.value.trim()) {
                     newRows.push({ tekst: '', broj: '' });
@@ -236,11 +238,17 @@ useEffect(() => {
                 if (index === currentRows.length - 2 && !event.target.value.trim() && !newRows[currentRows.length - 1].tekst.trim()) {
                     newRows.pop();
                 }
-    
+                let updatedRedoviGlasaca = [...redoviGlasaca];
+                updatedRedoviGlasaca[index].tekst = event.target.value;
+                
+                // Koristi prosleđenu funkciju za ažuriranje redoviGlasaca u App komponenti
+                updateRedoviGlasaca(updatedRedoviGlasaca);
                 return newRows;
             });
         };
     
+       
+
         const handleNumberChangeGlasaci = (index, event) => {
             setRedoviGlasaca(currentRows => {
                 const newRows = [...currentRows];
@@ -577,6 +585,56 @@ useEffect(() => {
     Remaining time: {remainingTime}
 </Box>
                 </Box>
+                <TextField
+    label="Količina za slanje (u wei)"
+    variant="outlined"
+    onChange={(e) => postaviKolicinuZaSlanje(e.target.value)}
+    fullWidth
+    margin="normal"
+    sx={{
+      '& label.Mui-focused': {
+        color: '#ff007a',
+      },
+      '& .MuiInput-underline:after': {
+        borderBottomColor: '#ff007a',
+      },
+      '& .MuiOutlinedInput-root': {
+        '& fieldset': {
+          borderColor: '#BDBDBD',
+        },
+        '&:hover fieldset': {
+          borderColor: '#ff007a',
+        },
+        '&.Mui-focused fieldset': {
+          borderColor: '#ff007a',
+        },
+        '& input': {
+          color: 'white',
+        },
+        backgroundColor: '#1c1c1c',
+      },
+      '& .MuiInputLabel-root': { // Label color
+        color: 'white',
+      },
+    }}
+/>
+
+<Button
+    variant="contained"
+    onClick={SlanjaNaAdreseGlasace}
+    sx={{
+      height: '56px',
+      marginTop: '20px',
+      backgroundColor: '#ff007a', 
+      color: 'white',
+      '&:hover': {
+        backgroundColor: '#463346',
+      },
+      fontWeight: 'bold',
+    }}
+>
+    Pošalji Ether
+</Button>
             </Box>
             
         );

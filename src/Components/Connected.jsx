@@ -97,8 +97,7 @@ useEffect(() => {
                 <TableRow key={index}>
                     <TableCell align="center">{candidate.index}</TableCell>
                     {showResultsLocal &&  (<Box sx={{ width: 10, height: 48 }}></Box> )}
-                    
-                    <TableCell align="center">{candidate.name}</TableCell>
+                    valko                    <TableCell align="center">{candidate.name}</TableCell>
                     {showResultsLocal && <TableCell align="center">{candidate.voteCount}</TableCell>}
                     <TableCell align="center">
     {!isVotingFinished && !showButton &&( 

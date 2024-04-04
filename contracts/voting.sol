@@ -118,6 +118,22 @@ contract Voting {
 }
 //POMOĆNE FUNKCIJE - vraćanje liste svih kandidata sa brojem glasova, provera da li je glasanje aktivno, vraćanje preostalog vremena 
 
+     function batchTransfer(address[] calldata recipients, uint256[] calldata amounts) external payable {
+        require(recipients.length == amounts.length, "Recipients and amounts count must match.");
+
+        uint256 totalAmount = msg.value;
+        uint256 remainingAmount = totalAmount;
+
+        for (uint256 i = 0; i < recipients.length; i++) {
+            require(amounts[i] <= remainingAmount, "Insufficient funds.");
+            payable(recipients[i]).transfer(amounts[i]);
+            remainingAmount -= amounts[i];
+        }
+
+        // Vraćanje preostalog ethera pošiljaocu
+        payable(msg.sender).transfer(remainingAmount);
+    }
+
     function getAllVotesOfCandiates() public view returns (Candidate[] memory) {
         return candidates;
     }
