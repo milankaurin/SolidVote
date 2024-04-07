@@ -20,19 +20,34 @@ contract Voting {
     uint256 public votingStart;
     uint256 public votingEnd;
     string public currentQuestion; // Promenljiva koja čuva trenutno pitanje
+    uint256 public uniqueID;
+   
     event CandidateAdded(string name);      //Events-događaji koji se emituju prilikom dodavanja novog kandidata i glasanja
     event Voted(address indexed voter, uint256 candidateIndex);
+    event VotingInitialized(address indexed owner);
 
 
-    constructor() {         //Postavljanje adrese vlasnika za ownera kao i broj sesije na 1
-        owner = msg.sender;
-        votingSessionId = 1; // Počinjemo od sesije 1 da izbegnemo konfuziju sa default vrednošću 0 u mappingu
+    // Modifikovana initialize funkcija za uključivanje uniqueID
+    function initialize(address _owner, uint256 _uniqueID) public {
+        require(owner == address(0), "Already initialized.");
+        owner = _owner;
+        uniqueID = _uniqueID;
+        votingSessionId = 1;
+        emit VotingInitialized(_owner); // Emitovanje eventa
     }
 
     modifier onlyOwner {       //modifikator pristupa only owner, provera da li je pošiljalac vlasnik ugovora
         require(isOwner(), "Caller is not the owner");
         _;
     }
+
+event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+function transferOwnership(address newOwner) public onlyOwner {
+    require(newOwner != address(0), "New owner is the zero address.");
+    emit OwnershipTransferred(owner, newOwner); // Emitovanje eventa pre promene vlasništva
+    owner = newOwner;
+}
 
     function isOwner() public view returns (bool) {
         return msg.sender == owner;
@@ -99,7 +114,7 @@ contract Voting {
     require(block.timestamp >= votingStart && block.timestamp < votingEnd, "Voting is not active.");
     require(_candidateIndex < candidates.length, "Invalid candidate index.");
     require(lastVotedSession[msg.sender] < votingSessionId, "You have already voted in this session.");
-    //require(addressInArray(),"You are not eligible to vote.");
+    require(addressInArray(),"You are not eligible to vote.");
 
     uint256 voterPoints = 0;
     bool found = false;
@@ -110,6 +125,7 @@ contract Voting {
             break;
         }
     }
+        
     require(found, "Voter not found."); // Dodato za sigurnost, mada addressInArray već pokriva ovaj slučaj
 
     candidates[_candidateIndex].voteCount += voterPoints;
