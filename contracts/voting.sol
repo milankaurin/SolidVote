@@ -21,7 +21,8 @@ contract Voting {
     uint256 public votingEnd;
     string public currentQuestion; // Promenljiva koja čuva trenutno pitanje
     uint256 public uniqueID;
-   
+    bool public allowSeeResults = false;
+
     event CandidateAdded(string name);      //Events-događaji koji se emituju prilikom dodavanja novog kandidata i glasanja
     event Voted(address indexed voter, uint256 candidateIndex);
     event VotingInitialized(address indexed owner);
@@ -63,9 +64,7 @@ function transferOwnership(address newOwner) public onlyOwner {
         }
     
 
-   
-
-    function startVoting(uint256 _durationInMinutes, address[] memory glasaci,uint256[] memory points,string[] memory names,string memory question) public onlyOwner {
+    function startVoting(uint256 _durationInMinutes, address[] memory glasaci,uint256[] memory points,string[] memory names,string memory question, bool allowVoterSeeResults) public onlyOwner {
         require(votingEnd <= block.timestamp, "Voting has already been started or has not been stopped.");
         clearCandidates();
         addVoters(glasaci, points);
@@ -73,7 +72,7 @@ function transferOwnership(address newOwner) public onlyOwner {
         currentQuestion = question; 
         votingStart = block.timestamp;
         votingEnd = block.timestamp + (_durationInMinutes * 1 minutes);
-         
+        allowSeeResults = allowVoterSeeResults; 
         votingSessionId++; // Povećava se za svako novo glasanje
     }
 
@@ -149,29 +148,61 @@ function transferOwnership(address newOwner) public onlyOwner {
         // Vraćanje preostalog ethera pošiljaocu
         payable(msg.sender).transfer(remainingAmount);
     }
+    //ako je enabled gledanje rezultata
+    function getAllVotesOfCandidates() public view returns (Candidate[] memory) {
+        require(addressInArray(),"You are not eligible to vote.");
+    if (allowSeeResults) {
+        return candidates; // Ako je dozvoljeno videti rezultate, vrati originalne kandidate sa brojem glasova
+    } else {
+        Candidate[] memory candidatesWithoutVotes = new Candidate[](candidates.length);
+        for (uint i = 0; i < candidates.length; i++) {
+            // Kopira samo imena kandidata u novi niz, bez broja glasova
+            candidatesWithoutVotes[i].name = candidates[i].name;
+            // Opciono: Postavi voteCount na 0 ako želite eksplicitno da naglasite da broj glasova nije dostupan
+             candidatesWithoutVotes[i].voteCount = 0;
+        }
+        return candidatesWithoutVotes; // Vrati kandidate bez broja glasova
+    }
+}
 
-    function getAllVotesOfCandiates() public view returns (Candidate[] memory) {
-        return candidates;
+    //sami kandidati
+    function getCandidateNames() public view returns (string[] memory) {
+    string[] memory candidateNames = new string[](candidates.length);
+    for (uint i = 0; i < candidates.length; i++) {
+        candidateNames[i] = candidates[i].name;
+    }
+    return candidateNames;
+}
+
+    function canSeeResults() public view returns (bool) {
+        return allowSeeResults;
     }
 
     function getVotingTitle() public view returns (string memory) {
+    require(addressInArray(),"You are not eligible to vote.");
+
     return currentQuestion;
     }
 
-     function getALLVotersAdressAndWeight() public view returns (Voter[] memory) {
-        return voters;
+    function getALLVotersAdressAndWeight() public view onlyOwner returns (Voter[] memory) {
+    return voters;
     }
 
-
     function getVotingStatus() public view returns (bool) {
-        return (block.timestamp >= votingStart && block.timestamp < votingEnd);
+        if (msg.sender == owner || addressInArray()){
+            return (block.timestamp >= votingStart && block.timestamp < votingEnd);
+        }
+        return false;
     }
 
     function getRemainingTime() public view returns (uint256) {
+        if (msg.sender == owner || addressInArray()){
         require(block.timestamp >= votingStart, "Voting has not started yet.");
         if (block.timestamp >= votingEnd) {
             return 0;
         }
         return votingEnd - block.timestamp;
+        }
+        return 0;
     }
 }
