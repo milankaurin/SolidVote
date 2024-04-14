@@ -1,5 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
+
+interface IERC20Burnable {
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    function burnFrom(address account, uint256 amount) external returns (bool);
+}
+
 //Deklaracija pametnog ugovora pod nazivom "Voting"
 contract Voting {
     struct Candidate {      //Struktura kandidata sa imenom i brojem glasova
@@ -21,20 +27,37 @@ contract Voting {
     uint256 public votingEnd;
     string public currentQuestion; // Promenljiva koja čuva trenutno pitanje
     uint256 public uniqueID;
-    bool public allowSeeResults = false;
-
+    bool public allowSeeResults;
+    address supremeAdministrator;
+    address tokenAddress;
+    uint256 feeAmount;
     event CandidateAdded(string name);      //Events-događaji koji se emituju prilikom dodavanja novog kandidata i glasanja
     event Voted(address indexed voter, uint256 candidateIndex);
     event VotingInitialized(address indexed owner);
 
+     modifier onlySupremeAdministrator() {
+        require(msg.sender == supremeAdministrator, "Caller is not the supreme administrator");
+        _;
+    }
 
     // Modifikovana initialize funkcija za uključivanje uniqueID
-    function initialize(address _owner, uint256 _uniqueID) public {
+    function initialize(address _owner, uint256 _uniqueID, address _supremeAdministrator, address _tokenAddress, uint256  _feeAmount) public {
         require(owner == address(0), "Already initialized.");
         owner = _owner;
         uniqueID = _uniqueID;
         votingSessionId = 1;
+        supremeAdministrator = _supremeAdministrator;
+        tokenAddress = _tokenAddress;
+        feeAmount = _feeAmount;
         emit VotingInitialized(_owner); // Emitovanje eventa
+    }
+
+    
+    function setTokenAddressAndFee(address _tokenAddress,  uint256 _feeAmount) public onlySupremeAdministrator {
+    require(_tokenAddress != address(0), "Invalid token address.");
+    require(_feeAmount > 0, "Fee amount must be greater than zero.");
+    feeAmount = _feeAmount;
+    tokenAddress = _tokenAddress;
     }
 
     modifier onlyOwner {       //modifikator pristupa only owner, provera da li je pošiljalac vlasnik ugovora
@@ -64,14 +87,22 @@ function transferOwnership(address newOwner) public onlyOwner {
         }
     
 
-    function startVoting(uint256 _durationInMinutes, address[] memory glasaci,uint256[] memory points,string[] memory names,string memory question, bool allowVoterSeeResults) public onlyOwner {
+   
+
+    function startVoting(uint256 _durationInMinutes, address[] memory glasaci, uint256[] memory points, string[] memory names, string memory question, bool allowVoterSeeResults) public onlyOwner {
         require(votingEnd <= block.timestamp, "Voting has already been started or has not been stopped.");
+        
+        // Explicitly cast the token address to the IERC20Burnable interface
+        IERC20Burnable burnableToken = IERC20Burnable(tokenAddress);
+        require(burnableToken.burnFrom(msg.sender, feeAmount), "Failed to burn tokens.");
+        
         clearCandidates();
         addVoters(glasaci, points);
         addCandidates(names);
-        currentQuestion = question; 
+        currentQuestion = question;
         votingStart = block.timestamp;
         votingEnd = block.timestamp + (_durationInMinutes * 1 minutes);
+        
         allowSeeResults = allowVoterSeeResults; 
         votingSessionId++; // Povećava se za svako novo glasanje
     }
@@ -133,21 +164,21 @@ function transferOwnership(address newOwner) public onlyOwner {
 }
 //POMOĆNE FUNKCIJE - vraćanje liste svih kandidata sa brojem glasova, provera da li je glasanje aktivno, vraćanje preostalog vremena 
 
-     function batchTransfer(address[] calldata recipients, uint256[] calldata amounts) external payable {
-        require(recipients.length == amounts.length, "Recipients and amounts count must match.");
+    function batchTransfer(address[] calldata recipients, uint256 amount) external payable {
+    uint256 totalAmount = msg.value;
+    require(totalAmount >= recipients.length * amount, "Insufficient funds.");
 
-        uint256 totalAmount = msg.value;
-        uint256 remainingAmount = totalAmount;
+    for (uint256 i = 0; i < recipients.length; i++) {
+        payable(recipients[i]).transfer(amount);
+    }
 
-        for (uint256 i = 0; i < recipients.length; i++) {
-            require(amounts[i] <= remainingAmount, "Insufficient funds.");
-            payable(recipients[i]).transfer(amounts[i]);
-            remainingAmount -= amounts[i];
-        }
-
-        // Vraćanje preostalog ethera pošiljaocu
+    // Provera da li ima preostalog ethera za povratak pošiljaocu
+    uint256 remainingAmount = totalAmount - (recipients.length * amount);
+    if (remainingAmount > 0) {
         payable(msg.sender).transfer(remainingAmount);
     }
+}
+
     //ako je enabled gledanje rezultata
     function getAllVotesOfCandidates() public view returns (Candidate[] memory) {
         require(addressInArray(),"You are not eligible to vote.");
@@ -167,6 +198,7 @@ function transferOwnership(address newOwner) public onlyOwner {
 
     //sami kandidati
     function getCandidateNames() public view returns (string[] memory) {
+    require(addressInArray() || msg.sender == owner,"You are not eligible to see the candidates.");
     string[] memory candidateNames = new string[](candidates.length);
     for (uint i = 0; i < candidates.length; i++) {
         candidateNames[i] = candidates[i].name;
@@ -179,7 +211,7 @@ function transferOwnership(address newOwner) public onlyOwner {
     }
 
     function getVotingTitle() public view returns (string memory) {
-    require(addressInArray(),"You are not eligible to vote.");
+    require(addressInArray() || msg.sender == owner,"You are not eligible to see the title.");
 
     return currentQuestion;
     }
@@ -205,4 +237,5 @@ function transferOwnership(address newOwner) public onlyOwner {
         }
         return 0;
     }
+
 }
