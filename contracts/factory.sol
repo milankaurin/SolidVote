@@ -10,6 +10,7 @@ contract VotingFactory {
     uint256 public nextUniqueID = 1; // Početna vrednost za jedinstveni ID
     address tokenAddress;
     uint256 feeAmount;
+    bool AddressTokenFeeSet = false;
     constructor() {
         supremeAdministrator = msg.sender;
     }
@@ -19,6 +20,7 @@ contract VotingFactory {
     require(_feeAmount > 0, "Fee amount must be greater than zero.");
     feeAmount = _feeAmount;
     tokenAddress = _tokenAddress;
+    AddressTokenFeeSet = true;
     }
 
     //dodaj funkciju za otkenaddress i feeamount. Koja ce da stavlja te 2 stvari na prosledjene vrednosti.
@@ -29,7 +31,7 @@ contract VotingFactory {
     // Kreira novu Voting instancu za admina ako već ne postoji
     function createVotingInstance(address admin) public onlySupremeAdministrator returns (address, uint256) {
     require(address(adminToVotingInstance[admin]) == address(0), "Admin already has a voting instance.");
-
+    require(AddressTokenFeeSet == true, "Token address and fee amount not set.");
     Voting newVotingInstance = new Voting();
     newVotingInstance.initialize(admin, nextUniqueID, supremeAdministrator, tokenAddress, feeAmount); // Sada prosljeđujemo i uniqueID
     adminToVotingInstance[admin] = newVotingInstance; // Dodavanje instance u mapu

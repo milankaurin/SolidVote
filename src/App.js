@@ -7,13 +7,14 @@ import { contractAbi, contractAddress, TransferAbi,TransferAddress } from './Con
 import Login from './Components/Login';                             
 import Connected from './Components/Connected';
 import AdminPanel from './Components/AdminPanel';
+import LandingPage from './Components/LandingPage'; // Import the LandingPage component
 import './App.css';
 import logobeli from './logobeli.png';
 import logo from './logobeli.png';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -394,16 +395,26 @@ async function getVoters() {
           }
 
         const [showResults, setShowResults] = useState(false);
-
-       
-        
-
+        return (
+            <div className="App">
+              <header className="App-logo">
+                <img src={logobeli} style={{ height: '70px', width: 'auto' }} alt="Logo"/>
+              </header>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}></div>            
+              <Router>
+                <Routes>
+                  <Route path="/" element={<LandingPage />} />
+                  {/* other routes */}
+                </Routes>
+              </Router>
+            </div>
+          );
+/*
     return (
         <div className="App">
              <header className="App-logo">
             <img src={logobeli} style={{ height: '70px', width: 'auto' }} alt="Logo"/>
             
-            {/* Kontejner za dugme i Chip, koji ne utiče na položaj ostalih komponenata */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
     {isConnected && (
       <Chip
@@ -484,7 +495,7 @@ async function getVoters() {
             )}
            
         </div>
-    );
+    );*/
 }
 
 export default App;
