@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "./voting.sol";
 
 contract VotingFactory {
@@ -44,22 +47,23 @@ contract VotingFactory {
 
     }
     
-     function createUserVotingInstance() public payable returns (address, uint256) {
-        // Možete dodati logiku za naplatu ovde ako je potrebno
-        // Na primer, zahtevajte određenu količinu ethera da bude poslata sa transakcijom
-        // require(msg.value == feeAmount, "Fee not met"); // Gde je `feeAmount` cena stvaranja instance
+     function createUserVotingInstance() public returns (address, uint256) {
+        require(AddressTokenFeeSet, "Token address and fee amount not set.");
+
+        IERC20Burnable token = IERC20Burnable(tokenAddress);
+        IERC20 tokenStandard = IERC20(tokenAddress);
+        require(tokenStandard.allowance(msg.sender, address(this)) >= feeAmount, "Insufficient token allowance for fee.");
+        require(token.burnFrom(msg.sender, feeAmount), "Failed to burn the required amount of tokens.");
 
         Voting newVotingInstance = new Voting();
-        newVotingInstance.initialize(msg.sender, nextUniqueID, supremeAdministrator, tokenAddress, feeAmount); // Sada prosljeđujemo i uniqueID
-        adminToVotingInstance[msg.sender] = newVotingInstance; // Dodavanje instance u mapu
+        newVotingInstance.initialize(msg.sender, nextUniqueID, supremeAdministrator, tokenAddress, feeAmount);
+        adminToVotingInstance[msg.sender] = newVotingInstance;
         idToVotingInstance[nextUniqueID] = newVotingInstance;
 
         uint256 currentID = nextUniqueID;
-        nextUniqueID++; // Inkrement za sledeći uniqueID
+        nextUniqueID++;
 
-        // Emitujemo event da je kreirana nova instanca
         emit VotingCreated(msg.sender, address(newVotingInstance), currentID);
-
         return (address(newVotingInstance), currentID);
     }
 
