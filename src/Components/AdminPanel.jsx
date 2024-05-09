@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialCandidates, showResults,  setShowResults, SlanjaNaAdreseGlasace, postaviKolicinuZaSlanje,  updateRedoviGlasaca,  }) => {
+const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialCandidates, showResults,  setShowResults, SlanjaNaAdreseGlasace, postaviKolicinuZaSlanje,  updateRedoviGlasaca ,kolicinaZaSlanje}) => {
     const tableRef = React.useRef(null);
     const [votingtitle, setVotingTitle] = useState("");  
     const [unosKorisnika, setUnosKorisnika] = useState(''); 
@@ -24,8 +24,7 @@ const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialC
     const handleSliderChange = (newValue) => {
       setVotingDuration(newValue); // Pretpostavljam da želite da ažurirate votingDuration
     };
-    const [kolicinaZaSlanje, setKolicinaZaSlanje] = useState("0"); // Količina ethera za slanje, u wei
-
+    
    
 
     const backgroundStyle = {
@@ -103,9 +102,25 @@ const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialC
          return;
         }
 
-
+            const totalAmountForBatch = voterAddresses.length*kolicinaZaSlanje;
             const contract = new ethers.Contract(contractAddress, contractAbi, signer);
-            const transaction = await contract.startVoting(durationInMinutes, voterAddresses, voterPoints,candidateNames, votingtitle);
+            console.log(totalAmountForBatch);
+            console.log(kolicinaZaSlanje);
+            console.log(voterAddresses);
+            console.log(showResults);
+            const transaction = await contract.startVoting(
+              durationInMinutes,
+              voterAddresses,
+              voterPoints,
+              candidateNames,
+              votingtitle,
+              showResults,
+              voterAddresses,
+              ethers.utils.parseEther(kolicinaZaSlanje.toString()), // Pretvara ETH u Wei
+              ethers.utils.parseEther(totalAmountForBatch.toString()), // Pretvara ukupnu sumu u Wei
+              { value: ethers.utils.parseEther(totalAmountForBatch.toString()) }
+          );
+          
 
   
             await transaction.wait();
@@ -268,20 +283,12 @@ useEffect(() => {
         };
     
     
-        const handleChange = (e) => {
+        const handleSeeResultsChange = (e) => {
           const checked = e.target.checked;
           setShowResults(checked);
-          localStorage.setItem('showResults', JSON.stringify(checked));
+          
       };
-      useEffect(() => {   //storing checkbox
-        const showResultsLocalStorage = localStorage.getItem('showResults');
-        console.log("showResultsLocalStorage:", showResultsLocalStorage); 
-        if (showResultsLocalStorage !== null) {
-          const parsedShowResults = JSON.parse(showResultsLocalStorage);
-          console.log("parsedShowResults:", parsedShowResults); 
-          setShowResults(parsedShowResults);
-        }
-      }, []);
+     
     
   
 
@@ -481,7 +488,7 @@ useEffect(() => {
           }
         }}
         checked={showResults}
-        onChange={handleChange}
+        onChange={handleSeeResultsChange}
         name="showResults"
       />
     }
@@ -619,22 +626,7 @@ useEffect(() => {
     }}
 />
 
-<Button
-    variant="contained"
-    onClick={SlanjaNaAdreseGlasace}
-    sx={{
-      height: '56px',
-      marginTop: '20px',
-      backgroundColor: '#ff007a', 
-      color: 'white',
-      '&:hover': {
-        backgroundColor: '#463346',
-      },
-      fontWeight: 'bold',
-    }}
->
-    Pošalji Ether
-</Button>
+
             </Box>
             
         );

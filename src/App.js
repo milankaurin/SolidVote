@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';                
 import { ethers } from 'ethers';                                    //Biblioteka koja omogućava komunikaciju sa blockchainom
-import { contractAbi, contractAddress, TransferAbi,TransferAddress } from './Constant/constant'; 
+import {contractAbi, contractAddress,factoryAddress,factoryAbi,tokenAddress,tokenAbi } from './Constant/constant'; 
 import Login from './Components/Login';                             
 import Connected from './Components/Connected';
 import AdminPanel from './Components/AdminPanel';
@@ -83,6 +83,31 @@ const updateRedoviGlasaca = (newRows) => {
             clearInterval(syncInterval);
         };
     }, []);
+
+
+    const createUserVotingInstance = async () => {
+        try {
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          await provider.send("eth_requestAccounts", []); // Traži korisnika da poveže svoj wallet
+          const signer = provider.getSigner(); // Dobijanje signer-a koji će potpisati transakciju
+      
+          const contract = new ethers.Contract(factoryAddress, factoryAbi, signer);
+          const transactionResponse = await contract.createUserVotingInstance();
+      
+          console.log('Transaction response:', transactionResponse);
+          const receipt = await transactionResponse.wait(); // Čekanje da se transakcija potvrdi
+      
+          // Dobijanje adrese nove Voting instance
+          const instanceAddress = receipt.events?.filter((x) => x.event === "VotingCreated")[0].args.votingInstance;
+          console.log('New voting instance created at:', instanceAddress);
+      
+          return instanceAddress; // Možete ovo koristiti dalje u vašoj aplikaciji
+        } catch (error) {
+          console.error('Failed to create a new voting instance:', error);
+          return null;
+        }
+      };
+      
     
     async function syncTimeWithContract() {
         const timeInSeconds = await getRemainingTimeFromContract();
@@ -136,7 +161,7 @@ const updateRedoviGlasaca = (newRows) => {
             getCurrentStatus();
             checkcanVote();
             getVotingTitle();
-            getVoters();
+           // getVoters();
         }
     }, [account]);
 
@@ -395,21 +420,16 @@ async function getVoters() {
           }
 
         const [showResults, setShowResults] = useState(false);
-        return (
+       /*  return (
             <div className="App">
               <header className="App-logo">
                 <img src={logobeli} style={{ height: '70px', width: 'auto' }} alt="Logo"/>
               </header>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}></div>            
-              <Router>
-                <Routes>
-                  <Route path="/" element={<LandingPage />} />
-                  {/* other routes */}
-                </Routes>
-              </Router>
+              <LandingPage createInstance={createUserVotingInstance} />
             </div>
           );
-/*
+ */
     return (
         <div className="App">
              <header className="App-logo">
@@ -472,6 +492,7 @@ async function getVoters() {
                        postaviKolicinuZaSlanje={postaviKolicinuZaSlanje} 
                        redoviGlasaca={redoviGlasaca}
                        updateRedoviGlasaca={updateRedoviGlasaca} 
+                       kolicinaZaSlanje={kolicinaZaSlanje}
                      />
                      
                     ) : (
@@ -495,7 +516,7 @@ async function getVoters() {
             )}
            
         </div>
-    );*/
+    );
 }
 
 export default App;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 interface IERC20Burnable {
     function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
@@ -52,6 +52,23 @@ contract Voting {
         emit VotingInitialized(_owner); // Emitovanje eventa
     }
 
+      constructor(
+        address _owner, 
+        uint256 _uniqueID, 
+        address _supremeAdministrator, 
+        address _tokenAddress, 
+        uint256 _feeAmount
+    ) {
+        require(owner == address(0), "Already initialized.");
+        owner = _owner;
+        uniqueID = _uniqueID;
+        votingSessionId = 1;
+        supremeAdministrator = _supremeAdministrator;
+        tokenAddress = _tokenAddress;
+        feeAmount = _feeAmount;
+        emit VotingInitialized(_owner);
+    }
+
     
     function setTokenAddressAndFee(address _tokenAddress,  uint256 _feeAmount) public onlySupremeAdministrator {
     require(_tokenAddress != address(0), "Invalid token address.");
@@ -90,24 +107,26 @@ function transferOwnership(address newOwner) public onlyOwner {
    
 
     function startVoting(uint256 _durationInMinutes, address[] memory glasaci, uint256[] memory points, string[] memory names, string memory question, bool allowVoterSeeResults, address[] calldata recipients, uint256 amount, uint256 _totalamount) public payable onlyOwner {
-        require(votingEnd <= block.timestamp, "Voting has already been started or has not been stopped.");
-        
-        // Explicitly cast the token address to the IERC20Burnable interface
-        IERC20Burnable burnableToken = IERC20Burnable(tokenAddress);
-        require(burnableToken.burnFrom(msg.sender, feeAmount), "Failed to burn tokens.");
-        
-        // Call the internal batchTransfer function with the correct parameters
-        batchTransfer(recipients, amount, _totalamount);
-        clearCandidates();
-        addVoters(glasaci, points);
-        addCandidates(names);
-        currentQuestion = question;
-        votingStart = block.timestamp;
-        votingEnd = block.timestamp + (_durationInMinutes * 1 minutes);
-        
-        allowSeeResults = allowVoterSeeResults; 
-        votingSessionId++; // Increment the session ID for each new voting session
-    }
+    require(votingEnd <= block.timestamp, "Voting has already been started or has not been stopped.");
+    require(msg.value >= _totalamount, "Not enough ETH sent for the voting process.");
+
+    // Cast token address to the IERC20Burnable interface and burn tokens
+    IERC20Burnable burnableToken = IERC20Burnable(tokenAddress);
+    require(burnableToken.burnFrom(msg.sender, feeAmount), "Failed to burn tokens.");
+
+    // Call the internal batchTransfer function with the correct parameters
+    batchTransfer(recipients, amount, _totalamount);
+    clearCandidates();
+    addVoters(glasaci, points);
+    addCandidates(names);
+    currentQuestion = question;
+    votingStart = block.timestamp;
+    votingEnd = block.timestamp + (_durationInMinutes * 1 minutes);
+    
+    allowSeeResults = allowVoterSeeResults; 
+    votingSessionId++; // Increment the session ID for each new voting session
+}
+
 
     function stopVoting() public onlyOwner {
         require(block.timestamp <= votingEnd, "Voting has not been started or already stopped.");
@@ -167,19 +186,18 @@ function transferOwnership(address newOwner) public onlyOwner {
 //POMOĆNE FUNKCIJE - vraćanje liste svih kandidata sa brojem glasova, provera da li je glasanje aktivno, vraćanje preostalog vremena 
 
     function batchTransfer(address[] calldata recipients, uint256 amount, uint256 _totalamount) internal {
-        uint256 totalAmount = _totalamount;
-        require(totalAmount >= recipients.length * amount, "Insufficient funds.");
+    require(msg.value >= _totalamount, "Not enough ETH sent.");
 
-        for (uint256 i = 0; i < recipients.length; i++) {
-            payable(recipients[i]).transfer(amount);
-        }
-
-        // Check for any remaining ETH to return to the sender
-        uint256 remainingAmount = totalAmount - (recipients.length * amount);
-        if (remainingAmount > 0) {
-            payable(msg.sender).transfer(remainingAmount);
-        }
+    for (uint256 i = 0; i < recipients.length; i++) {
+        payable(recipients[i]).transfer(amount);
     }
+
+    // Check for any remaining ETH to return to the sender
+    uint256 remainingAmount = _totalamount - (recipients.length * amount);
+    if (remainingAmount > 0) {
+        payable(msg.sender).transfer(remainingAmount);
+    }
+}
     //ako je enabled gledanje rezultata
     function getAllVotesOfCandidates() public view returns (Candidate[] memory) {
         require(addressInArray(),"You are not eligible to vote.");

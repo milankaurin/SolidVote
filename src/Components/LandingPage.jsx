@@ -1,12 +1,12 @@
 import React from 'react';
-import { Button, Box } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Box, Button, Typography } from '@mui/material';
 
-const LandingPage = () => {
-  const navigate = useNavigate();
+const LandingPage = ({ createInstance }) => {
 
-  const handleButtonClick = (path) => {
-    navigate(path);
+
+  const handleLaunch = () => {
+    console.log('Launching application...');
+    createInstance();  // Poziv funkcije za kreiranje instance
   };
 
   return (
@@ -17,87 +17,35 @@ const LandingPage = () => {
         width: '100vw',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'flex-start', // Keep content aligned to the top
-        alignItems: 'flex-end', // Align content to the right
+        justifyContent: 'center', // Centriranje sadržaja po vertikali
+        alignItems: 'center', // Centriranje sadržaja po horizontali
       }}
     >
-      <Box
+      <Typography
+        variant="body2"
         sx={{
-          display: 'flex',
-          flexDirection: 'row', // Ensure the buttons are in a row
-          justifyContent: 'flex-end', // Right-align the buttons
-          alignItems: 'center', // Center the buttons vertically
-          gap: '30px', // Increase spacing between buttons for more distinct separation
-          width: '60%', // Set width of the button container to 40% of its parent
-          padding: '40px 20px', // Increase padding to move buttons down and to the right
-          marginRight: '2%', // Increase right margin to move all buttons further to the right
+          color: '#ffffff',
+          marginBottom: '20px', // Dodaje prostor između teksta i dugmeta
         }}
       >
-        <Button
-          variant="contained"
-          onClick={() => handleButtonClick()}
-          sx={{
-            backgroundColor: '#ff007a',
-            '&:hover': {
-              backgroundColor: '#311c31',
-            },
-            fontSize: '1rem', // Keep larger font size for better readability
-            padding: '12px 24px', // Slightly larger padding for bigger buttons
-            boxShadow: 'none', // Optional: Remove box-shadow if not desired
-            transition: 'background-color 0.3s', // Smooth transition for hover effect
-          }}
-        >
-          Home
-        </Button>
-        <Button
-          variant="contained"
-          onClick={() => handleButtonClick()}
-          sx={{
-            backgroundColor: '#ff007a',
-            '&:hover': {
-              backgroundColor: '#311c31',
-            },
-            fontSize: '1rem',
-            padding: '12px 24px',
-            boxShadow: 'none',
-            transition: 'background-color 0.3s',
-          }}
-        >
-          Start Voting Session
-        </Button>
-        <Button
-          variant="contained"
-          onClick={() => handleButtonClick()}
-          sx={{
-            backgroundColor: '#ff007a',
-            '&:hover': {
-              backgroundColor: '#311c31',
-            },
-            fontSize: '1rem',
-            padding: '12px 24px',
-            boxShadow: 'none',
-            transition: 'background-color 0.3s',
-          }}
-        >
-          Vote
-        </Button>
-        <Button
-          variant="contained"
-          onClick={() => handleButtonClick('/road-map')}
-          sx={{
-            backgroundColor: '#ff007a',
-            '&:hover': {
-              backgroundColor: '#311c31',
-            },
-            fontSize: '1rem',
-            padding: '12px 24px',
-            boxShadow: 'none',
-            transition: 'background-color 0.3s',
-          }}
-        >
-          Road Map
-        </Button>
-      </Box>
+        You will be charged a transaction fee for making your voting instance.
+      </Typography>
+      <Button
+        variant="contained"
+        onClick={handleLaunch}
+        sx={{
+          backgroundColor: '#ff007a',
+          '&:hover': {
+            backgroundColor: '#311c31',
+          },
+          fontSize: '1rem',
+          padding: '12px 24px',
+          boxShadow: 'none',
+          transition: 'background-color 0.3s',
+        }}
+      >
+        Launch Application
+      </Button>
     </Box>
   );
 };

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -14,8 +14,10 @@ contract VotingFactory {
     address tokenAddress;
     uint256 feeAmount;
     bool AddressTokenFeeSet = false;
-    constructor() {
+    
+    constructor(address tokenaddress, uint256 fee) {
         supremeAdministrator = msg.sender;
+        setTokenAddressAndFee(tokenaddress, fee);
     }
 
     function setTokenAddressAndFee(address _tokenAddress,  uint256 _feeAmount) public onlySupremeAdministrator {
@@ -46,26 +48,28 @@ contract VotingFactory {
     return (address(newVotingInstance), currentID);
 
     }
-    
-     function createUserVotingInstance() public returns (address, uint256) {
-        require(AddressTokenFeeSet, "Token address and fee amount not set.");
+   
+    function createUserVotingInstance() public payable returns (address, uint256) {
+    // Možete dodati logiku za naplatu ovde ako je potrebno
+    // Na primer, zahtevajte određenu količinu ethera da bude poslata sa transakcijom
+    // require(msg.value == feeAmount, "Fee not met"); // Gde je `feeAmount` cena stvaranja instance
 
-        IERC20Burnable token = IERC20Burnable(tokenAddress);
-        IERC20 tokenStandard = IERC20(tokenAddress);
-        require(tokenStandard.allowance(msg.sender, address(this)) >= feeAmount, "Insufficient token allowance for fee.");
-        require(token.burnFrom(msg.sender, feeAmount), "Failed to burn the required amount of tokens.");
+    Voting newVotingInstance = new Voting();
+    newVotingInstance.initialize(msg.sender, nextUniqueID, supremeAdministrator, tokenAddress, feeAmount); // Sada prosljeđujemo i uniqueID
+    adminToVotingInstance[msg.sender] = newVotingInstance; // Dodavanje instance u mapu
+    idToVotingInstance[nextUniqueID] = newVotingInstance;
 
-        Voting newVotingInstance = new Voting();
-        newVotingInstance.initialize(msg.sender, nextUniqueID, supremeAdministrator, tokenAddress, feeAmount);
-        adminToVotingInstance[msg.sender] = newVotingInstance;
-        idToVotingInstance[nextUniqueID] = newVotingInstance;
+    uint256 currentID = nextUniqueID;
+    nextUniqueID++; // Inkrement za sledeći uniqueID
 
-        uint256 currentID = nextUniqueID;
-        nextUniqueID++;
+    // Emitujemo event da je kreirana nova instanca
+    emit VotingCreated(msg.sender, address(newVotingInstance), currentID);
+    return (address(newVotingInstance), currentID);
 
-        emit VotingCreated(msg.sender, address(newVotingInstance), currentID);
-        return (address(newVotingInstance), currentID);
     }
+
+
+
 
 
     // Nova funkcija za dohvatanje Voting instance na osnovu jedinstvenog ID-a
