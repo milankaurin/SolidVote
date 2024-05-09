@@ -1,30 +1,28 @@
-async function main() {
-    const [deployer] = await ethers.getSigners();
-  
-    const Voting = await ethers.getContractFactory("Voting");
-  
-    // Dodaj argumente koji odgovaraju konstruktoru ugovora
-    const ownerAddress = deployer.address; // ili neka specifična adresa koja treba da bude vlasnik
-    const uniqueID = 1; // Primer jedinstvenog ID-a
-    const supremeAdministrator = deployer.address; // Može biti ista ili druga adresa
-    const tokenAddress = "0x8F45b6892F648E7dC01AFEBEEBaA2DA63462343F"; // Adresa tokena koji se koristi u ugovoru
-    const feeAmount = 1000000000000000000000; // Primer naknade u Etheru
-  
-    const Voting_ = await Voting.deploy(
-      ownerAddress, 
-      uniqueID, 
-      supremeAdministrator, 
-      tokenAddress, 
-      feeAmount
-    );
-  
-    console.log("Contract deployed to address:", Voting_.address);
-  }
-  
-  main()
-    .then(() => process.exit(0))
-    .catch(error => {
-      console.error(error);
-      process.exit(1);
+const { ethers } = require("hardhat");
+
+    async function main() {
+        // Fetch the account to deploy the contract
+        const [deployer] = await ethers.getSigners();
+        
+        // Deploy the Voting contract
+        const feeAmount = ethers.utils.parseUnits("10", "ether");
+
+        const Voting = await ethers.getContractFactory("Voting");
+        const voting = await Voting.deploy(
+            deployer.address,        // owner address
+            1,                       // uniqueID
+            deployer.address,        // supremeAdministrator address
+            "0x8F45b6892F648E7dC01AFEBEEBaA2DA63462343F",    // tokenAddress
+            feeAmount                     // feeAmount
+        );
+    
+        await voting.deployed();
+    
+        console.log("Voting deployed to:", voting.address);
+    }
+    
+    main().catch((error) => {
+        console.error(error);
+        process.exitCode = 1;
     });
-  
+    

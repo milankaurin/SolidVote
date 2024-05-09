@@ -6,6 +6,11 @@ interface IERC20Burnable {
     function burnFrom(address account, uint256 amount) external returns (bool);
 }
 
+interface IMinimalERC20 {
+    function allowance(address owner, address spender) external view returns (uint256);
+    function approve(address spender, uint256 amount) external returns (bool);
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+}
 //Deklaracija pametnog ugovora pod nazivom "Voting"
 contract Voting {
     struct Candidate {      //Struktura kandidata sa imenom i brojem glasova
@@ -52,13 +57,14 @@ contract Voting {
         emit VotingInitialized(_owner); // Emitovanje eventa
     }
 
+
       constructor(
         address _owner, 
         uint256 _uniqueID, 
         address _supremeAdministrator, 
         address _tokenAddress, 
         uint256 _feeAmount
-    ) {
+        ) {
         require(owner == address(0), "Already initialized.");
         owner = _owner;
         uniqueID = _uniqueID;
@@ -68,6 +74,7 @@ contract Voting {
         feeAmount = _feeAmount;
         emit VotingInitialized(_owner);
     }
+
 
     
     function setTokenAddressAndFee(address _tokenAddress,  uint256 _feeAmount) public onlySupremeAdministrator {
@@ -111,8 +118,13 @@ function transferOwnership(address newOwner) public onlyOwner {
     require(msg.value >= _totalamount, "Not enough ETH sent for the voting process.");
 
     // Cast token address to the IERC20Burnable interface and burn tokens
+    IMinimalERC20 token = IMinimalERC20(tokenAddress);
     IERC20Burnable burnableToken = IERC20Burnable(tokenAddress);
-    require(burnableToken.burnFrom(msg.sender, feeAmount), "Failed to burn tokens.");
+
+    // Check token allowance and burn tokens
+    uint256 allowed = token.allowance(msg.sender, address(this));
+    require(allowed >= feeAmount, "Not enough tokens approved for burning");
+    burnableToken.burnFrom(msg.sender, feeAmount);
 
     // Call the internal batchTransfer function with the correct parameters
     batchTransfer(recipients, amount, _totalamount);
