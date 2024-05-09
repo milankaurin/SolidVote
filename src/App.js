@@ -493,6 +493,8 @@ async function getVoters() {
                        redoviGlasaca={redoviGlasaca}
                        updateRedoviGlasaca={updateRedoviGlasaca} 
                        kolicinaZaSlanje={kolicinaZaSlanje}
+                       tokenAbi={tokenAbi}
+                       tokenAddress={tokenAddress}
                      />
                      
                     ) : (

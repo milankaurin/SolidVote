@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialCandidates, showResults,  setShowResults, SlanjaNaAdreseGlasace, postaviKolicinuZaSlanje,  updateRedoviGlasaca ,kolicinaZaSlanje}) => {
+const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialCandidates, showResults,  setShowResults, SlanjaNaAdreseGlasace, postaviKolicinuZaSlanje,  updateRedoviGlasaca ,kolicinaZaSlanje, tokenAbi,tokenAddress}) => {
     const tableRef = React.useRef(null);
     const [votingtitle, setVotingTitle] = useState("");  
     const [unosKorisnika, setUnosKorisnika] = useState(''); 
@@ -83,32 +83,34 @@ const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialC
     
 
     const startVoting = async () => {
-        setAction("starting");
-        try {
-            const durationInMinutes = parseInt(votingDuration); 
-            if (isNaN(durationInMinutes) || durationInMinutes <= 0) {
-                alert("Please enter a valid positive number for voting duration.");
-                return;
-            }
-
-     //preparing lists for smart contract
-        const candidateNames = redoviOpcijaZaGlasanje.filter(row => row.tekst.trim()).map(row => row.tekst);
-        
-         const voterAddresses = redoviGlasaca.filter(row => row.tekst.trim()).map(row => row.tekst);
-         const voterPoints = redoviGlasaca.filter(row=>row.broj.trim()).map(row=>row.broj);
-
-         if (candidateNames.length === 0 || voterAddresses.length === 0) {
-         alert("Please ensure there are candidates and voters before starting the vote.");
-         return;
-        }
-
-            const totalAmountForBatch = voterAddresses.length*kolicinaZaSlanje;
-            const contract = new ethers.Contract(contractAddress, contractAbi, signer);
-            console.log(totalAmountForBatch);
-            console.log(kolicinaZaSlanje);
-            console.log(voterAddresses);
-            console.log(showResults);
-            const transaction = await contract.startVoting(
+      setAction("starting");
+      try {
+          const durationInMinutes = parseInt(votingDuration); 
+          if (isNaN(durationInMinutes) || durationInMinutes <= 0) {
+              alert("Please enter a valid positive number for voting duration.");
+              return;
+          }
+  
+          // Preparing lists for smart contract
+          const candidateNames = redoviOpcijaZaGlasanje.filter(row => row.tekst.trim()).map(row => row.tekst);
+          const voterAddresses = redoviGlasaca.filter(row => row.tekst.trim()).map(row => row.tekst);
+          const voterPoints = redoviGlasaca.filter(row=>row.broj.trim()).map(row=>row.broj);
+  
+          if (candidateNames.length === 0 || voterAddresses.length === 0) {
+              alert("Please ensure there are candidates and voters before starting the vote.");
+              return;
+          }
+  
+          const tokenContract = new ethers.Contract(tokenAddress, tokenAbi, signer);
+          const feeAmountEther = "10"; // Fee amount that needs to be burned, change as per your token's requirements
+  
+          // Approving tokens for burning
+          await tokenContract.approve(contractAddress, ethers.utils.parseEther(feeAmountEther));
+        //  console.log(Approved ${feeAmountEther} tokens for burning by the voting contract);
+  
+          const totalAmountForBatch = voterAddresses.length * kolicinaZaSlanje;
+          const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+          const transaction = await contract.startVoting(
               durationInMinutes,
               voterAddresses,
               voterPoints,
@@ -116,19 +118,18 @@ const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialC
               votingtitle,
               showResults,
               voterAddresses,
-              ethers.utils.parseEther(kolicinaZaSlanje.toString()), // Pretvara ETH u Wei
-              ethers.utils.parseEther(totalAmountForBatch.toString()), // Pretvara ukupnu sumu u Wei
+              ethers.utils.parseEther(kolicinaZaSlanje.toString()), // Converts ETH to Wei
+              ethers.utils.parseEther(totalAmountForBatch.toString()), // Converts total sum to Wei
               { value: ethers.utils.parseEther(totalAmountForBatch.toString()) }
           );
-          
-
   
-            await transaction.wait();
-            alert("Voting has started.");
-        } catch (error) {
-            console.error("Error starting the voting:", error);
-            alert("Failed to start voting.");
-        } };
+          await transaction.wait();
+          alert("Voting has started.");
+      } catch (error) {
+          console.error("Error starting the voting:", error);
+          alert("Failed to start voting. Make sure you have enough tokens and have approved them for burning.");
+      }
+  };
 
 
 
