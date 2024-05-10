@@ -40,16 +40,22 @@ contract Voting {
     }
 
     // Modifikovana initialize funkcija za uključivanje uniqueID
-    function initialize(address _owner, uint256 _uniqueID, address _supremeAdministrator, address _tokenAddress, uint256  _feeAmount) public {
-        require(owner == address(0), "Already initialized.");
-        owner = _owner;
-        uniqueID = _uniqueID;
-        votingSessionId = 1;
-        supremeAdministrator = _supremeAdministrator;
-        tokenAddress = _tokenAddress;
-        feeAmount = _feeAmount;
-        emit VotingInitialized(_owner); // Emitovanje eventa
-    }
+   function initialize(
+    address _owner, 
+    uint256 _uniqueID, 
+    address _supremeAdministrator, 
+    ERC20Burnable _token, 
+    uint256 _feeAmount
+) public {
+    require(owner == address(0), "Already initialized.");
+    owner = _owner;
+    uniqueID = _uniqueID;
+    votingSessionId = 1;
+    supremeAdministrator = _supremeAdministrator;
+    token = _token;
+    feeAmount = _feeAmount;
+    emit VotingInitialized(_owner); // Emitovanje eventa
+}
 
 
        constructor(
@@ -70,13 +76,12 @@ contract Voting {
     }
 
 
-    
-    function setTokenAddressAndFee(address _tokenAddress,  uint256 _feeAmount) public onlySupremeAdministrator {
-    require(_tokenAddress != address(0), "Invalid token address.");
+  function setTokenAddressAndFee(ERC20Burnable _token, uint256 _feeAmount) public onlySupremeAdministrator {
+    require(address(_token) != address(0), "Invalid token address.");
     require(_feeAmount > 0, "Fee amount must be greater than zero.");
+    token = _token;
     feeAmount = _feeAmount;
-    tokenAddress = _tokenAddress;
-    }
+}
 
     modifier onlyOwner {       //modifikator pristupa only owner, provera da li je pošiljalac vlasnik ugovora
         require(isOwner(), "Caller is not the owner");
