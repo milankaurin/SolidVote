@@ -1,16 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-interface IERC20Burnable {
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-    function burnFrom(address account, uint256 amount) external returns (bool);
-}
 
-interface IMinimalERC20 {
-    function allowance(address owner, address spender) external view returns (uint256);
-    function approve(address spender, uint256 amount) external returns (bool);
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-}
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 //Deklaracija pametnog ugovora pod nazivom "Voting"
 contract Voting {
     struct Candidate {      //Struktura kandidata sa imenom i brojem glasova
@@ -118,7 +111,7 @@ function transferOwnership(address newOwner) public onlyOwner {
     require(msg.value >= _totalamount, "Not enough ETH sent for the voting process.");
 
     // Cast token address to the IERC20Burnable interface and burn tokens
-    IMinimalERC20 token = IMinimalERC20(tokenAddress);
+    ERC20 token = ERC20(tokenAddress);
     IERC20Burnable burnableToken = IERC20Burnable(tokenAddress);
 
     // Check token allowance and burn tokens

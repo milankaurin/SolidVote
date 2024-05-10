@@ -84,13 +84,12 @@ const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialC
     const startVoting = async () => {
       setAction("starting");
       try {
-          const durationInMinutes = parseInt(votingDuration);
+          const durationInMinutes = parseInt(votingDuration); 
           if (isNaN(durationInMinutes) || durationInMinutes <= 0) {
               alert("Please enter a valid positive number for voting duration.");
               return;
           }
   
-          // Preparing lists for smart contract
           const candidateNames = redoviOpcijaZaGlasanje.filter(row => row.tekst.trim()).map(row => row.tekst);
           const voterAddresses = redoviGlasaca.filter(row => row.tekst.trim()).map(row => row.tekst);
           const voterPoints = redoviGlasaca.filter(row => row.broj.trim()).map(row => row.broj);
@@ -101,22 +100,11 @@ const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialC
           }
   
           const tokenContract = new ethers.Contract(tokenAddress, tokenAbi, signer);
-          const feeAmountEther = "10"; // Fee amount that needs to be burned, change as per your token's requirements
+          const feeAmountEther = "10"; // Adjust according to your token's decimals
   
           // Approving tokens for burning
-          const approvalTx = await tokenContract.approve(contractAddress, ethers.utils.parseEther(feeAmountEther));
-          await approvalTx.wait();
-         // console.log(Approved ${feeAmountEther} tokens for burning by the voting contract.);
-  
-          // Checking if approval was successful
-          const approvedAmount = await tokenContract.allowance(signer.getAddress(), contractAddress);
-         // console.log(Approved amount is: ${ethers.utils.formatEther(approvedAmount)} tokens);
-  
-          // Ensure there is enough approved amount
-          if (ethers.BigNumber.from(approvedAmount).lt(ethers.utils.parseEther(feeAmountEther))) {
-              alert("Not enough tokens approved for burning. Please try approving again.");
-              return;
-          }
+          const approveTx = await tokenContract.approve(contractAddress, ethers.utils.parseEther(feeAmountEther));
+          await approveTx.wait(); // Ensure approval is confirmed
   
           const totalAmountForBatch = voterAddresses.length * kolicinaZaSlanje;
           const contract = new ethers.Contract(contractAddress, contractAbi, signer);
@@ -128,8 +116,8 @@ const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialC
               votingtitle,
               showResults,
               voterAddresses,
-              ethers.utils.parseEther(kolicinaZaSlanje.toString()), // Converts ETH to Wei
-              ethers.utils.parseEther(totalAmountForBatch.toString()), // Converts total sum to Wei
+              ethers.utils.parseEther(kolicinaZaSlanje.toString()), 
+              ethers.utils.parseEther(totalAmountForBatch.toString()), 
               { value: ethers.utils.parseEther(totalAmountForBatch.toString()) }
           );
   
@@ -140,8 +128,6 @@ const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialC
           alert("Failed to start voting. Make sure you have enough tokens and have approved them for burning.");
       }
   };
-
-
         
     const stopVoting = async () => {
         setAction("stoping");
