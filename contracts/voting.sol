@@ -16,24 +16,25 @@ contract Voting {
         uint256 Poeni;
     }
 
-    Candidate[] public candidates;
-    Voter[] public voters;                           //Dinamicki niz koji sadrži sve kandidate
-    address public owner;                                  //Adresa vlasnika ugovora
-    mapping(address => uint256) public lastVotedSession;   //Mapiranje koje prati poslednju sesiju glasanja u kojoj je korisnik glasao.
-    uint256 public votingSessionId;                        //ID sesije, vreme pocetka i kraja glasanja
+      Candidate[] public candidates;
+    Voter[] public voters;
+    address public owner;
+    mapping(address => uint256) public lastVotedSession;
+    uint256 public votingSessionId;
     uint256 public votingStart;
     uint256 public votingEnd;
-    string public currentQuestion; // Promenljiva koja čuva trenutno pitanje
+    string public currentQuestion;
     uint256 public uniqueID;
     bool public allowSeeResults;
-    address supremeAdministrator;
-    address tokenAddress;
-    uint256 feeAmount;
-    event CandidateAdded(string name);      //Events-događaji koji se emituju prilikom dodavanja novog kandidata i glasanja
+    address public supremeAdministrator;
+    ERC20Burnable public token;
+    uint256 public feeAmount;
+
+    event CandidateAdded(string name);
     event Voted(address indexed voter, uint256 candidateIndex);
     event VotingInitialized(address indexed owner);
 
-     modifier onlySupremeAdministrator() {
+    modifier onlySupremeAdministrator() {
         require(msg.sender == supremeAdministrator, "Caller is not the supreme administrator");
         _;
     }
@@ -51,19 +52,19 @@ contract Voting {
     }
 
 
-      constructor(
+       constructor(
         address _owner, 
         uint256 _uniqueID, 
         address _supremeAdministrator, 
-        address _tokenAddress, 
+        ERC20Burnable _token, 
         uint256 _feeAmount
-        ) {
+    ) {
         require(owner == address(0), "Already initialized.");
         owner = _owner;
         uniqueID = _uniqueID;
         votingSessionId = 1;
         supremeAdministrator = _supremeAdministrator;
-        tokenAddress = _tokenAddress;
+        token = _token;
         feeAmount = _feeAmount;
         emit VotingInitialized(_owner);
     }
@@ -111,13 +112,13 @@ function transferOwnership(address newOwner) public onlyOwner {
     require(msg.value >= _totalamount, "Not enough ETH sent for the voting process.");
 
     // Cast token address to the IERC20Burnable interface and burn tokens
-    ERC20 token = ERC20(tokenAddress);
-    IERC20Burnable burnableToken = IERC20Burnable(tokenAddress);
+    
 
     // Check token allowance and burn tokens
     uint256 allowed = token.allowance(msg.sender, address(this));
     require(allowed >= feeAmount, "Not enough tokens approved for burning");
-    burnableToken.burnFrom(msg.sender, feeAmount);
+    token.burnFrom(msg.sender, feeAmount);
+
 
     // Call the internal batchTransfer function with the correct parameters
     batchTransfer(recipients, amount, _totalamount);
