@@ -16,7 +16,7 @@ contract Voting {
         uint256 Poeni;
     }
 
-      Candidate[] public candidates;
+    Candidate[] public candidates;
     Voter[] public voters;
     address public owner;
     mapping(address => uint256) public lastVotedSession;
@@ -83,10 +83,16 @@ contract Voting {
     feeAmount = _feeAmount;
 }
 
-    modifier onlyOwner {       //modifikator pristupa only owner, provera da li je pošiljalac vlasnik ugovora
-        require(isOwner(), "Caller is not the owner");
-        _;
-    }
+modifier onlyOwner {       //modifikator pristupa only owner, provera da li je pošiljalac vlasnik ugovora
+     require(isOwner(), "Caller is not the owner");
+      _;
+}
+
+// Function to retrieve the unique ID of the contract
+function getUniqueID() public view onlyOwner returns (uint256) {
+    return uniqueID;
+}
+
 
 event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
@@ -96,9 +102,9 @@ function transferOwnership(address newOwner) public onlyOwner {
     owner = newOwner;
 }
 
-    function isOwner() public view returns (bool) {
-        return msg.sender == owner;
-    }
+function isOwner() public view returns (bool) {
+      return msg.sender == owner;
+}
 
 //FUNKCIJE ZA KONTROLU GLASANJA - započinjanje, prekidanje glasanja, dodavanje novog kandidata, brisanje svih kandidata, dodavanje liste kandidata
 

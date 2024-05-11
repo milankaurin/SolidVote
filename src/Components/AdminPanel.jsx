@@ -24,7 +24,7 @@ const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialC
     const handleSliderChange = (newValue) => {
       setVotingDuration(newValue); // Pretpostavljam da želite da ažurirate votingDuration
     };
-    
+    const [uniqueID, setUniqueID] = useState('');
    
 
     const backgroundStyle = {
@@ -65,6 +65,19 @@ const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialC
     };
 
 
+
+
+const fetchUniqueID = async () => {
+    try {
+        const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+        const fetchedID = await contract.getUniqueID();
+        setUniqueID(fetchedID.toString());  // Convert BigNumber to string if needed
+    } catch (error) {
+        console.error('Failed to fetch the unique ID:', error);
+    }
+};
+
+
    
     useEffect(() => {
       if (initialCandidates) {
@@ -77,7 +90,10 @@ const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialC
     }, [initialCandidates]);
     
     
-
+    useEffect(() => {
+      fetchUniqueID();
+  }, [signer]);  // Re-run when signer changes, assuming signer is necessary to call the contract
+  
 
 
     
@@ -619,6 +635,42 @@ useEffect(() => {
       '& .MuiInputLabel-root': { // Label color
         color: 'white',
       },
+    }}
+/>
+<TextField
+    label="Unique ID"
+    variant="outlined"
+    value={uniqueID}
+    InputProps={{
+        readOnly: true,
+    }}
+    fullWidth
+    margin="normal"
+    sx={{
+        '& label.Mui-focused': {
+            color: '#ff007a',
+        },
+        '& .MuiInput-underline:after': {
+            borderBottomColor: '#ff007a',
+        },
+        '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+                borderColor: '#BDBDBD',
+            },
+            '&:hover fieldset': {
+                borderColor: '#ff007a',
+            },
+            '&.Mui-focused fieldset': {
+                borderColor: '#ff007a',
+            },
+            '& input': {
+                color: 'white',
+            },
+            backgroundColor: '#1c1c1c',
+        },
+        '& .MuiInputLabel-root': { // Label color
+            color: 'white',
+        },
     }}
 />
 

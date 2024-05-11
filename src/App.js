@@ -420,7 +420,7 @@ async function getVoters() {
           }
 
         const [showResults, setShowResults] = useState(false);
-       /*  return (
+        return (
             <div className="App">
               <header className="App-logo">
                 <img src={logobeli} style={{ height: '70px', width: 'auto' }} alt="Logo"/>
@@ -429,8 +429,8 @@ async function getVoters() {
               <LandingPage createInstance={createUserVotingInstance} />
             </div>
           );
- */
-    return (
+
+  /*   return (
         <div className="App">
              <header className="App-logo">
             <img src={logobeli} style={{ height: '70px', width: 'auto' }} alt="Logo"/>
@@ -518,7 +518,7 @@ async function getVoters() {
             )}
            
         </div>
-    );
+    ); */
 }
 
 export default App;
