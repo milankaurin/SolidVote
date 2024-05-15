@@ -1,4 +1,4 @@
-const contractAddress = "0x38C45841B7E67FC669Fe9e174e22b0265646c401"; 
+const contractAddress = "0xBf79e66Dc60382Fb7B3a8904734fFf38B0dB2e49"; 
 const factoryAddress = "0x7e75A1cdF03BbCfC995057a91E288DE1BcD05c40"; 
 const tokenAddress = "0x8F45b6892F648E7dC01AFEBEEBaA2DA63462343F"; 
 
