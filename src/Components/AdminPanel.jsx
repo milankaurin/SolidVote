@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from "react";
 import { ethers } from 'ethers';
-import { contractAbi, contractAddress } from '../Constant/constant';
+import { contractAbi } from '../Constant/constant';
 import { Container, Box, Grid,Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InputSlider from './Slider'; 
@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialCandidates, showResults,  setShowResults, SlanjaNaAdreseGlasace, postaviKolicinuZaSlanje,  updateRedoviGlasaca ,kolicinaZaSlanje, tokenAbi,tokenAddress}) => {
+const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialCandidates, showResults,  setShowResults, SlanjaNaAdreseGlasace, postaviKolicinuZaSlanje,  updateRedoviGlasaca ,kolicinaZaSlanje, tokenAbi,tokenAddress,contractAddress}) => {
     const tableRef = React.useRef(null);
     const [votingtitle, setVotingTitle] = useState("");  
     const [unosKorisnika, setUnosKorisnika] = useState(''); 
