@@ -17,11 +17,13 @@ import Stack from '@mui/material/Stack';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 
-const provider = new ethers.providers.Web3Provider(window.ethereum);
-const signer = provider.getSigner();
+//const provider = new ethers.providers.Web3Provider(window.ethereum);
+//const signer = provider.getSigner();
 
 
 function App() {
+
+    const [signer, setSigner] = useState(null);
     const [provider, setProvider] = useState(null);
     const [account, setAccount] = useState(null);
     const [isConnected, setIsConnected] = useState(false);
@@ -164,18 +166,23 @@ function App() {
     const seconds = remainingSeconds % 60;
 
 
-    useEffect(() => {
-        if (window.ethereum) {
-            window.ethereum.on('accountsChanged', handleAccountsChanged);
-            // connectToMetamask();
+   useEffect(() => {
+    // Možete dodati event listener za promene u accounts ili mreži ako je potrebno
+    const handleAccountsChanged = (accounts) => {
+        if (accounts.length === 0) {
+            setIsConnected(false);
+            setAccount(null);
+        } else {
+            connectToMetamask(); // Ponovo povežite ako se account promeni
         }
+    };
 
-        return () => {
-            if (window.ethereum) {
-                window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-            }
-        };
-    }, []);
+    window.ethereum?.on('accountsChanged', handleAccountsChanged);
+
+    return () => {
+        window.ethereum?.removeListener('accountsChanged', handleAccountsChanged);
+    };
+}, []);
 
 
 
@@ -379,27 +386,29 @@ function App() {
     }
 };
 
-    const connectToMetamask = async () => {
-        if (window.ethereum) {
-            try {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                setProvider(provider);
-                await provider.send("eth_requestAccounts", []);
-                const signer = provider.getSigner();
-                const address = await signer.getAddress();
-                setAccount(address);
-                console.log("Metamask Connected : " + address);
-                setIsConnected(true);
+const connectToMetamask = async () => {
+    if (window.ethereum) {
+        try {
+            const tempProvider = new ethers.providers.Web3Provider(window.ethereum);
+            await tempProvider.send("eth_requestAccounts", []); // Traži korisnika da poveže svoj wallet
+            const tempSigner = tempProvider.getSigner();
+            const address = await tempSigner.getAddress();
+            setProvider(tempProvider);
+            setSigner(tempSigner);
+            setAccount(address);
+            setIsConnected(true);
+            console.log("Metamask Connected : " + address);
 
-                // Provera admin instance nakon povezivanja MetaMask-a
-                await checkAdminInstance();
-            } catch (err) {
-                console.error(err);
-            }
-        } else {
-            console.error("Metamask is not detected in the browser");
+            // Provera admin instance nakon povezivanja MetaMask-a
+            await checkAdminInstance();
+        } catch (err) {
+            console.error("Error connecting to MetaMask:", err);
+            setIsConnected(false); // U slučaju greške, postaviti isConnected na false
         }
-    };
+    } else {
+        console.error("MetaMask is not detected in the browser");
+    }
+};
 
     const handleAccountsChanged = (accounts) => {
         if (accounts.length > 0) {
