@@ -47,12 +47,32 @@ const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialC
         setVotingTitle(e.target.value);
         console.log(votingtitle);
     };
+
+
+
+    async function getCandidates() {
+      if (!contractAddress) return; // Check if contractAddress is not null
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
+      const candidatesList = await contractInstance.getAllVotesOfCandidatesAdmin();
+      const formattedCandidates = candidatesList.map((candidate, index) => {
+          return {
+              index: index,
+              name: candidate.name,
+              voteCount: candidate.voteCount.toNumber()
+          };
+      });
+      setCandidates(formattedCandidates);
+  }
     
     const fetchCandidates = async () => {
         setLoading(true);
         try {
             const contract = new ethers.Contract(contractAddress, contractAbi, signer);
-            const candidatesArray = await contract.getAllVotesOfCandiates();
+            const candidatesArray = await contract.getAllVotesOfCandidatesAdmin();
+            console.log(candidatesArray);
             setCandidates(candidatesArray.map((candidate, index) => ({
                 index,
                 name: candidate.name,
@@ -92,6 +112,7 @@ const fetchUniqueID = async () => {
     
     useEffect(() => {
       fetchUniqueID();
+      getCandidates();
   }, [signer]);  // Re-run when signer changes, assuming signer is necessary to call the contract
   
 
@@ -226,7 +247,7 @@ useEffect(() => {
     console.log(redoviGlasaca);
 }, [redoviGlasaca]);
         
-    useEffect(() => {
+   /*  useEffect(() => {
         fetchCandidates();  }, []);
 
         const updateRowsFromTable = () => {
@@ -247,7 +268,7 @@ useEffect(() => {
             });
           
             setRedoviOpcijaZaGlasanje(rows);
-          };
+          }; */
           
 
           

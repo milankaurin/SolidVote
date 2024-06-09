@@ -229,8 +229,15 @@ function isOwner() public view returns (bool) {
              candidatesWithoutVotes[i].voteCount = 0;
         }
         return candidatesWithoutVotes; // Vrati kandidate bez broja glasova
-    }
+    }    
 }
+
+      function getAllVotesOfCandidatesAdmin() public onlyOwner view returns (Candidate[] memory) {
+        return candidates; // Ako je dozvoljeno videti rezultate, vrati originalne kandidate sa brojem glasova
+   
+    }    
+}
+
 
     //sami kandidati
     function getCandidateNames() public view returns (string[] memory) {

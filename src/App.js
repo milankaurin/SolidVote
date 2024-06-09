@@ -189,10 +189,10 @@ function App() {
     useEffect(() => {
         if (account && contractAddress) {
             checkIfOwner();
-            getCandidates();
+            //getCandidates();
             getRemainingTime();
-            getCurrentStatus();
-            checkcanVote();
+           // getCurrentStatus();
+            //checkcanVote();
             getVotingTitle();
         }
     }, [account, contractAddress]);
@@ -254,13 +254,13 @@ function App() {
         setCanVote(hasVoted);
     }
 
-    async function getCandidates() {
+   /*  async function getCandidates() {
         if (!contractAddress) return; // Check if contractAddress is not null
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         await provider.send("eth_requestAccounts", []);
         const signer = provider.getSigner();
         const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
-        const candidatesList = await contractInstance.getAllVotesOfCandiates();
+        const candidatesList = await contractInstance.getAllVotesOfCandidates();
         const formattedCandidates = candidatesList.map((candidate, index) => {
             return {
                 index: index,
@@ -269,7 +269,7 @@ function App() {
             };
         });
         setCandidates(formattedCandidates);
-    }
+    } */
 
     async function getCurrentStatus() {
         if (!contractAddress) return; // Check if contractAddress is not null
