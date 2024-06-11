@@ -116,7 +116,6 @@ const fetchUniqueID = async () => {
   }, [signer]);  // Re-run when signer changes, assuming signer is necessary to call the contract
   
 
-
     
     const startVoting = async () => {
       setAction("starting");

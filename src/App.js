@@ -50,6 +50,9 @@ function App() {
 
     const [redoviGlasaca, setRedoviGlasaca] = useState();
     const [adminInstanceAddress, setAdminInstanceAddress] = useState(null); // Dodato
+    const [voterInstanceAddress, setVoterInstanceAddress] = useState(null);
+
+   
 
     const checkAdminInstance = async () => {
         try {
@@ -203,6 +206,16 @@ function App() {
         }
     }, [account]);
 
+    useEffect(() => {
+        if (voterInstanceAddress != null) {
+            console.log("voterInstanceAddress updated:", voterInstanceAddress);
+            // Možete dodati logiku za redirekciju ili druge akcije ovde
+        }
+    }, [voterInstanceAddress]);
+    
+    
+
+
     const checkIfOwner = async () => {
         try {
             if (!contractAddress) return; // Skip if contract address is null
@@ -229,6 +242,7 @@ function App() {
     }
 
 
+   
 
 
     useEffect(() => {
@@ -546,7 +560,171 @@ const connectToMetamask = async () => {
           </div>
       ); */
 
-      return (
+     /*  return (
+        <div className="App">
+            <header className="App-logo">
+                <img src={logobeli} style={{ height: '70px', width: 'auto' }} alt="Logo" />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                    {isConnected && (
+                        <Chip
+                            label={isAddressExpanded ? account : formatAddress(account)}
+                            color="primary"
+                            onClick={toggleAddress}
+                            sx={{
+                                height: '46px',
+                                marginRight: '10px',
+                                backgroundColor: '#ff007a',
+                                color: 'white',
+                                borderRadius: '12px',
+                                fontSize: '0.875rem',
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    backgroundColor: '#463346',
+                                },
+                            }}
+                        />
+                    )}
+                    <Button variant="contained" onClick={handleButton} sx={{
+                        height: '56px',
+                        minWidth: '120px',
+                        maxWidth: '200px',
+                        fontSize: '1rem',
+                        fontWeight: 'bold',
+                        borderRadius: '12px',
+                        backgroundColor: '#323538',
+                        color: 'f2f2f2',
+                        '&:hover': { backgroundColor: '#AAA', color: 'dimgray' },
+                    }}>
+                        {textButton}
+                    </Button>
+                </div>
+            </header>
+            {isConnected && (
+                prevVoterInstanceAddress === voterInstanceAddress ? (
+                    <Connected
+                        account={account}
+                        candidates={candidates}
+                        remainingTime={timeString}
+                        number={number}
+                        voteFunction={vote}
+                        showButton={canVote}
+                        votingStatus={votingStatus}
+                        Title={votingTitle}
+                        showResults={showResults}
+                    />
+                ) : adminInstanceAddress ? (
+                    <AdminPanel
+                    signer={signer}
+                    voters={voters}
+                    initialCandidates={candidates}
+                    showResults={showResults}
+                    remainingTime={remainingTime}
+                    Title={votingTitle}
+                    SlanjaNaAdreseGlasace={posaljiEther}
+                    setShowResults={setShowResults}
+                    postaviKolicinuZaSlanje={postaviKolicinuZaSlanje}
+                    redoviGlasaca={redoviGlasaca}
+                    updateRedoviGlasaca={updateRedoviGlasaca}
+                    kolicinaZaSlanje={kolicinaZaSlanje}
+                    tokenAbi={tokenAbi}
+                    tokenAddress={tokenAddress}
+                    contractAddress={contractAddress}
+                    />
+                ) : (
+                    <LandingPage
+                    createInstance={createUserVotingInstance}
+                    voterInstanceAddress= {voterInstanceAddress}
+                    />
+                )
+            )}
+            {!isConnected && (
+                <Login connectWallet={connectToMetamask} />
+            )}
+        </div>
+    ); */
+
+    return (
+        <div className="App">
+            <header className="App-logo">
+                <img src={logobeli} style={{ height: '70px', width: 'auto' }} alt="Logo" />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                    {isConnected && (
+                        <Chip
+                            label={isAddressExpanded ? account : formatAddress(account)}
+                            color="primary"
+                            onClick={toggleAddress}
+                            sx={{
+                                height: '46px',
+                                marginRight: '10px',
+                                backgroundColor: '#ff007a',
+                                color: 'white',
+                                borderRadius: '12px',
+                                fontSize: '0.875rem',
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    backgroundColor: '#463346',
+                                },
+                            }}
+                        />
+                    )}
+                    <Button variant="contained" onClick={handleButton} sx={{
+                        height: '56px',
+                        minWidth: '120px',
+                        maxWidth: '200px',
+                        fontSize: '1rem',
+                        fontWeight: 'bold',
+                        borderRadius: '12px',
+                        backgroundColor: '#323538',
+                        color: 'f2f2f2',
+                        '&:hover': { backgroundColor: '#AAA', color: 'dimgray' },
+                    }}>
+                        {textButton}
+                    </Button>
+                </div>
+            </header>
+            {isConnected && (
+                adminInstanceAddress ? (
+                    <AdminPanel
+                    signer={signer}
+                    voters={voters}
+                    initialCandidates={candidates}
+                    showResults={showResults}
+                    remainingTime={remainingTime}
+                    Title={votingTitle}
+                    SlanjaNaAdreseGlasace={posaljiEther}
+                    setShowResults={setShowResults}
+                    postaviKolicinuZaSlanje={postaviKolicinuZaSlanje}
+                    redoviGlasaca={redoviGlasaca}
+                    updateRedoviGlasaca={updateRedoviGlasaca}
+                    kolicinaZaSlanje={kolicinaZaSlanje}
+                    tokenAbi={tokenAbi}
+                    tokenAddress={tokenAddress}
+                    contractAddress={contractAddress}
+                    />
+                ) : voterInstanceAddress && voterInstanceAddress !== '' ? (
+                    <Connected
+                    account={account}
+                    candidates={candidates}
+                    remainingTime={timeString}
+                    number={number}
+                    voteFunction={vote}
+                    showButton={canVote}
+                    votingStatus={votingStatus}
+                    Title={votingTitle}
+                    showResults={showResults}
+                />
+                ) : (
+                    <LandingPage createInstance={createUserVotingInstance} setVoterInstanceAddress={setVoterInstanceAddress} />
+
+                )
+            )}
+            {!isConnected && (
+                <Login connectWallet={connectToMetamask} />
+            )}
+        </div>
+    );
+
+    /*   return (
         <div className="App">
             <header className="App-logo">
                 <img src={logobeli} style={{ height: '70px', width: 'auto' }} alt="Logo" />
@@ -605,13 +783,14 @@ const connectToMetamask = async () => {
                         contractAddress={contractAddress}
                     />
                 ) : (
-                    <LandingPage createInstance={createUserVotingInstance} />
+                    <LandingPage createInstance={createUserVotingInstance}
+                    voterInstanceAddress= {voterInstanceAddress} />
                 )
             ) : (
                 <Login connectWallet={connectToMetamask} />
             )}
         </div>
-    );
+    ); */
 }
 
 export default App;

@@ -1,6 +1,6 @@
 async function main() {
     const tokenAddress = "0x8F45b6892F648E7dC01AFEBEEBaA2DA63462343F"; // Zamenite sa stvarnom adresom vašeg tokena
-    const feeAmount = ethers.utils.parseUnits("1000000000000000000000", "ether"); // 10 tokena
+    const feeAmount = ethers.utils.parseUnits("10", "ether"); // 10 tokena
   
     const VotingFactory = await ethers.getContractFactory("VotingFactory");
     const votingFactory = await VotingFactory.deploy(tokenAddress, feeAmount);

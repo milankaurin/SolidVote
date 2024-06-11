@@ -3,12 +3,14 @@ import { Box, Button, Typography, TextField, Link } from '@mui/material';
 import { ethers } from 'ethers';
 import { factoryAbi, factoryAddress } from '../Constant/constant';
 
-const LandingPage = ({ createInstance }) => {
+const LandingPage = ({ createInstance ,setVoterInstanceAddress}) => {
   const [sessionID, setSessionID] = useState('');
   const [provider, setProvider] = useState(null);
   const [votingFactoryContract, setVotingFactoryContract] = useState(null);
+  
 
   useEffect(() => {
+  //  console.log(voterInstanceAddress+"Pusi ga");
     const initEthers = async () => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []); // Request account access
@@ -23,8 +25,11 @@ const LandingPage = ({ createInstance }) => {
 
   const handleGoToSession = async () => {
     try {
-      const instanceAddress = await votingFactoryContract.getVotingInstanceForVoter(sessionID);
-      console.log('Voting instance address:', instanceAddress);
+      
+      setVoterInstanceAddress(await votingFactoryContract.getVotingInstanceForVoter(sessionID));
+      
+      
+     // console.log('Voting instance address:', voterInstanceAddress);
     } catch (error) {
       console.error('Error retrieving voting instance:', error);
     }

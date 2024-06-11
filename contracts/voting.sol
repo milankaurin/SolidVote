@@ -236,7 +236,7 @@ function isOwner() public view returns (bool) {
         return candidates; // Ako je dozvoljeno videti rezultate, vrati originalne kandidate sa brojem glasova
    
     }    
-}
+
 
 
     //sami kandidati
