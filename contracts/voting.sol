@@ -176,6 +176,10 @@ function isOwner() public view returns (bool) {
         return false;
     }
     
+
+function hasUserVoted() public view returns (bool) {
+    return lastVotedSession[msg.sender] < votingSessionId;
+}
 //FUNKCIJA VOTE - omogućava korisnicima da glasaju, proverava se da li je glasanje aktivno, da li su već glasali u ovoj sesiji i da li je unos (index) validan
 
    function vote(uint256 _candidateIndex) public {

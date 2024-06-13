@@ -5,52 +5,85 @@ import { contractAbi } from '../Constant/constant';
 import { ethers } from 'ethers';  
 
 const Connected = ({ account={account},
-    voteFunction,
-    votingStatus,
-    showResults,
+    
+   
     voterInstanceAddress }) => {
     const [selectedCandidate, setSelectedCandidate] = useState('');
     const [remainingTime, setRemainingTime] = useState('');
     const [votingTitle, setVotingTitle] = useState(''); 
     const [candidates, setCandidates] = useState([]);
-    const [showResultsLocal, setshowResultsLocal] = useState(true);
+    const [showResults, setShowResults] = useState(false);
     const handleRadioChange = (event) => {
         setSelectedCandidate(event.target.value);
     };
-    const [showButton, setshowButton] = useState(true);
+    
+    const [isVotingFinished, setisVotingFinished] = useState();
+    const [hasVoted, setHasVoted] = useState(false);
 
-    const isVotingFinished = !votingStatus;
-    console.log("Voting Status:", votingStatus);
+    console.log("Voting Status:", isVotingFinished);
 
-    const voteClick = () => {
-        if (!selectedCandidate) {
-            console.error("No candidate selected.");
-            return;
-        }
-        voteFunction(selectedCandidate);
-    };
+    
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const title = await getVotingTitle(); // Assuming this function properly handles its asynchronous operations
+                const title = await getVotingTitle();
                 setVotingTitle(title);
-    
-                const time = await getRemainingTime(); // Assuming this function properly handles its asynchronous operations
+        
+                const time = await getRemainingTime();
                 setRemainingTime(time);
-    
-                const candidatesList = await getCandidates(); // Modify getCandidates to directly return the formatted candidates
+        
+                const candidatesList = await getCandidates();
                 setCandidates(candidatesList);
+    
+                // Assume checkIfUserHasVoted is a function you might need to define based on your contract
+                await getCurrentStatus();
+                await checkIfUserHasVoted();
+                await checkCanSeeResults();
+               console.log(hasVoted+"AAAA");
             } catch (error) {
                 console.error("Failed to fetch data:", error);
             }
         }
-    
+        
         fetchData();
-    }, [voterInstanceAddress]); // Include dependencies as necessary
+    }, [voterInstanceAddress]);
+
+    async function getCurrentStatus() {
+        if (!voterInstanceAddress) return; // Check if contractAddress is not null
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const contractInstance = new ethers.Contract(voterInstanceAddress, contractAbi, signer);
+        const status = await contractInstance.getVotingStatus();
+        setisVotingFinished(!status);
+       
     
+    }
+
     
-    
+
+    async function checkCanSeeResults() {
+        if (!voterInstanceAddress) return; // Check if contractAddress is not null
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const contractInstance = new ethers.Contract(voterInstanceAddress, contractAbi, signer);
+        const canseeresults =  await contractInstance.canSeeResults();
+        setShowResults(canseeresults);
+        
+    }
+
+    async function checkIfUserHasVoted() {
+        if (!voterInstanceAddress) return; // Check if contractAddress is not null
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const contractInstance = new ethers.Contract(voterInstanceAddress, contractAbi, signer);
+        const hasvoted =  await contractInstance.hasUserVoted();
+        setHasVoted(!hasvoted);
+        
+    }
     async function getVotingTitle() {
         if (!voterInstanceAddress) return; // Check if contractAddress is not null
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -93,11 +126,27 @@ const Connected = ({ account={account},
             };
         });
     }
-     
+    
+    async function vote(index) {
+        if (!voterInstanceAddress) return; // Check if contractAddress is not null
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const contractInstance = new ethers.Contract(voterInstanceAddress, contractAbi, signer);
 
+        const tx = await contractInstance.vote(index);
+        await tx.wait();
+        checkIfUserHasVoted();
+    }
 
-
-
+    const voteClick = () => {
+        if (!selectedCandidate) {
+            console.error("No candidate selected.");
+            return;
+        }
+        console.log("BBB" + selectedCandidate)
+        vote(selectedCandidate);
+    };
 
 
     const backgroundStyle = {
@@ -129,16 +178,16 @@ const Connected = ({ account={account},
             <TableRow>
                 
                 <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Index</TableCell>
-                {showResultsLocal && showButton && (<Box sx={{ width: 10, height: 50 }}></Box> )}
-                {showResultsLocal && (<Box sx={{ width: 5, height: 0 }}></Box> )}
+                {showResults && !hasVoted && (<Box sx={{ width: 10, height: 50 }}></Box> )}
+                {showResults && (<Box sx={{ width: 5, height: 0 }}></Box> )}
                 <TableCell align="center" sx={{ fontSize: '1.2rem' , color:'black'}}>Candidate name</TableCell>
-                {showResultsLocal && <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Votes</TableCell>}
-                {!isVotingFinished && !showButton && (
+                {showResults && <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Votes</TableCell>}
+                {!isVotingFinished && hasVoted && (
             <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Vote</TableCell>
         ) }
-        {!showResultsLocal && showButton && (<Box sx={{ width: 84, height: 50 }}></Box> )}
-        {showResultsLocal && showButton && (<Box sx={{ width: 5, height: 50 }}></Box> )}
-        {showResultsLocal && (<Box sx={{ width: 0, height: 0 }}></Box> )}
+        {!showResults && !hasVoted && (<Box sx={{ width: 84, height: 50 }}></Box> )}
+        {showResults && hasVoted && (<Box sx={{ width: 5, height: 50 }}></Box> )}
+        {showResults && (<Box sx={{ width: 0, height: 0 }}></Box> )}
             </TableRow>
         </TableHead>
         <TableBody sx={{
@@ -158,11 +207,11 @@ const Connected = ({ account={account},
             {candidates && candidates.map((candidate, index) => (
                 <TableRow key={index}>
                     <TableCell align="center">{candidate.index}</TableCell>
-                    {showResultsLocal &&  (<Box sx={{ width: 10, height: 48 }}></Box> )}
+                    {!hasVoted &&  (<Box sx={{ width: 10, height: 48 }}></Box> )}
                                         <TableCell align="center">{candidate.name}</TableCell>
-                    {showResultsLocal && <TableCell align="center">{candidate.voteCount}</TableCell>}
+                    {!hasVoted && <TableCell align="center">{candidate.voteCount}</TableCell>}
                     <TableCell align="center">
-    {!isVotingFinished && !showButton &&( 
+    {!isVotingFinished && !hasVoted &&( 
         <Radio
             checked={selectedCandidate === candidate.index.toString()}
             onChange={handleRadioChange}
@@ -181,28 +230,26 @@ const Connected = ({ account={account},
         <Typography variant="h6" sx={{fontWeight: '400', color: '#white', marginBottom: '5px', marginTop: '5px', textAlign: 'center' }}>
             Remaining Time: {remainingTime}
         </Typography>
-        {!isVotingFinished && !showButton && (
-          <Button variant="contained" onClick={voteClick} sx={{ 
-            marginTop: '10px', 
-            marginBottom: '20px', 
-            display: 'block', 
-            marginX: 'auto', 
-            fontSize: '1.5rem',
-            fontWeight: 'bold', 
-            padding: '15px 30px', 
-            borderRadius: '16px', 
-            backgroundColor: '#ff007a', 
-            '&:hover': {
-                backgroundColor: '#463346', 
-            },
-        }}>
-            Vote
-        </Button>
-        
+        {!isVotingFinished  && !hasVoted && (
+            <Button variant="contained" onClick={voteClick} sx={{
+                marginTop: '10px',
+                marginBottom: '20px',
+                display: 'block',
+                marginX: 'auto',
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                padding: '15px 30px',
+                borderRadius: '16px',
+                backgroundColor: '#ff007a',
+                '&:hover': {
+                    backgroundColor: '#463346',
+                },
+            }}>
+                Vote
+            </Button>
         )}
     </div>
-    
-    );
+);
 };
 
 export default Connected;

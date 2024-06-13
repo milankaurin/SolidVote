@@ -17,6 +17,7 @@ const AdminPanel = ({ signer, voters, postaviKolicinuZaSlanje,  updateRedoviGlas
     const [redoviGlasaca, setRedoviGlasaca] = useState([ 
         { tekst: '', broj: '' }
     ]);
+    const [isVotingFinished, setisVotingFinished] = useState();
     const [inputCandidates, setInputCandidates] = useState("");
     const [loading, setLoading] = useState(false);
     const [votingDuration, setVotingDuration] = useState("30"); 
@@ -48,7 +49,6 @@ const AdminPanel = ({ signer, voters, postaviKolicinuZaSlanje,  updateRedoviGlas
         setVotingTitle(e.target.value);
         console.log(votingtitle);
     };
-
     async function getVotingTitle() {
       if (!contractAddress) return; // Check if contractAddress is not null
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -76,7 +76,16 @@ const AdminPanel = ({ signer, voters, postaviKolicinuZaSlanje,  updateRedoviGlas
       return (`${hours}h ${minutes}m ${seconds}s`);
   }
 
-  
+  async function getCurrentStatus() {
+    if (!contractAddress) return; // Check if contractAddress is not null
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
+    const status = await contractInstance.getVotingStatus();
+    console.log(status);
+    setisVotingFinished(status);
+}
 
   async function getCandidates() {
     if (!contractAddress) return []; // Return empty array if no address
@@ -126,16 +135,6 @@ const fetchUniqueID = async () => {
 };
 
 
-   
-    /* useEffect(() => {
-      if (initialCandidates) {
-        const initialRows = initialCandidates.map(candidate => ({
-          tekst: candidate.name,
-        }));
-        
-        setRedoviOpcijaZaGlasanje(initialRows);
-      }
-    }, [initialCandidates]); */
     
     
     useEffect(() => {
@@ -149,6 +148,9 @@ const fetchUniqueID = async () => {
   
               const candidatesList = await getCandidates(); // Modify getCandidates to directly return the formatted candidates
               setCandidates(candidatesList);
+
+              fetchUniqueID();
+              getCurrentStatus();
           } catch (error) {
               console.error("Failed to fetch data:", error);
           }

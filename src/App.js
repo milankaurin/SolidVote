@@ -17,17 +17,13 @@ import Stack from '@mui/material/Stack';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 
-//const provider = new ethers.providers.Web3Provider(window.ethereum);
-//const signer = provider.getSigner();
-
-
 function App() {
 
     const [signer, setSigner] = useState(null);
     const [provider, setProvider] = useState(null);
     const [account, setAccount] = useState(null);
     const [isConnected, setIsConnected] = useState(false);
-    const [votingStatus, setVotingStatus] = useState(true);
+   
     const [remainingTime, setRemainingTime] = useState('');
     const [candidates, setCandidates] = useState([]);
     const [number, setNumber] = useState('');
@@ -192,28 +188,17 @@ function App() {
     useEffect(() => {
         if (account && contractAddress) {
             checkIfOwner();
-            //getCandidates();
-            //getRemainingTime();
-           // getCurrentStatus();
-            //checkcanVote();
-           // getVotingTitle();
+            
         }
     }, [account, contractAddress]);
 
+
     useEffect(() => {
         if (account) {
-            checkAdminInstance(); // Provera admin instance kada se promeni account
+            checkAdminInstance(); 
         }
     }, [account]);
 
-    useEffect(() => {
-        if (voterInstanceAddress != null) {
-            console.log("voterInstanceAddress updated:", voterInstanceAddress);
-            // Možete dodati logiku za redirekciju ili druge akcije ovde
-        }
-    }, [voterInstanceAddress]);
-    
-    
 
 
     const checkIfOwner = async () => {
@@ -229,22 +214,7 @@ function App() {
         }
     };
 
-    async function vote(index) {
-        if (!contractAddress) return; // Check if contractAddress is not null
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        const signer = provider.getSigner();
-        const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
-
-        const tx = await contractInstance.vote(index);
-        await tx.wait();
-        checkcanVote();
-    }
-
-
-   
-
-
+    
     useEffect(() => {
         if (isConnected) {
             setTextButton("Disconnect");
@@ -270,16 +240,7 @@ function App() {
 
    
 
-    async function getCurrentStatus() {
-        if (!contractAddress) return; // Check if contractAddress is not null
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        const signer = provider.getSigner();
-        const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
-        const status = await contractInstance.getVotingStatus();
-        console.log(status);
-        setVotingStatus(status);
-    }
+    
 
    
 
@@ -302,34 +263,6 @@ function App() {
 
    
     const timeString = `${hours}h ${minutes}m ${seconds}s`;
-
-    /*  const posaljiEther = async () => {
-       if (!signer || redoviGlasaca.length === 0 || kolicinaZaSlanje <= 0) {
-           console.error("Signer nije dostupan, lista glasača je prazna, ili količina za slanje nije ispravna.");
-           return;
-       }
-   
-       const contract = new ethers.Contract(TransferAddress, TransferAbi, signer);
-       
-       const recipients = redoviGlasaca.map(glasac => glasac.tekst);
-       // Ako svi primaoci treba da dobiju isti iznos, nije potrebno mapiranje za amounts
-       const totalAmountWei = ethers.utils.parseUnits((kolicinaZaSlanje * redoviGlasaca.length).toString(), "wei");
-   
-       try {
-           // Pošto svi dobijaju istu količinu, šaljemo niz istih iznosa
-           const amounts = new Array(recipients.length).fill(ethers.utils.parseUnits(kolicinaZaSlanje, "wei").toString());
-           
-           const transaction = await contract.batchTransfer(recipients, amounts, {
-               value: totalAmountWei, // Ovde šaljemo ukupan iznos
-               gasLimit: ethers.utils.hexlify(1000000) // Primer gas limita, treba ga prilagoditi
-           });
-           await transaction.wait();
-           console.log(`Uspješno poslato ${ethers.utils.formatEther(totalAmountWei)} ETH na navedene adrese.`);
-       } catch (error) {
-           console.error("Greška pri slanju ethera:", error);
-       }
-   }; */
-
 
    const posaljiEther = async () => {
     try {
@@ -421,189 +354,7 @@ const connectToMetamask = async () => {
         return `${account.substring(0, 4)}...${account.substring(account.length - 4)}`;
     }
 
-    const [showResults, setShowResults] = useState(false);
-    /*  return (
-         <div className="App">
-           <header className="App-logo">
-             <img src={logobeli} style={{ height: '70px', width: 'auto' }} alt="Logo"/>
-           </header>
-           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}></div>            
-           <LandingPage createInstance={createUserVotingInstance} />
-         </div>
-       ); */
-
-    /*   return (
-          <div className="App">
-               <header className="App-logo">
-              <img src={logobeli} style={{ height: '70px', width: 'auto' }} alt="Logo"/>
-              
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-      {isConnected && (
-        <Chip
-        label={isAddressExpanded ? account : formatAddress(account)}
-        color="primary"
-        onClick={toggleAddress} 
-        sx={{
-            height: '46px',
-            marginRight: '10px',
-            backgroundColor: '#ff007a', 
-            color: 'white',
-            borderRadius: '12px',
-            fontSize: '0.875rem',
-            cursor: 'pointer', 
-            '&:hover': {
-                backgroundColor: '#463346', 
-            },
-        }}
-    />
-    
-     
-      )}
-      
-      <Button variant="contained" onClick={handleButton} sx={{
-          height: '56px',
-          minWidth: '120px',
-          maxWidth: '200px',
-          fontSize: '1rem',
-          fontWeight: 'bold',
-          borderRadius: '12px',
-          backgroundColor: '#323538', 
-          color: 'f2f2f2',
-          '&:hover': { backgroundColor: '#AAA', color:'dimgray' }, 
-      }}>
-          {textButton}
-      </Button>
-  </div>
-  
-          </header>
-              {isConnected ? (   
-                  <>
-                  
-                     
-                      
-                      {isOwner ? (            
-                         <AdminPanel
-                         signer={signer}
-                         voters={voters}
-                         initialCandidates={candidates}
-                         showResults={showResults}
-                         remainingTime={timeString}
-                         Title={votingTitle}
-                         SlanjaNaAdreseGlasace= {posaljiEther}
-                         setShowResults={setShowResults} 
-                         postaviKolicinuZaSlanje={postaviKolicinuZaSlanje} 
-                         redoviGlasaca={redoviGlasaca}
-                         updateRedoviGlasaca={updateRedoviGlasaca} 
-                         kolicinaZaSlanje={kolicinaZaSlanje}
-                         tokenAbi={tokenAbi}
-                         tokenAddress={tokenAddress}
-                       />
-                       
-                      ) : (
-                          <Connected      
-                              account={account}
-                              candidates={candidates}
-                              remainingTime={timeString}
-                              number={number}
-                              voteFunction={vote}
-                              showButton={canVote}
-                              votingStatus={votingStatus}
-                              Title={votingTitle}
-                              showResults={showResults}
-                              
-                  
-                          />
-                      )}
-                  </>
-              ) : (
-                  <Login connectWallet={connectToMetamask} />
-              )}
-             
-          </div>
-      ); */
-
-     /*  return (
-        <div className="App">
-            <header className="App-logo">
-                <img src={logobeli} style={{ height: '70px', width: 'auto' }} alt="Logo" />
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                    {isConnected && (
-                        <Chip
-                            label={isAddressExpanded ? account : formatAddress(account)}
-                            color="primary"
-                            onClick={toggleAddress}
-                            sx={{
-                                height: '46px',
-                                marginRight: '10px',
-                                backgroundColor: '#ff007a',
-                                color: 'white',
-                                borderRadius: '12px',
-                                fontSize: '0.875rem',
-                                cursor: 'pointer',
-                                '&:hover': {
-                                    backgroundColor: '#463346',
-                                },
-                            }}
-                        />
-                    )}
-                    <Button variant="contained" onClick={handleButton} sx={{
-                        height: '56px',
-                        minWidth: '120px',
-                        maxWidth: '200px',
-                        fontSize: '1rem',
-                        fontWeight: 'bold',
-                        borderRadius: '12px',
-                        backgroundColor: '#323538',
-                        color: 'f2f2f2',
-                        '&:hover': { backgroundColor: '#AAA', color: 'dimgray' },
-                    }}>
-                        {textButton}
-                    </Button>
-                </div>
-            </header>
-            {isConnected && (
-                prevVoterInstanceAddress === voterInstanceAddress ? (
-                    <Connected
-                        account={account}
-                        candidates={candidates}
-                        remainingTime={timeString}
-                        number={number}
-                        voteFunction={vote}
-                        showButton={canVote}
-                        votingStatus={votingStatus}
-                        Title={votingTitle}
-                        showResults={showResults}
-                    />
-                ) : adminInstanceAddress ? (
-                    <AdminPanel
-                    signer={signer}
-                    voters={voters}
-                    initialCandidates={candidates}
-                    showResults={showResults}
-                    remainingTime={remainingTime}
-                    Title={votingTitle}
-                    SlanjaNaAdreseGlasace={posaljiEther}
-                    setShowResults={setShowResults}
-                    postaviKolicinuZaSlanje={postaviKolicinuZaSlanje}
-                    redoviGlasaca={redoviGlasaca}
-                    updateRedoviGlasaca={updateRedoviGlasaca}
-                    kolicinaZaSlanje={kolicinaZaSlanje}
-                    tokenAbi={tokenAbi}
-                    tokenAddress={tokenAddress}
-                    contractAddress={contractAddress}
-                    />
-                ) : (
-                    <LandingPage
-                    createInstance={createUserVotingInstance}
-                    voterInstanceAddress= {voterInstanceAddress}
-                    />
-                )
-            )}
-            {!isConnected && (
-                <Login connectWallet={connectToMetamask} />
-            )}
-        </div>
-    ); */
+   
 
     return (
         <div className="App">
@@ -664,9 +415,6 @@ const connectToMetamask = async () => {
                 ) : voterInstanceAddress && voterInstanceAddress !== '' ? (
                     <Connected
                     account={account}
-                    voteFunction={vote}
-                    votingStatus={votingStatus} 
-                    showResults={showResults}
                     voterInstanceAddress={voterInstanceAddress}
                 />
                 ) : (
@@ -681,73 +429,6 @@ const connectToMetamask = async () => {
         </div>
     );
 
-    /*   return (
-        <div className="App">
-            <header className="App-logo">
-                <img src={logobeli} style={{ height: '70px', width: 'auto' }} alt="Logo" />
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                    {isConnected && (
-                        <Chip
-                            label={isAddressExpanded ? account : formatAddress(account)}
-                            color="primary"
-                            onClick={toggleAddress}
-                            sx={{
-                                height: '46px',
-                                marginRight: '10px',
-                                backgroundColor: '#ff007a',
-                                color: 'white',
-                                borderRadius: '12px',
-                                fontSize: '0.875rem',
-                                cursor: 'pointer',
-                                '&:hover': {
-                                    backgroundColor: '#463346',
-                                },
-                            }}
-                        />
-                    )}
-                    <Button variant="contained" onClick={handleButton} sx={{
-                        height: '56px',
-                        minWidth: '120px',
-                        maxWidth: '200px',
-                        fontSize: '1rem',
-                        fontWeight: 'bold',
-                        borderRadius: '12px',
-                        backgroundColor: '#323538',
-                        color: 'f2f2f2',
-                        '&:hover': { backgroundColor: '#AAA', color: 'dimgray' },
-                    }}>
-                        {textButton}
-                    </Button>
-                </div>
-            </header>
-            {isConnected ? (
-                adminInstanceAddress ? ( // Provera da li postoji admin instance
-                    <AdminPanel
-                        signer={signer}
-                        voters={voters}
-                        initialCandidates={candidates}
-                        showResults={showResults}
-                        remainingTime={remainingTime}
-                        Title={votingTitle}
-                        SlanjaNaAdreseGlasace={posaljiEther}
-                        setShowResults={setShowResults}
-                        postaviKolicinuZaSlanje={postaviKolicinuZaSlanje}
-                        redoviGlasaca={redoviGlasaca}
-                        updateRedoviGlasaca={updateRedoviGlasaca}
-                        kolicinaZaSlanje={kolicinaZaSlanje}
-                        tokenAbi={tokenAbi}
-                        tokenAddress={tokenAddress}
-                        contractAddress={contractAddress}
-                    />
-                ) : (
-                    <LandingPage createInstance={createUserVotingInstance}
-                    voterInstanceAddress= {voterInstanceAddress} />
-                )
-            ) : (
-                <Login connectWallet={connectToMetamask} />
-            )}
-        </div>
-    ); */
 }
 
 export default App;
