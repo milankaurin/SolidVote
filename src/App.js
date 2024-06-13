@@ -193,10 +193,10 @@ function App() {
         if (account && contractAddress) {
             checkIfOwner();
             //getCandidates();
-            getRemainingTime();
+            //getRemainingTime();
            // getCurrentStatus();
             //checkcanVote();
-            getVotingTitle();
+           // getVotingTitle();
         }
     }, [account, contractAddress]);
 
@@ -268,22 +268,7 @@ function App() {
         setCanVote(hasVoted);
     }
 
-   /*  async function getCandidates() {
-        if (!contractAddress) return; // Check if contractAddress is not null
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        const signer = provider.getSigner();
-        const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
-        const candidatesList = await contractInstance.getAllVotesOfCandidates();
-        const formattedCandidates = candidatesList.map((candidate, index) => {
-            return {
-                index: index,
-                name: candidate.name,
-                voteCount: candidate.voteCount.toNumber()
-            };
-        });
-        setCandidates(formattedCandidates);
-    } */
+   
 
     async function getCurrentStatus() {
         if (!contractAddress) return; // Check if contractAddress is not null
@@ -296,17 +281,7 @@ function App() {
         setVotingStatus(status);
     }
 
-    async function getVotingTitle() {
-        if (!contractAddress) return; // Check if contractAddress is not null
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        const signer = provider.getSigner();
-        const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
-        const title = await contractInstance.getVotingTitle();
-        console.log(title);
-        setVotingTitle(title);
-        return title;
-    }
+   
 
     async function getVoters() {
         if (!contractAddress) return; // Check if contractAddress is not null
@@ -325,20 +300,7 @@ function App() {
         setVoters(formattedVoters);
     }
 
-    async function getRemainingTime() {
-        if (!contractAddress) return; // Check if contractAddress is not null
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        const signer = provider.getSigner();
-        const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
-        const timeInSeconds = await contractInstance.getRemainingTime();
-        const time = parseInt(timeInSeconds);
-        const hours = Math.floor(time / 3600);
-        const minutes = Math.floor((time % 3600) / 60);
-        const seconds = time % 60;
-
-        setRemainingTime(`${hours}h ${minutes}m ${seconds}s`);
-    }
+   
     const timeString = `${hours}h ${minutes}m ${seconds}s`;
 
     /*  const posaljiEther = async () => {
@@ -687,12 +649,10 @@ const connectToMetamask = async () => {
                     <AdminPanel
                     signer={signer}
                     voters={voters}
-                    initialCandidates={candidates}
-                    showResults={showResults}
-                    remainingTime={remainingTime}
-                    Title={votingTitle}
+                    
+                    
                     SlanjaNaAdreseGlasace={posaljiEther}
-                    setShowResults={setShowResults}
+                 
                     postaviKolicinuZaSlanje={postaviKolicinuZaSlanje}
                     redoviGlasaca={redoviGlasaca}
                     updateRedoviGlasaca={updateRedoviGlasaca}
@@ -704,14 +664,10 @@ const connectToMetamask = async () => {
                 ) : voterInstanceAddress && voterInstanceAddress !== '' ? (
                     <Connected
                     account={account}
-                    candidates={candidates}
-                    remainingTime={timeString}
-                    number={number}
                     voteFunction={vote}
-                    showButton={canVote}
-                    votingStatus={votingStatus}
-                    Title={votingTitle}
+                    votingStatus={votingStatus} 
                     showResults={showResults}
+                    voterInstanceAddress={voterInstanceAddress}
                 />
                 ) : (
                     <LandingPage createInstance={createUserVotingInstance} setVoterInstanceAddress={setVoterInstanceAddress} />
@@ -719,7 +675,8 @@ const connectToMetamask = async () => {
                 )
             )}
             {!isConnected && (
-                <Login connectWallet={connectToMetamask} />
+                <Login connectWallet={connectToMetamask}
+                 />
             )}
         </div>
     );

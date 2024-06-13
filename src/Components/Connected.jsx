@@ -1,14 +1,23 @@
 
 import React, { useState,useEffect } from "react";
 import { Radio, Table, TableBody, TableCell, TableContainer,Box, TableHead, TableRow, Paper, Button, Typography } from '@mui/material';
+import { contractAbi } from '../Constant/constant';
+import { ethers } from 'ethers';  
 
-
-const Connected = ({ account, candidates, remainingTime, voteFunction, showButton, votingStatus,Title, isAdmin,showResults,canVote }) => {
+const Connected = ({ account={account},
+    voteFunction,
+    votingStatus,
+    showResults,
+    voterInstanceAddress }) => {
     const [selectedCandidate, setSelectedCandidate] = useState('');
-
+    const [remainingTime, setRemainingTime] = useState('');
+    const [votingTitle, setVotingTitle] = useState(''); 
+    const [candidates, setCandidates] = useState([]);
+    const [showResultsLocal, setshowResultsLocal] = useState(true);
     const handleRadioChange = (event) => {
         setSelectedCandidate(event.target.value);
     };
+    const [showButton, setshowButton] = useState(true);
 
     const isVotingFinished = !votingStatus;
     console.log("Voting Status:", votingStatus);
@@ -21,10 +30,75 @@ const Connected = ({ account, candidates, remainingTime, voteFunction, showButto
         voteFunction(selectedCandidate);
     };
 
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const title = await getVotingTitle(); // Assuming this function properly handles its asynchronous operations
+                setVotingTitle(title);
     
-useEffect(() => {
-    console.log(selectedCandidate);
-}, [selectedCandidate]);
+                const time = await getRemainingTime(); // Assuming this function properly handles its asynchronous operations
+                setRemainingTime(time);
+    
+                const candidatesList = await getCandidates(); // Modify getCandidates to directly return the formatted candidates
+                setCandidates(candidatesList);
+            } catch (error) {
+                console.error("Failed to fetch data:", error);
+            }
+        }
+    
+        fetchData();
+    }, [voterInstanceAddress]); // Include dependencies as necessary
+    
+    
+    
+    async function getVotingTitle() {
+        if (!voterInstanceAddress) return; // Check if contractAddress is not null
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const contractInstance = new ethers.Contract(voterInstanceAddress, contractAbi, signer);
+        const title = await contractInstance.getVotingTitle();
+        console.log(title);
+        setVotingTitle(title);
+        return title;
+    }
+    
+    async function getRemainingTime() {
+        if (!voterInstanceAddress) return; // Check if contractAddress is not null
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const contractInstance = new ethers.Contract(voterInstanceAddress, contractAbi, signer);
+        const timeInSeconds = await contractInstance.getRemainingTime();
+        const time = parseInt(timeInSeconds);
+        const hours = Math.floor(time / 3600);
+        const minutes = Math.floor((time % 3600) / 60);
+        const seconds = time % 60;
+
+        return (`${hours}h ${minutes}m ${seconds}s`);
+    }
+
+    async function getCandidates() {
+        if (!voterInstanceAddress) return []; // Return empty array if no address
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const contractInstance = new ethers.Contract(voterInstanceAddress, contractAbi, signer);
+        const candidatesList = await contractInstance.getAllVotesOfCandidates();
+        return candidatesList.map((candidate, index) => {
+            return {
+                index: index,
+                name: candidate.name,
+                voteCount: candidate.voteCount.toNumber()
+            };
+        });
+    }
+     
+
+
+
+
+
 
     const backgroundStyle = {
         backgroundColor: '#1e1f23',
@@ -32,23 +106,11 @@ useEffect(() => {
         width: '100vw'
     };
 
-    const [showResultsLocal, setShowResultsLocal] = useState(() => {
-        
-        const showResultsLocalStorage = localStorage.getItem('showResults');
-        return showResultsLocalStorage ? JSON.parse(showResultsLocalStorage) : showResults;
-    });
-
-
-    useEffect(() => {   //checkbox storing
-        console.log("showResults prop in Connected:", showResultsLocal);
-        
-        localStorage.setItem('showResults', JSON.stringify(showResultsLocal));
-    }, [showResultsLocal]);
     return (
         <div style={backgroundStyle} className="connected-container">
         
         <Typography variant="h4" sx={{ color: 'white', marginBottom: '3px', textAlign: 'center',mt:'150px' }}>
-            {Title} 
+            {votingTitle} 
         </Typography>
     
         <TableContainer 
@@ -93,7 +155,7 @@ useEffect(() => {
                 },
             },
         }}>
-            {candidates.map((candidate, index) => (
+            {candidates && candidates.map((candidate, index) => (
                 <TableRow key={index}>
                     <TableCell align="center">{candidate.index}</TableCell>
                     {showResultsLocal &&  (<Box sx={{ width: 10, height: 48 }}></Box> )}

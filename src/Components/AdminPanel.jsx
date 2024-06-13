@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialCandidates, showResults,  setShowResults, SlanjaNaAdreseGlasace, postaviKolicinuZaSlanje,  updateRedoviGlasaca ,kolicinaZaSlanje, tokenAbi,tokenAddress,contractAddress}) => {
+const AdminPanel = ({ signer, voters, postaviKolicinuZaSlanje,  updateRedoviGlasaca ,kolicinaZaSlanje, tokenAbi,tokenAddress,contractAddress}) => {
     const tableRef = React.useRef(null);
     const [votingtitle, setVotingTitle] = useState("");  
     const [unosKorisnika, setUnosKorisnika] = useState(''); 
@@ -25,7 +25,8 @@ const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialC
       setVotingDuration(newValue); // Pretpostavljam da želite da ažurirate votingDuration
     };
     const [uniqueID, setUniqueID] = useState('');
-   
+    const [remainingTime, setRemainingTime] = useState('');
+    const [showResults, setShowResults] = useState(false);
 
     const backgroundStyle = {
         backgroundImage: `url('/images/adminBackground.jpg')`,
@@ -48,24 +49,51 @@ const AdminPanel = ({ signer, voters, remainingTime, Title, candidates: initialC
         console.log(votingtitle);
     };
 
-
-
-    async function getCandidates() {
+    async function getVotingTitle() {
       if (!contractAddress) return; // Check if contractAddress is not null
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
       const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
-      const candidatesList = await contractInstance.getAllVotesOfCandidatesAdmin();
-      const formattedCandidates = candidatesList.map((candidate, index) => {
-          return {
-              index: index,
-              name: candidate.name,
-              voteCount: candidate.voteCount.toNumber()
-          };
-      });
-      setCandidates(formattedCandidates);
+      const title = await contractInstance.getVotingTitle();
+      console.log(title);
+      setVotingTitle(title);
+      return title;
   }
+  
+  async function getRemainingTime() {
+      if (!contractAddress) return; // Check if contractAddress is not null
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
+      const timeInSeconds = await contractInstance.getRemainingTime();
+      const time = parseInt(timeInSeconds);
+      const hours = Math.floor(time / 3600);
+      const minutes = Math.floor((time % 3600) / 60);
+      const seconds = time % 60;
+
+      return (`${hours}h ${minutes}m ${seconds}s`);
+  }
+
+  
+
+  async function getCandidates() {
+    if (!contractAddress) return []; // Return empty array if no address
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
+    const candidatesList = await contractInstance.getAllVotesOfCandidatesAdmin();
+    return candidatesList.map((candidate, index) => {
+        return {
+            index: index,
+            name: candidate.name,
+            voteCount: candidate.voteCount.toNumber()
+        };
+    });
+}
+
     
     const fetchCandidates = async () => {
         setLoading(true);
@@ -99,7 +127,7 @@ const fetchUniqueID = async () => {
 
 
    
-    useEffect(() => {
+    /* useEffect(() => {
       if (initialCandidates) {
         const initialRows = initialCandidates.map(candidate => ({
           tekst: candidate.name,
@@ -107,13 +135,27 @@ const fetchUniqueID = async () => {
         
         setRedoviOpcijaZaGlasanje(initialRows);
       }
-    }, [initialCandidates]);
+    }, [initialCandidates]); */
     
     
     useEffect(() => {
-      fetchUniqueID();
-      getCandidates();
-  }, [signer]);  // Re-run when signer changes, assuming signer is necessary to call the contract
+      async function fetchData() {
+          try {
+              const title = await getVotingTitle(); // Assuming this function properly handles its asynchronous operations
+              setVotingTitle(title);
+  
+              const time = await getRemainingTime(); // Assuming this function properly handles its asynchronous operations
+              setRemainingTime(time);
+  
+              const candidatesList = await getCandidates(); // Modify getCandidates to directly return the formatted candidates
+              setCandidates(candidatesList);
+          } catch (error) {
+              console.error("Failed to fetch data:", error);
+          }
+      }
+  
+      fetchData();
+  }, [contractAddress]); // Include dependencies as necessary
   
 
     
@@ -583,7 +625,7 @@ useEffect(() => {
 </Container>
 
 <Box sx={{ width: '100%', maxWidth: '90%', display: 'flex', justifyContent: 'center', color: 'white', fontSize: '2rem' , mb:'20px', fontFamily: 'Roboto, sans-serif' }}>
-   {Title}
+   {votingtitle}
 </Box>
 
 
