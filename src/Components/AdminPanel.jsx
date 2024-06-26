@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState,useEffect,useMemo } from "react";
 import { ethers } from 'ethers';
 import { contractAbi } from '../Constant/constant';
 import { Container, Box, Grid,Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Typography } from '@mui/material';
@@ -9,6 +9,8 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 const AdminPanel = ({ signer, voters, postaviKolicinuZaSlanje,  updateRedoviGlasaca ,kolicinaZaSlanje, tokenAbi,tokenAddress,contractAddress}) => {
+  
+    const [remainingSeconds, setRemainingSeconds] = useState(0);
     const tableRef = React.useRef(null);
     const [votingtitle, setVotingTitle] = useState("");  
     const [unosKorisnika, setUnosKorisnika] = useState(''); 
@@ -49,6 +51,14 @@ const AdminPanel = ({ signer, voters, postaviKolicinuZaSlanje,  updateRedoviGlas
         setVotingTitle(e.target.value);
         console.log(votingtitle);
     };
+    const formattedTime = useMemo(() => {
+      const hours = Math.floor(remainingSeconds / 3600);
+      const minutes = Math.floor((remainingSeconds % 3600) / 60);
+      const seconds = remainingSeconds % 60;
+      return `${hours}h ${minutes}m ${seconds}s`;
+  }, [remainingSeconds]);
+  
+
     async function getVotingTitle() {
       if (!contractAddress) return; // Check if contractAddress is not null
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -61,20 +71,27 @@ const AdminPanel = ({ signer, voters, postaviKolicinuZaSlanje,  updateRedoviGlas
       return title;
   }
   
-  async function getRemainingTime() {
-      if (!contractAddress) return; // Check if contractAddress is not null
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      const signer = provider.getSigner();
-      const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
-      const timeInSeconds = await contractInstance.getRemainingTime();
-      const time = parseInt(timeInSeconds);
-      const hours = Math.floor(time / 3600);
-      const minutes = Math.floor((time % 3600) / 60);
-      const seconds = time % 60;
+  async function getRemainingTimeFromContract() {
+    if (!contractAddress) return 0; // Return 0 if contractAddress is null
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
+    const timeInSeconds = await contractInstance.getRemainingTime();
+    console.log("Time from contract:", timeInSeconds); // Log fetched time
+    return parseInt(timeInSeconds, 10);
+}
 
-      return (`${hours}h ${minutes}m ${seconds}s`);
+async function syncTimeWithContract() {
+  const timeInSeconds = await getRemainingTimeFromContract();
+  console.log("Fetched time from contract:", timeInSeconds);
+  if (Math.abs(timeInSeconds - remainingSeconds) > 120) {
+    console.log("Significant time difference detected. Syncing time...");
+    setRemainingSeconds(timeInSeconds);
   }
+}
+
+
 
   async function getCurrentStatus() {
     if (!contractAddress) return; // Check if contractAddress is not null
@@ -83,7 +100,7 @@ const AdminPanel = ({ signer, voters, postaviKolicinuZaSlanje,  updateRedoviGlas
     const signer = provider.getSigner();
     const contractInstance = new ethers.Contract(contractAddress, contractAbi, signer);
     const status = await contractInstance.getVotingStatus();
-    console.log(status);
+    console.log("HHHHHHHHHHHHHHH"+status);
     setisVotingFinished(status);
 }
 
@@ -134,6 +151,19 @@ const fetchUniqueID = async () => {
     }
 };
 
+useEffect(() => {
+  const countdown = setInterval(() => {
+    setRemainingSeconds(prevSeconds => prevSeconds > 0 ? prevSeconds - 1 : 0);
+  }, 1000);
+
+  return () => clearInterval(countdown);
+}, []);
+
+
+useEffect(() => {
+  const interval = setInterval(syncTimeWithContract, 60000); // Sinhronizacija na svakih 90 sekundi
+  return () => clearInterval(interval);
+}, [remainingSeconds, contractAddress]); // Dependencies da osiguramo pravilno ažuriranje
 
     
     
@@ -143,11 +173,16 @@ const fetchUniqueID = async () => {
               const title = await getVotingTitle(); // Assuming this function properly handles its asynchronous operations
               setVotingTitle(title);
   
-              const time = await getRemainingTime(); // Assuming this function properly handles its asynchronous operations
-              setRemainingTime(time);
+              const time = await getRemainingTimeFromContract();
+              console.log(time); // Assuming this function properly handles its asynchronous operations
+              setRemainingSeconds(time);
   
               const candidatesList = await getCandidates(); // Modify getCandidates to directly return the formatted candidates
               setCandidates(candidatesList);
+
+             const votingStatus = await getCurrentStatus();
+             setisVotingFinished(votingStatus);
+             console.log("GGGGGGGGGGGG"+isVotingFinished);
 
               fetchUniqueID();
               getCurrentStatus();
@@ -665,7 +700,7 @@ useEffect(() => {
     </TableContainer>
 </Box>
      <Box sx={{ width: '100%', maxWidth: '90%', display: 'flex', justifyContent: 'center', color: 'white', fontSize: '2rem' , mb:'20px',mt:'20px'}}>
-    Remaining time: {remainingTime}
+    Remaining time: {formattedTime}
 </Box>
                 </Box>
                 <TextField

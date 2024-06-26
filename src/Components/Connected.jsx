@@ -176,18 +176,10 @@ const Connected = ({ account={account},
     <Table aria-label="candidates table" size="small"> 
         <TableHead sx={{backgroundColor:'#f7f7f7'}}>
             <TableRow>
-                
                 <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Index</TableCell>
-                {showResults && !hasVoted && (<Box sx={{ width: 10, height: 50 }}></Box> )}
-                {showResults && (<Box sx={{ width: 5, height: 0 }}></Box> )}
-                <TableCell align="center" sx={{ fontSize: '1.2rem' , color:'black'}}>Candidate name</TableCell>
-                {showResults && <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Votes</TableCell>}
-                {!isVotingFinished && hasVoted && (
-            <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Vote</TableCell>
-        ) }
-        {!showResults && !hasVoted && (<Box sx={{ width: 84, height: 50 }}></Box> )}
-        {showResults && hasVoted && (<Box sx={{ width: 5, height: 50 }}></Box> )}
-        {showResults && (<Box sx={{ width: 0, height: 0 }}></Box> )}
+                <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Candidate name</TableCell>
+                <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Current Resaults</TableCell>
+                <TableCell align="center" sx={{ fontSize: '1.2rem', color:'black' }}>Vote</TableCell>
             </TableRow>
         </TableHead>
         <TableBody sx={{
@@ -206,26 +198,37 @@ const Connected = ({ account={account},
         }}>
             {candidates && candidates.map((candidate, index) => (
                 <TableRow key={index}>
-                    <TableCell align="center">{candidate.index}</TableCell>
-                    {!hasVoted &&  (<Box sx={{ width: 10, height: 48 }}></Box> )}
-                                        <TableCell align="center">{candidate.name}</TableCell>
-                    {!hasVoted && <TableCell align="center">{candidate.voteCount}</TableCell>}
+                    <TableCell align="center">{index + 1}</TableCell>
+                    <TableCell align="center">{candidate.name}</TableCell>
                     <TableCell align="center">
-    {!isVotingFinished && !hasVoted &&( 
-        <Radio
-            checked={selectedCandidate === candidate.index.toString()}
-            onChange={handleRadioChange}
-            value={candidate.index.toString()}
-            name="radio-buttons"
-            sx={{ '& .MuiSvgIcon-root': { fontSize: '1.25rem', color:'#ff007a' } }}
-        />
-    )}
-</TableCell>
+                        {showResults ? candidate.voteCount : "Not available"}
+                    </TableCell>
+                    <TableCell align="center">
+                        {!isVotingFinished && !hasVoted ? (
+                            <Radio
+                                checked={selectedCandidate === candidate.index.toString()}
+                                onChange={handleRadioChange}
+                                value={candidate.index.toString()}
+                                name="radio-buttons"
+                                sx={{ '& .MuiSvgIcon-root': { fontSize: '1.25rem', color: '#ff007a' } }}
+                            />
+                        ) : (
+                            <Radio
+                                checked={selectedCandidate === candidate.index.toString()}
+                                value={candidate.index.toString()}
+                                name="radio-buttons"
+                                sx={{ '& .MuiSvgIcon-root': { fontSize: '1.25rem', color: '#D3D3D3' } }}
+                                disabled
+                            />
+                        )}
+                    </TableCell>
                 </TableRow>
             ))}
         </TableBody>
     </Table>
 </TableContainer>
+
+
 
         <Typography variant="h6" sx={{fontWeight: '400', color: '#white', marginBottom: '5px', marginTop: '5px', textAlign: 'center' }}>
             Remaining Time: {remainingTime}
