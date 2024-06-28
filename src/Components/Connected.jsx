@@ -1,26 +1,61 @@
-
-import React, { useState,useEffect } from "react";
-import { Radio, Table, TableBody, TableCell, TableContainer,Box, TableHead, TableRow, Paper, Button, Typography } from '@mui/material';
+import React, { useState, useEffect, useMemo } from "react";
+import { Radio, Table, TableBody, TableCell, TableContainer, Box, TableHead, TableRow, Paper, Button, Typography } from '@mui/material';
 import { contractAbi } from '../Constant/constant';
-import { ethers } from 'ethers';  
+import { ethers } from 'ethers';
 
-const Connected = ({ account={account},
-    
-   
-    voterInstanceAddress }) => {
+const Connected = ({ account, voterInstanceAddress }) => {
     const [selectedCandidate, setSelectedCandidate] = useState('');
-    const [remainingTime, setRemainingTime] = useState('');
-    const [votingTitle, setVotingTitle] = useState(''); 
+    const [remainingSeconds, setRemainingSeconds] = useState(0);
+    const [votingTitle, setVotingTitle] = useState('');
     const [candidates, setCandidates] = useState([]);
     const [showResults, setShowResults] = useState(false);
-    const handleRadioChange = (event) => {
-        setSelectedCandidate(event.target.value);
-    };
-    
     const [isVotingFinished, setisVotingFinished] = useState();
     const [hasVoted, setHasVoted] = useState(false);
     const [gasAmountForVote, setGasAmountForVote] = useState(0);
 
+    const handleRadioChange = (event) => {
+        setSelectedCandidate(event.target.value);
+    };
+
+    const formattedTime = useMemo(() => {
+        const hours = Math.floor(remainingSeconds / 3600);
+        const minutes = Math.floor((remainingSeconds % 3600) / 60);
+        const seconds = remainingSeconds % 60;
+        return `${hours}h ${minutes}m ${seconds}s`;
+    }, [remainingSeconds]);
+
+    useEffect(() => {
+        const countdown = setInterval(() => {
+            setRemainingSeconds(prevSeconds => prevSeconds > 0 ? prevSeconds - 1 : 0);
+        }, 1000);
+
+        return () => clearInterval(countdown);
+    }, []);
+
+    useEffect(() => {
+        const interval = setInterval(syncTimeWithContract, 60000); // Sync every minute
+        return () => clearInterval(interval);
+    }, [remainingSeconds, voterInstanceAddress]);
+
+    async function getRemainingTimeFromContract() {
+        if (!voterInstanceAddress) return 0; // Return 0 if contractAddress is null
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const contractInstance = new ethers.Contract(voterInstanceAddress, contractAbi, signer);
+        const timeInSeconds = await contractInstance.getRemainingTime();
+        console.log("Time from contract:", timeInSeconds); // Log fetched time
+        return parseInt(timeInSeconds, 10);
+    }
+
+    async function syncTimeWithContract() {
+        const timeInSeconds = await getRemainingTimeFromContract();
+        console.log("Fetched time from contract:", timeInSeconds);
+        if (Math.abs(timeInSeconds - remainingSeconds) > 120) {
+            console.log("Significant time difference detected. Syncing time...");
+            setRemainingSeconds(timeInSeconds);
+        }
+    }
     console.log("Voting Status:", isVotingFinished);
     useEffect(() => {
         const estimateVoteGas = async () => {
@@ -48,8 +83,8 @@ const Connected = ({ account={account},
                 const title = await getVotingTitle();
                 setVotingTitle(title);
         
-                const time = await getRemainingTime();
-                setRemainingTime(time);
+                const time = await getRemainingTimeFromContract();
+                setRemainingSeconds(time);
         
                 const candidatesList = await getCandidates();
                 setCandidates(candidatesList);
@@ -249,7 +284,7 @@ const Connected = ({ account={account},
 
 
         <Typography variant="h6" sx={{fontWeight: '400', color: '#white', marginBottom: '5px', marginTop: '5px', textAlign: 'center' }}>
-            Remaining Time: {remainingTime}
+            Remaining Time: {formattedTime}
         </Typography>
         {!isVotingFinished  && !hasVoted && (
             <Button variant="contained" onClick={voteClick} sx={{
