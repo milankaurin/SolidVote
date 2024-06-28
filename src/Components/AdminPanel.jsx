@@ -172,9 +172,6 @@ useEffect(() => {
       activeProvider = new ethers.providers.Web3Provider(window.ethereum);
      
   }
-
-
-  
   // Dohvatanje trenutne cene gasa i postavljanje količine za slanje
   const fetchGasPrice = async () => {
     if (activeProvider) {

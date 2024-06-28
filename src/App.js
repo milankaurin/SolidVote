@@ -42,7 +42,7 @@ function App() {
 
     const postaviKolicinuZaSlanje = (novaKolicina) => {
         setKolicinaZaSlanje(novaKolicina);
-        console.log(kolicinaZaSlanje+"LLLLLLLLLLLL");
+       
     };
 
     const [redoviGlasaca, setRedoviGlasaca] = useState();
