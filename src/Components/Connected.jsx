@@ -19,10 +19,28 @@ const Connected = ({ account={account},
     
     const [isVotingFinished, setisVotingFinished] = useState();
     const [hasVoted, setHasVoted] = useState(false);
+    const [gasAmountForVote, setGasAmountForVote] = useState(0);
 
     console.log("Voting Status:", isVotingFinished);
+    useEffect(() => {
+        const estimateVoteGas = async () => {
+            if (!voterInstanceAddress) return;
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            await provider.send("eth_requestAccounts", []);
+            const signer = provider.getSigner();
+            const contract = new ethers.Contract(voterInstanceAddress, contractAbi, signer);
+            try {
+                const estimatedGas = await contract.estimateGas.vote(1); // Ensure the account is eligible
+                setGasAmountForVote(estimatedGas.toString());
+                console.log(`Estimated gas: ${estimatedGas.toString()}`);
+            } catch (error) {
+                console.error('Error estimating gas:', error.message);
+                setGasAmountForVote('Estimation failed');
+            }
+        };
 
-    
+        estimateVoteGas();
+    }, [voterInstanceAddress]);
 
     useEffect(() => {
         async function fetchData() {

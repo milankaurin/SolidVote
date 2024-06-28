@@ -7,6 +7,9 @@ import InputSlider from './Slider';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import QRCode from 'qrcode.react';  // If QRCode is the default export
+// OR
+ // If you want to use QRCodeSVG, adjust as per your requirement
 
 const AdminPanel = ({ signer, voters, postaviKolicinuZaSlanje,  updateRedoviGlasaca ,kolicinaZaSlanje, tokenAbi,tokenAddress,contractAddress}) => {
   
@@ -30,7 +33,7 @@ const AdminPanel = ({ signer, voters, postaviKolicinuZaSlanje,  updateRedoviGlas
     const [uniqueID, setUniqueID] = useState('');
     const [remainingTime, setRemainingTime] = useState('');
     const [showResults, setShowResults] = useState(false);
-
+    const [gasAmountForVote, setGasAmountForVote] = useState(0);
     const backgroundStyle = {
         backgroundImage: `url('/images/adminBackground.jpg')`,
         backgroundSize: 'cover', // Pokriva celu pozadinu
@@ -58,6 +61,17 @@ const AdminPanel = ({ signer, voters, postaviKolicinuZaSlanje,  updateRedoviGlas
       return `${hours}h ${minutes}m ${seconds}s`;
   }, [remainingSeconds]);
   
+  const downloadQR = () => {
+    const canvas = document.getElementById("qrCodeEl");
+    const pngUrl = canvas.toDataURL("image/png");
+    let downloadLink = document.createElement("a");
+    downloadLink.href = pngUrl;
+    downloadLink.download = "QRCode.png";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+};
+
 
     async function getVotingTitle() {
       if (!contractAddress) return; // Check if contractAddress is not null
@@ -158,6 +172,7 @@ useEffect(() => {
 
   return () => clearInterval(countdown);
 }, []);
+
 
 
 useEffect(() => {
@@ -423,7 +438,7 @@ useEffect(() => {
                   background: '#1c1c1c',
                   borderRadius: '8px',
                   padding: '20px',
-                  marginBottom: '20px',
+                  marginBottom: '00px',
                   overflowX: 'auto', 
                   transform: 'scale(0.75)', 
                   transformOrigin: 'top center',
@@ -559,7 +574,7 @@ useEffect(() => {
       </Container>
     
     <Container maxWidth="lg" sx={{
-  marginBottom: '35px',
+  marginBottom: '15px',
   background: '#1c1c1c', 
   borderRadius: '11px',
   padding: '20px',
@@ -699,10 +714,46 @@ useEffect(() => {
         </Table>
     </TableContainer>
 </Box>
-     <Box sx={{ width: '100%', maxWidth: '90%', display: 'flex', justifyContent: 'center', color: 'white', fontSize: '2rem' , mb:'20px',mt:'20px'}}>
+<Box sx={{ width: '100%', maxWidth: '90%', display: 'flex', justifyContent: 'center', color: 'white', fontSize: '2rem', mb: '30px', mt: '20px' }}> {/* Reduced bottom margin and reduced top margin */}
     Remaining time: {formattedTime}
 </Box>
+                <Box sx={{
+  marginTop: '0px', // No top margin to make it closer
+  marginBottom: '20px', // Reduced bottom margin before the button
+  display: 'flex', 
+  flexDirection: 'column', // Stack elements vertically
+  alignItems: 'center',
+  width: '100%'
+}}>
+  <QRCode
+    id="qrCodeEl"
+    value={uniqueID}
+    size={200}
+    level={"H"}
+    includeMargin={true}
+    style={{
+      border: '5px solid #ff007a', // Pink border matching the theme
+      borderRadius: '8px',
+      padding: '5px'
+    }}
+  />
+  <Button onClick={downloadQR} variant="contained" sx={{
+    mt: 3, // Margin top for spacing after the QR Code
+    padding: '12px 30px', // Increased padding for a larger button appearance
+    fontSize: '1.2rem', // Larger font size for better visibility
+    backgroundColor: '#ff007a', // Theme color
+    '&:hover': {
+      backgroundColor: '#e6006d' // Darker on hover
+    },
+    color: 'white',
+    fontWeight: 'bold'
+  }}>
+    Download QR Code
+</Button>
+
+</Box>
                 </Box>
+                
                 <TextField
     label="Količina za slanje (u wei)"
     variant="outlined"

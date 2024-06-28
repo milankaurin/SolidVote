@@ -11,13 +11,9 @@ contract Voting {
         uint256 voteCount;
     }
     
-    struct Voter{
-        address Adresa;
-        uint256 Poeni;
-    }
+    
 
     Candidate[] public candidates;
-    Voter[] public voters;
     address public owner;
     mapping(address => uint256) public lastVotedSession;
     uint256 public votingSessionId;
@@ -29,10 +25,16 @@ contract Voting {
     address public supremeAdministrator;
     ERC20Burnable public token;
     uint256 public feeAmount;
-
+    mapping(address => uint256) public voterPoints;
     event CandidateAdded(string name);
     event Voted(address indexed voter, uint256 candidateIndex);
     event VotingInitialized(address indexed owner);
+
+       struct Voter {
+        address Adress;
+        uint256 Points;
+    }
+
 
     modifier onlySupremeAdministrator() {
         require(msg.sender == supremeAdministrator, "Caller is not the supreme administrator");
@@ -107,13 +109,22 @@ function isOwner() public view returns (bool) {
 }
 
 //FUNKCIJE ZA KONTROLU GLASANJA - započinjanje, prekidanje glasanja, dodavanje novog kandidata, brisanje svih kandidata, dodavanje liste kandidata
+    address[] private currentVoters; 
 
-    function addVoters(address[] memory glasaci, uint256[] memory points) public onlyOwner {
-            delete voters;
-        for(uint i = 0; i < glasaci.length; i++) {
-        voters.push(Voter({Adresa: glasaci[i], Poeni: points[i]}));
+    function resetVoters() public onlyOwner {
+        for (uint256 i = 0; i < currentVoters.length; i++) {
+            delete voterPoints[currentVoters[i]];
+            }
+        delete currentVoters;  // Očisti niz trenutnih glasača
+    }
+
+     function addVoters(address[] memory addresses, uint256[] memory points) public onlyOwner {
+        resetVoters(); 
+        for (uint256 i = 0; i < addresses.length; i++) {
+            currentVoters.push(addresses[i]); 
+            voterPoints[addresses[i]] = points[i];
         }
-        }
+    }
     
 
    
@@ -167,14 +178,7 @@ function isOwner() public view returns (bool) {
         }
     }
 
-     function addressInArray() public view returns (bool) {
-        for (uint256 index = 0; index < voters.length; index++) {
-            if (msg.sender == voters[index].Adresa) {
-                return true;
-            }
-        }
-        return false;
-    }
+     
     
 
 function hasUserVoted() public view returns (bool) {
@@ -182,25 +186,14 @@ function hasUserVoted() public view returns (bool) {
 }
 //FUNKCIJA VOTE - omogućava korisnicima da glasaju, proverava se da li je glasanje aktivno, da li su već glasali u ovoj sesiji i da li je unos (index) validan
 
-   function vote(uint256 _candidateIndex) public {
+function vote(uint256 _candidateIndex) public {
     require(block.timestamp >= votingStart && block.timestamp < votingEnd, "Voting is not active.");
     require(_candidateIndex < candidates.length, "Invalid candidate index.");
     require(lastVotedSession[msg.sender] < votingSessionId, "You have already voted in this session.");
-    require(addressInArray(),"You are not eligible to vote.");
+    require(voterPoints[msg.sender] > 0, "Not eligible to vote.");  
+    uint256 points = voterPoints[msg.sender];
 
-    uint256 voterPoints = 0;
-    bool found = false;
-    for (uint i = 0; i < voters.length; i++) {
-        if (voters[i].Adresa == msg.sender) {
-            voterPoints = voters[i].Poeni;
-            found = true;
-            break;
-        }
-    }
-        
-    require(found, "Voter not found."); // Dodato za sigurnost, mada addressInArray već pokriva ovaj slučaj
-
-    candidates[_candidateIndex].voteCount += voterPoints;
+    candidates[_candidateIndex].voteCount += points;
     lastVotedSession[msg.sender] = votingSessionId;
     emit Voted(msg.sender, _candidateIndex);
 }
@@ -221,7 +214,7 @@ function hasUserVoted() public view returns (bool) {
 }
     //ako je enabled gledanje rezultata
     function getAllVotesOfCandidates() public view returns (Candidate[] memory) {
-        require(addressInArray(),"You are not eligible to vote.");
+       require(voterPoints[msg.sender] > 0, "Not eligible to view.");
     if (allowSeeResults) {
         return candidates; // Ako je dozvoljeno videti rezultate, vrati originalne kandidate sa brojem glasova
     } else {
@@ -245,7 +238,7 @@ function hasUserVoted() public view returns (bool) {
 
     //sami kandidati
     function getCandidateNames() public view returns (string[] memory) {
-    require(addressInArray() || msg.sender == owner,"You are not eligible to see the candidates.");
+    require(voterPoints[msg.sender] > 0 || msg.sender == owner,"You are not eligible to see the candidates.");
     string[] memory candidateNames = new string[](candidates.length);
     for (uint i = 0; i < candidates.length; i++) {
         candidateNames[i] = candidates[i].name;
@@ -258,24 +251,31 @@ function hasUserVoted() public view returns (bool) {
     }
 
     function getVotingTitle() public view returns (string memory) {
-    require(addressInArray() || msg.sender == owner,"You are not eligible to see the title.");
+    require(voterPoints[msg.sender] > 0 || msg.sender == owner,"You are not eligible to see the title.");
 
     return currentQuestion;
     }
 
     function getALLVotersAdressAndWeight() public view onlyOwner returns (Voter[] memory) {
-    return voters;
+        Voter[] memory voters = new Voter[](currentVoters.length);
+        for (uint i = 0; i < currentVoters.length; i++) {
+            voters[i] = Voter({
+                Adress: currentVoters[i],
+                Points : voterPoints[currentVoters[i]]
+            });
+        }
+        return voters;
     }
 
     function getVotingStatus() public view returns (bool) {
-        if (msg.sender == owner || addressInArray()){
+        if (msg.sender == owner || voterPoints[msg.sender] > 0){
             return (block.timestamp >= votingStart && block.timestamp < votingEnd);
         }
         return false;
     }
 
     function getRemainingTime() public view returns (uint256) {
-        if (msg.sender == owner || addressInArray()){
+        if (msg.sender == owner || voterPoints[msg.sender] > 0){
         require(block.timestamp >= votingStart, "Voting has not started yet.");
         if (block.timestamp >= votingEnd) {
             return 0;
