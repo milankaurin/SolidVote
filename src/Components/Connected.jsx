@@ -3,19 +3,20 @@ import { Radio, Table, TableBody, TableCell, TableContainer, Box, TableHead, Tab
 import { contractAbi } from '../Constant/constant';
 import { ethers } from 'ethers';
 
-const Connected = ({ account, voterInstanceAddress }) => {
+const Connected = ({ account={account},voterInstanceAddress }) => {
     const [selectedCandidate, setSelectedCandidate] = useState('');
     const [remainingSeconds, setRemainingSeconds] = useState(0);
     const [votingTitle, setVotingTitle] = useState('');
     const [candidates, setCandidates] = useState([]);
     const [showResults, setShowResults] = useState(false);
-    const [isVotingFinished, setisVotingFinished] = useState();
-    const [hasVoted, setHasVoted] = useState(false);
-    const [gasAmountForVote, setGasAmountForVote] = useState(0);
 
     const handleRadioChange = (event) => {
         setSelectedCandidate(event.target.value);
     };
+    const [isVotingFinished, setisVotingFinished] = useState();
+    const [hasVoted, setHasVoted] = useState(false);
+    const [gasAmountForVote, setGasAmountForVote] = useState(0);
+
 
     const formattedTime = useMemo(() => {
         const hours = Math.floor(remainingSeconds / 3600);
