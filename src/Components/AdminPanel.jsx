@@ -166,6 +166,41 @@ const fetchUniqueID = async () => {
 };
 
 useEffect(() => {
+  // Postavljanje providera
+  let activeProvider;
+  if (window.ethereum) {
+      activeProvider = new ethers.providers.Web3Provider(window.ethereum);
+     
+  }
+
+
+  
+  // Dohvatanje trenutne cene gasa i postavljanje količine za slanje
+  const fetchGasPrice = async () => {
+    if (activeProvider) {
+        const gasPrice = await activeProvider.getGasPrice();
+        const gasPriceInWei = gasPrice.mul(79441); // Množenje cene gasa sa vašim brojem
+        const gasPriceWithBuffer = gasPriceInWei.mul(120).div(100); // Dodavanje 20% buffer-a
+        const gasPriceInEth = ethers.utils.formatEther(gasPriceWithBuffer); // Pretvaranje iz wei u ether
+        postaviKolicinuZaSlanje(gasPriceInEth); // Prosleđivanje iznosa u etherima
+    }
+};
+
+if (activeProvider) {
+    fetchGasPrice();
+}
+
+}, []);
+
+
+useEffect(() => {
+  if (kolicinaZaSlanje !== "0") { // Provera da li je količina različita od "0" (inicijalna vrednost)
+      console.log("Ažurirana količina za slanje:", kolicinaZaSlanje);
+      // Ovde možete dalje manipulisati sa kolicinaZaSlanje
+  }
+}, [kolicinaZaSlanje]);
+
+useEffect(() => {
   const countdown = setInterval(() => {
     setRemainingSeconds(prevSeconds => prevSeconds > 0 ? prevSeconds - 1 : 0);
   }, 1000);
@@ -754,39 +789,7 @@ useEffect(() => {
 </Box>
                 </Box>
                 
-                <TextField
-    label="Količina za slanje (u wei)"
-    variant="outlined"
-    onChange={(e) => postaviKolicinuZaSlanje(e.target.value)}
-    fullWidth
-    margin="normal"
-    sx={{
-      '& label.Mui-focused': {
-        color: '#ff007a',
-      },
-      '& .MuiInput-underline:after': {
-        borderBottomColor: '#ff007a',
-      },
-      '& .MuiOutlinedInput-root': {
-        '& fieldset': {
-          borderColor: '#BDBDBD',
-        },
-        '&:hover fieldset': {
-          borderColor: '#ff007a',
-        },
-        '&.Mui-focused fieldset': {
-          borderColor: '#ff007a',
-        },
-        '& input': {
-          color: 'white',
-        },
-        backgroundColor: '#1c1c1c',
-      },
-      '& .MuiInputLabel-root': { // Label color
-        color: 'white',
-      },
-    }}
-/>
+      
 <TextField
     label="Unique ID"
     variant="outlined"
