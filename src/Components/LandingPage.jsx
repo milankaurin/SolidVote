@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box, Button, Typography, TextField, Link } from '@mui/material';
 import { ethers } from 'ethers';
 import { factoryAbi, factoryAddress } from '../Constant/constant';
@@ -7,7 +8,8 @@ const LandingPage = ({ createInstance ,setVoterInstanceAddress}) => {
   const [sessionID, setSessionID] = useState('');
   const [provider, setProvider] = useState(null);
   const [votingFactoryContract, setVotingFactoryContract] = useState(null);
-  
+  const navigate = useNavigate();
+
 
   useEffect(() => {
   //  console.log(voterInstanceAddress+"Pusi ga");
@@ -23,17 +25,18 @@ const LandingPage = ({ createInstance ,setVoterInstanceAddress}) => {
     initEthers();
   }, []);
 
+
   const handleGoToSession = async () => {
-    try {
-      
-      setVoterInstanceAddress(await votingFactoryContract.getVotingInstanceForVoter(sessionID));
-      
-      
-     // console.log('Voting instance address:', voterInstanceAddress);
-    } catch (error) {
-      console.error('Error retrieving voting instance:', error);
+    if (sessionID) {
+        try {
+
+            setVoterInstanceAddress(await votingFactoryContract.getVotingInstanceForVoter(sessionID));
+            navigate(`/vote/${sessionID}`);
+        } catch (error) {
+            console.error('Error retrieving voting instance:', error);
+        }
     }
-  };
+};
 
   const handleChange = (event) => {
     const value = event.target.value;

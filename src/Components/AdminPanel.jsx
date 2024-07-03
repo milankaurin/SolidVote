@@ -22,6 +22,7 @@ const AdminPanel = ({ signer, voters, postaviKolicinuZaSlanje,  updateRedoviGlas
     const [redoviGlasaca, setRedoviGlasaca] = useState([ 
         { tekst: '', broj: '' }
     ]);
+    const [qrCodeUrl, setQrCodeUrl] = useState('');
     const [isVotingFinished, setisVotingFinished] = useState();
     const [inputCandidates, setInputCandidates] = useState("");
     const [loading, setLoading] = useState(false);
@@ -205,7 +206,11 @@ useEffect(() => {
   return () => clearInterval(countdown);
 }, []);
 
-
+useEffect(() => {
+  if (uniqueID) {
+      setQrCodeUrl(`${window.location.origin}/vote/${uniqueID}`);
+  }
+}, [uniqueID]);
 
 useEffect(() => {
   const interval = setInterval(syncTimeWithContract, 60000); // Sinhronizacija na svakih 90 sekundi
@@ -758,17 +763,17 @@ useEffect(() => {
   width: '100%'
 }}>
   <QRCode
-    id="qrCodeEl"
-    value={uniqueID}
-    size={200}
-    level={"H"}
-    includeMargin={true}
-    style={{
-      border: '5px solid #ff007a', // Pink border matching the theme
-      borderRadius: '8px',
-      padding: '5px'
-    }}
-  />
+            id="qrCodeEl"
+            value={qrCodeUrl}
+            size={200}
+            level={"H"}
+            includeMargin={true}
+            style={{
+                border: '5px solid #ff007a',
+                borderRadius: '8px',
+                padding: '5px'
+            }}
+        />
   <Button onClick={downloadQR} variant="contained" sx={{
     mt: 3, // Margin top for spacing after the QR Code
     padding: '12px 30px', // Increased padding for a larger button appearance

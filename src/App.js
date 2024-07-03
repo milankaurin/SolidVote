@@ -1,22 +1,76 @@
-
-
-
 import React, { useState, useEffect } from 'react';
-import { ethers } from 'ethers';                                    //Biblioteka koja omogućava komunikaciju sa blockchainom
+import { ethers } from 'ethers';
+import { 
+    BrowserRouter as Router, 
+    Routes, 
+    Route, 
+    useNavigate, 
+    useLocation,
+    useParams,
+} from 'react-router-dom';
 import { contractAbi, factoryAddress, factoryAbi, tokenAddress, tokenAbi } from './Constant/constant';
 import Login from './Components/Login';
 import Connected from './Components/Connected';
 import AdminPanel from './Components/AdminPanel';
-import LandingPage from './Components/LandingPage'; // Import the LandingPage component
+import LandingPage from './Components/LandingPage';
 import './App.css';
 import logobeli from './logobeli.png';
 import logo from './logobeli.png';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Stack from '@mui/material/Stack'
 
+const VotingSession = ({ account }) => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { id } = useParams();
+    const [sessionVoterInstanceAddress, setSessionVoterInstanceAddress] = useState(null);
 
+    useEffect(() => {
+        const fetchVoterInstance = async () => {
+            console.log("Fetching voter instance, ID:", id);
+            if (id) {
+                try {
+                    const provider = new ethers.providers.Web3Provider(window.ethereum);
+                    const ethereumNodeUrl = await provider.connection.url; // This needs to be a valid URL
+                    console.log("Ethereum Node URL:", ethereumNodeUrl);
+        
+                    const response = await fetch(`http://localhost:4000/vote/${id}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ ethereumNodeUrl }),
+                    });
+        
+                    const data = await response.json();
+                    console.log("Response data:", data);
+        
+                    if (data.voterInstanceAddress) {
+                        setSessionVoterInstanceAddress(data.voterInstanceAddress);
+                    } else {
+                        console.error("Invalid voting session ID");
+                        navigate('/');
+                    }
+                } catch (error) {
+                    console.error("Error fetching voter instance address:", error);
+                    navigate('/');
+                }
+            } else {
+                console.log("No ID provided, redirecting to home");
+                navigate('/');
+            }
+        };
+
+        fetchVoterInstance();
+    }, [id, navigate]);
+
+    if (!sessionVoterInstanceAddress) {
+        return <div>Loading voting session...</div>;
+    }
+
+    return <Connected account={account} voterInstanceAddress={sessionVoterInstanceAddress} />;
+};
 function App() {
 
     const [signer, setSigner] = useState(null);
@@ -48,8 +102,6 @@ function App() {
     const [redoviGlasaca, setRedoviGlasaca] = useState();
     const [adminInstanceAddress, setAdminInstanceAddress] = useState(null); // Dodato
     const [voterInstanceAddress, setVoterInstanceAddress] = useState(null);
-
-   
 
     const checkAdminInstance = async () => {
         try {
@@ -134,7 +186,6 @@ function App() {
             return null;
         }
     };
-
 
     async function syncTimeWithContract() {
         const timeInSeconds = await getRemainingTimeFromContract();
@@ -238,8 +289,6 @@ function App() {
 
         setCanVote(hasVoted);
     }
-
-   
 
     
 
@@ -358,6 +407,7 @@ const connectToMetamask = async () => {
    
 
     return (
+        <Router>
         <div className="App">
             <header className="App-logo">
                 <img src={logobeli} style={{ height: '70px', width: 'auto' }} alt="Logo" />
@@ -396,15 +446,14 @@ const connectToMetamask = async () => {
                     </Button>
                 </div>
             </header>
-            {isConnected && (
-                adminInstanceAddress ? (
-                    <AdminPanel
+            <Routes>
+                    <Route path="/" element={
+                        isConnected ? (
+                            adminInstanceAddress ? (
+                                <AdminPanel
                     signer={signer}
                     voters={voters}
-                    
-                    
                     SlanjaNaAdreseGlasace={posaljiEther}
-                 
                     postaviKolicinuZaSlanje={postaviKolicinuZaSlanje}
                     redoviGlasaca={redoviGlasaca}
                     updateRedoviGlasaca={updateRedoviGlasaca}
@@ -412,24 +461,23 @@ const connectToMetamask = async () => {
                     tokenAbi={tokenAbi}
                     tokenAddress={tokenAddress}
                     contractAddress={contractAddress}
-                    />
-                ) : voterInstanceAddress && voterInstanceAddress !== '' ? (
-                    <Connected
-                    account={account}
-                    voterInstanceAddress={voterInstanceAddress}
                 />
-                ) : (
-                    <LandingPage createInstance={createUserVotingInstance} setVoterInstanceAddress={setVoterInstanceAddress} />
-
-                )
-            )}
-            {!isConnected && (
-                <Login connectWallet={connectToMetamask}
-                 />
-            )}
-        </div>
-    );
-
+            ) : (
+                <LandingPage 
+                    createInstance={createUserVotingInstance} 
+                    setVoterInstanceAddress={setVoterInstanceAddress}
+                />
+            )
+        ) : (
+            <Login connectWallet={connectToMetamask} />
+        )
+    } />
+    <Route path="/vote/:id" element={
+        <VotingSession account={account} />
+    } />
+</Routes>
+</div>
+</Router>
+);
 }
-
 export default App;

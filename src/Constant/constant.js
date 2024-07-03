@@ -99,7 +99,15 @@ const tokenAbi = [
 ];
 const tokenOnlyAbi = [{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burnFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"address","name":"recipient","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"}];
 //const tokenAbi = [...tokenOnlyAbi, ...erc20StandardAbi, ...erc20BurnableAbi];
-export {contractAbi, contractAddress,factoryAddress,factoryAbi,tokenAddress,tokenAbi};
+//export {contractAbi, contractAddress,factoryAddress,factoryAbi,tokenAddress,tokenAbi};
+module.exports = {
+    contractAbi,
+    contractAddress,
+    factoryAddress,
+    factoryAbi,
+    tokenAddress,
+    tokenAbi
+};
 
 
 
