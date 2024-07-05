@@ -445,6 +445,7 @@ const connectToMetamask = async () => {
                             </Button>
                         </div>
                     </header>
+                    <w3m-button />
                     <Routes>
                         <Route path="/" element={
                             isConnected ? (
